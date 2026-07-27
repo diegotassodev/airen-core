@@ -10,7 +10,7 @@ public class ReadVersaoDto {
     public string? Nome {get;set;}
     public string? Personalidade {get;set;}
     public string? Descricao {get;set;}
-    public Genero? Genero {get;set;}
+    public string? Genero {get;set;}
     public string? UrlImagem {get;set;}
     public int IdadeInicial {get;set;}
     public int IdadeFinal {get;set;}

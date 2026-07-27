@@ -11,5 +11,5 @@ public class CreateParentescoDto {
     [Required (ErrorMessage = "O id do parente não foi definido")]
     public int IdParente {get;set;}
 
-    public TipoParentesco? TipoParentesco {get;set;}
+    public string? TipoParentesco {get;set;}
 }

@@ -23,6 +23,7 @@ public class Personagem {
     public bool EstaVivo {get;set;}
     
     public virtual Potentia? Potentia {get;set;}
+    
     public virtual ICollection<Versao>? Versoes {get;set;}
 
     public virtual ICollection<Afiliacao>? Afiliacoes {get;set;}

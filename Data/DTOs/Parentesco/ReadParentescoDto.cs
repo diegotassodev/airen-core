@@ -6,7 +6,7 @@ namespace AirenApi.Data.DTOs;
 public class ReadParentescoDto {
 
     public int Id {get;set;}
-    public virtual ReadPersonagemDto? Personagem {get;set;}
-    public virtual ReadPersonagemDto? Parente {get;set;}
-    public TipoParentesco? TipoParentesco {get;set;}
+    public virtual string? NomePersonagem {get;set;}
+    public virtual string? NomeParente {get;set;}
+    public string? TipoParentesco {get;set;}
 }

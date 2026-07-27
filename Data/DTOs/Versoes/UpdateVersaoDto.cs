@@ -9,7 +9,7 @@ public class UpdateVersaoDto {
     public string? Nome {get;set;}
 
     [Required (ErrorMessage = "O gênero não foi definido")]
-    public Genero? Genero {get;set;}
+    public string? Genero {get;set;}
 
     public string? UrlImagem {get;set;}
 

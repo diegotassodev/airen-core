@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AirenApi.Models;
 
@@ -20,5 +21,9 @@ public class Capitulo {
     [Required (ErrorMessage = "O número de páginas do capítulo não foi definido.")]
     public int NumeroPaginas {get;set;}
 
+    [Required(ErrorMessage = "O volume do capítulo não foi definido.")]
+    [ForeignKey(nameof(Volume))]
+    public int? IdVolume {get;set;}
     public virtual Volume? Volume {get;set;}
+
 }

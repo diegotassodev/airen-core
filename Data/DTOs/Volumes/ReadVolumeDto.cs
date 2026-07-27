@@ -11,5 +11,5 @@ public class ReadVolumeDto {
     public DateTime? DataLancamento {get;set;}
     public string? MensagemVolume {get;set;}
     public string? UrlCapa {get;set;}
-    public virtual ICollection<Capitulo>? Capitulos {get;set;}
+    public virtual ICollection<ReadCapituloDto>? Capitulos {get;set;}
 }

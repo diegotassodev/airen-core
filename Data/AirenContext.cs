@@ -21,7 +21,7 @@ public class AirenContext : DbContext {
 
         builder.Entity<Parentesco>()
             .HasOne(p => p.Personagem)
-            .WithMany()
+            .WithMany(p => p.Parentes)
             .HasForeignKey(p => p.IdPersonagem)
             .OnDelete(DeleteBehavior.Restrict);
 

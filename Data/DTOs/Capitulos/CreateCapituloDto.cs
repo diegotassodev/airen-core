@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using AirenApi.Models;
 
 namespace AirenApi.Data.DTOs;
@@ -16,5 +17,9 @@ public class CreateCapituloDto {
 
     [Required (ErrorMessage = "O número de páginas do capítulo não foi definido.")]
     public int NumeroPaginas {get;set;}
+
+    [Required(ErrorMessage = "O volume do capítulo não foi definido.")]
+    public int IdVolume {get;set;}
+    public virtual Volume? Volume {get;set;}
 
 }

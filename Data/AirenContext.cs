@@ -30,5 +30,6 @@ public class AirenContext : DbContext {
             .WithMany()
             .HasForeignKey(p => p.IdParente)
             .OnDelete(DeleteBehavior.Restrict);
+
     }
 }

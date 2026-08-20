@@ -7,6 +7,7 @@ public class HabilidadeProfile : Profile {
     public HabilidadeProfile() {
         CreateMap<CreateHabilidadeDto, Habilidade>();
         CreateMap<UpdateHabilidadeDto, Habilidade>();
-        CreateMap<Habilidade, ReadHabilidadeDto>();
+        CreateMap<Habilidade, ReadHabilidadeDto>()
+            .ForMember(habilidadeDto => habilidadeDto.NomePotentia, opt => opt.MapFrom(habilidade => habilidade.Potentia!.Nome));;
     }
 }

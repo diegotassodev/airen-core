@@ -38,24 +38,8 @@ Classe Parentesco
 - Personagem Parente
 
 // Informações
-- TipoParentesco TipoParentesco
-  
-enum TipoParentesco {
-    Pai,
-    Mae,
-    Filho,
-    Filha,
-    Irmao,
-    Irma,
-    Primo,
-    Prima,
-    Tio,
-    Tia,
-    Esposa,
-    Marido,
-    Mestre,
-    Aprendiz
-};
+- string TipoParentesco
+
 ```
 
 ## ⚡ Classe Potentia
@@ -123,16 +107,6 @@ Classe Versao
 - ICollection<Hobby> Hobbies
   
 - ICollection<Volume> Volumes
-  
-public enum Genero {
-    Masculino,
-    Feminino,
-    NaoBinario,
-    GeneroFluido,
-    Poligenero,
-    Outro,
-    NaoInformado
-}
 ``` 
 
 ## 🎮 Classe Hobby

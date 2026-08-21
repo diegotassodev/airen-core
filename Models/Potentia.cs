@@ -14,7 +14,7 @@ public class Potentia {
     [Required (ErrorMessage = "A descrição não foi definida")]
     public string? Descricao {get;set;}
 
-    public string? LinkMusica {get;set;}
+    public string? LinkMusica {get;set;} 
 
     public virtual ICollection<Habilidade>? Habilidades {get;set;}
 

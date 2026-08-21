@@ -11,7 +11,6 @@ public class Personagem {
     [Required (ErrorMessage = "O nome não foi definido")]
     public string? Nome {get;set;}
 
-    [Required (ErrorMessage = "O nome original não foi definido")]
     public string? NomeOriginal {get;set;}
 
     [Required (ErrorMessage = "A biografia não foi definida")]

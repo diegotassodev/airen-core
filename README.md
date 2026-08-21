@@ -1,100 +1,129 @@
 # AirenApi
 
-API ASP.NET Core para gerenciamento de personagens de Airen.
+## Introdução
 
-## Endpoints da API
+Este repositório contém a API REST do projeto Airen, uma API feita em ASP.NET Core que expõe operações CRUD para as principais entidades do domínio (Personagem, Potentia, Afiliacao, Capitulo, Habilidade, Hobby, Parentesco, Tecnica, Versao e Volume).
 
-A aplicação expõe os seguintes endpoints:
-
-### Personagens
-- POST /personagem: cria um novo personagem
-- GET /personagem: lista todos os personagens
-- GET /personagem/{id}: busca um personagem pelo ID
-- PUT /personagem/{id}: atualiza um personagem existente
-- DELETE /personagem/{id}: remove um personagem
-
-### Potências
-- POST /potentia: cria uma nova potentia
-- GET /potentia: lista todas as potentias
-- GET /potentia/{id}: busca uma potentia pelo ID
-- PUT /potentia/{id}: atualiza uma potentia existente
-- DELETE /potentia/{id}: remove uma potentia
-
-## Requisitos
-
-- .NET SDK 10.0 ou superior
-- Banco de dados MySQL acessível localmente
+Ela fornece endpoints REST para gerenciar os recursos do domínio. A API utiliza Entity Framework Core com MySQL, AutoMapper para mapeamento entre DTOs e modelos.
 
 ## Configuração
 
-1. Ajuste a string de conexão no arquivo appsettings_copy.json e tire o sufixo "_copy".
-2. Garanta que o banco MySQL esteja instalado.
-3. Execute as migrações:
+- Pré-requisitos:
+	- .NET SDK 10
+	- MySQL (ou outro servidor compatível configurado na connection string)
+	- Configurar a connection string em `appsettings.json` com a chave `AirenConnection`.
+	- As dependências relevantes estão configuradas em `Program.cs` (DbContext, AutoMapper, Controllers, OpenAPI).
 
-```bash
-dotnet tool install --global dotnet-ef /// FERRAMENTA
-dotnet ef migrations add Airen
-dotnet ef database update
+Exemplo (appsettings.json):
+
+```
+"ConnectionStrings": {
+	"AirenConnection": "server=localhost;user=root;password=senha;database=airen_db"
+}
 ```
 
 ## Compilação
 
+Na raiz do projeto, execute:
+
 ```bash
-dotnet restore
 dotnet build
-```
-
-## Execução
-
-```bash
 dotnet run
 ```
 
-A API ficará disponível em uma URL semelhante a:
-
-- http://localhost:5027
-- https://localhost:7245
-
-
-## Adicionar pacotes
-
-Para instalar todos os pacotes de dependência listados para este projeto, execute o script auxiliar:
+Para aplicar migrations (quando necessário):
 
 ```bash
-./scripts/add-package.sh
+dotnet ef migrations add "migration"
+dotnet ef database update
 ```
 
-Esse script adiciona automaticamente os seguintes pacotes:
+Certifique-se de que a connection string esteja correta antes de rodar as migrations ou iniciar a aplicação.
 
-- AutoMapper 12.0.1
-- AutoMapper.Extensions.Microsoft.DependencyInjection 12.0.1
-- Microsoft.AspNetCore.OpenApi 10.0.9
-- Microsoft.EntityFrameworkCore 10.0.9
-- Microsoft.EntityFrameworkCore.Proxies 10.0.9
-- Microsoft.EntityFrameworkCore.SqlServer 10.0.9
-- Microsoft.EntityFrameworkCore.Tools 10.0.9
-- Pomelo.EntityFrameworkCore.MySql 10.0.0
+## Endpoints
 
-## Arquitetura de pastas
+Cada controller segue o padrão REST básico com rotas no formato `/{Controller}` e `/{Controller}/{id}`.
 
-```text
-AirenApi/
-├── Controllers/          # Endpoints da API
-│   ├── PersonagemController.cs
-│   └── PotentiaController.cs
-├── Models/               # Entidades do domínio
-│   ├── Personagem.cs
-│   └── Potentia.cs
-├── Data/                 # Contexto do Entity Framework e DTOs
-│   ├── AirenContext.cs
-│   └── DTOs/
-│       ├── Personagens/
-│       └── Potentias/
-├── Profiles/             # Mapeamentos do AutoMapper
-│   ├── PersonagemProfile.cs
-│   └── PotentiaProfile.cs
-├── Migrations/           # Histórico de migrações do banco
-├── Properties/           # Configurações de execução
-├── Program.cs            # Inicialização da aplicação
-└── AirenApi.csproj       # Configuração do projeto
-```
+- `GET /Afiliacao` — listar afiliacões
+- `POST /Afiliacao` — criar afiliacão
+- `GET /Afiliacao/{id}` — obter afiliacão por id
+- `PUT /Afiliacao/{id}` — atualizar afiliacão
+- `DELETE /Afiliacao/{id}` — remover afiliacão
+
+- `GET /Capitulo` — listar capítulos
+- `POST /Capitulo` — criar capítulo
+- `GET /Capitulo/{id}` — obter capítulo por id
+- `PUT /Capitulo/{id}` — atualizar capítulo
+- `DELETE /Capitulo/{id}` — remover capítulo
+
+- `GET /Habilidade` — listar habilidades
+- `POST /Habilidade` — criar habilidade
+- `GET /Habilidade/{id}` — obter habilidade por id
+- `PUT /Habilidade/{id}` — atualizar habilidade
+- `DELETE /Habilidade/{id}` — remover habilidade
+
+- `GET /Hobby` — listar hobbies
+- `POST /Hobby` — criar hobby
+- `GET /Hobby/{id}` — obter hobby por id
+- `PUT /Hobby/{id}` — atualizar hobby
+- `DELETE /Hobby/{id}` — remover hobby
+
+- `GET /Parentesco` — listar parentescos
+- `POST /Parentesco` — criar parentesco
+- `GET /Parentesco/{id}` — obter parentesco por id
+- `PUT /Parentesco/{id}` — atualizar parentesco
+- `DELETE /Parentesco/{id}` — remover parentesco
+
+- `GET /Personagem` — listar personagens
+- `POST /Personagem` — criar personagem
+- `GET /Personagem/{id}` — obter personagem por id
+- `PUT /Personagem/{id}` — atualizar personagem
+- `DELETE /Personagem/{id}` — remover personagem
+
+- `GET /Potentia` — listar potentias
+- `POST /Potentia` — criar potentia
+- `GET /Potentia/{id}` — obter potentia por id
+- `PUT /Potentia/{id}` — atualizar potentia
+- `DELETE /Potentia/{id}` — remover potentia
+
+- `GET /Tecnica` — listar técnicas
+- `POST /Tecnica` — criar técnica
+- `GET /Tecnica/{id}` — obter técnica por id
+- `PUT /Tecnica/{id}` — atualizar técnica
+- `DELETE /Tecnica/{id}` — remover técnica
+
+- `GET /Versao` — listar versões
+- `POST /Versao` — criar versão
+- `GET /Versao/{id}` — obter versão por id
+- `PUT /Versao/{id}` — atualizar versão
+- `DELETE /Versao/{id}` — remover versão
+
+- `GET /Volume` — listar volumes
+- `POST /Volume` — criar volume
+- `GET /Volume/{id}` — obter volume por id
+- `PUT /Volume/{id}` — atualizar volume
+- `DELETE /Volume/{id}` — remover volume
+
+> Observação: os controllers usam `CreatedAtAction` nas criações e retornam `NoContent` para atualizações e exclusões bem-sucedidas.
+
+## Explicação da Arquitetura - classes
+
+- `Controllers/` — controladores que expõem os endpoints REST (cada controller implementa operações CRUD básicas).
+- `Data/AirenContext.cs` — `DbContext` do EF Core que registra os `DbSet<>` para cada entidade. Configura relacionamentos (ex.: `Parentesco` possui chaves estrangeiras para `Personagem` e `Parente` com delete behavior `Restrict`).
+- `Data/DTOs/` — DTOs de entrada e saída usados para separar o modelo de domínio da interface HTTP.
+- `Models/` — classes de domínio (entidades) mapeadas pelo EF Core.
+- `Profiles/` — perfis do AutoMapper que definem mapeamentos entre DTOs e Models.
+- `Migrations/` — histórico de migrações do EF Core.
+
+Infraestrutura e padrões:
+- AutoMapper para conversão DTO ↔ Model.
+- EF Core com `UseLazyLoadingProxies()` para carregamento preguiçoso quando necessário.
+- MySQL como provedor de banco de dados (configurado em `Program.cs`).
+
+## Solução resolvida
+
+A API fornece:
+- Endpoints CRUD consistentes para as entidades principais.
+- Mapeamento de DTOs para manter contratos de API estáveis.
+- Persistência via EF Core com migrações.
+- Regras de integridade referencial explícitas (`Parentesco` restrito para evitar deletes em cascata indesejados).

@@ -23,7 +23,7 @@ public class CapituloController : ControllerBase {
         var capitulo = _mapper.Map<Capitulo>(capituloDto);
         _context.Capitulos!.Add(capitulo);
         _context.SaveChanges();
-        return CreatedAtAction(nameof(BuscaCapituloPorId), new {Id = capitulo.Id}, capituloDto);
+        return CreatedAtAction(nameof(BuscaCapituloPorId), new {Id = capitulo.Id}, capitulo);
     }
 
     [HttpGet]

@@ -23,7 +23,7 @@ public class VersaoController : ControllerBase {
         var versao = _mapper.Map<Versao>(versaoDto);
         _context.Versoes!.Add(versao);
         _context.SaveChanges();
-        return CreatedAtAction(nameof(BuscaVersaoPorId), new {Id = versao.Id}, versaoDto);
+        return CreatedAtAction(nameof(BuscaVersaoPorId), new {Id = versao.Id}, versao);
     }
 
     [HttpGet]

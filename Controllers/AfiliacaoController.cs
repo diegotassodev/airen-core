@@ -23,7 +23,7 @@ public class AfiliacaoController : ControllerBase {
         var afiliacao = _mapper.Map<Afiliacao>(afiliacaoDto);
         _context.Afiliacaos!.Add(afiliacao);
         _context.SaveChanges();
-        return CreatedAtAction(nameof(BuscaAfiliacaoPorId), new {Id = afiliacao.Id}, afiliacaoDto);
+        return CreatedAtAction(nameof(BuscaAfiliacaoPorId), new {Id = afiliacao.Id}, afiliacao);
     }
 
     [HttpGet]

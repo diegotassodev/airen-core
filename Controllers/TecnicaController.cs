@@ -23,7 +23,7 @@ public class TecnicaController : ControllerBase {
         var tecnica = _mapper.Map<Tecnica>(tecnicaDto);
         _context.Tecnicas!.Add(tecnica);
         _context.SaveChanges();
-        return CreatedAtAction(nameof(BuscaTecnicaPorId), new {Id = tecnica.Id}, tecnicaDto);
+        return CreatedAtAction(nameof(BuscaTecnicaPorId), new {Id = tecnica.Id}, tecnica);
     }
 
     [HttpGet]

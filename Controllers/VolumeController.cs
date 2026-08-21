@@ -23,7 +23,7 @@ public class VolumeController : ControllerBase {
         var volume = _mapper.Map<Volume>(volumeDto);
         _context.Volumes!.Add(volume);
         _context.SaveChanges();
-        return CreatedAtAction(nameof(BuscaVolumePorId), new {Id = volume.Id}, volumeDto);
+        return CreatedAtAction(nameof(BuscaVolumePorId), new {Id = volume.Id}, volume);
     }
 
     [HttpGet]

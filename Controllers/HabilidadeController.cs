@@ -23,7 +23,7 @@ public class HabilidadeController : ControllerBase {
         var habilidade = _mapper.Map<Habilidade>(habilidadeDto);
         _context.Habilidades!.Add(habilidade);
         _context.SaveChanges();
-        return CreatedAtAction(nameof(BuscaHabilidadePorId), new {Id = habilidade.Id}, habilidadeDto);
+        return CreatedAtAction(nameof(BuscaHabilidadePorId), new {Id = habilidade.Id}, habilidade);
     }
 
     [HttpGet]

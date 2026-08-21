@@ -23,7 +23,7 @@ public class ParentescoController : ControllerBase {
         var parentesco = _mapper.Map<Parentesco>(parentescoDto);
         _context.Parentescos!.Add(parentesco);
         _context.SaveChanges();
-        return CreatedAtAction(nameof(BuscaParentescoPorId), new {Id = parentesco.Id}, parentescoDto);
+        return CreatedAtAction(nameof(BuscaParentescoPorId), new {Id = parentesco.Id}, parentesco);
     }
 
     [HttpGet]

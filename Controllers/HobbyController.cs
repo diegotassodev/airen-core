@@ -23,7 +23,7 @@ public class HobbyController : ControllerBase {
         var hobby = _mapper.Map<Hobby>(hobbyDto);
         _context.Hobbies!.Add(hobby);
         _context.SaveChanges();
-        return CreatedAtAction(nameof(BuscaHobbyPorId), new {Id = hobby.Id}, hobbyDto);
+        return CreatedAtAction(nameof(BuscaHobbyPorId), new {Id = hobby.Id}, hobby);
     }
 
     [HttpGet]

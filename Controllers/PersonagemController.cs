@@ -23,7 +23,7 @@ public class PersonagemController : ControllerBase {
         var personagem = _mapper.Map<Personagem>(personagemDto);
         _context.Personagens!.Add(personagem);
         _context.SaveChanges();
-        return CreatedAtAction(nameof(BuscaPersonagensPorId), new {Id = personagem.Id}, personagemDto);
+        return CreatedAtAction(nameof(BuscaPersonagensPorId), new {Id = personagem.Id}, personagem);
     }
 
     [HttpGet]

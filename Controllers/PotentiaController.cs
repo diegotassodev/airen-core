@@ -23,7 +23,7 @@ public class PotentiaController : ControllerBase {
         var potentia = _mapper.Map<Potentia>(potentiaDto);
         _context.Potentias!.Add(potentia);
         _context.SaveChanges();
-        return CreatedAtAction(nameof(BuscaPotentiasPorId), new {Id = potentia.Id}, potentiaDto);
+        return CreatedAtAction(nameof(BuscaPotentiasPorId), new {Id = potentia.Id}, potentia);
     }
 
     [HttpGet]

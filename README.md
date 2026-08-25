@@ -109,10 +109,10 @@ Cada controller segue o padrão REST básico com rotas no formato `/{Controller}
 ## Explicação da Arquitetura - classes
 
 - `Controllers/` — controladores que expõem os endpoints REST (cada controller implementa operações CRUD básicas).
-- `Data/AirenContext.cs` — `DbContext` do EF Core que registra os `DbSet<>` para cada entidade. Configura relacionamentos (ex.: `Parentesco` possui chaves estrangeiras para `Personagem` e `Parente` com delete behavior `Restrict`).
+- `Data/AirenContext.cs` — `DbContext` do EF Core que registra os `DbSet<>` para cada entidade. Configura relacionamentos (exemplo: `Parentesco` possui chaves estrangeiras para `Personagem` e `Parente` com delete behavior `Restrict`).
 - `Data/DTOs/` — DTOs de entrada e saída usados para separar o modelo de domínio da interface HTTP.
 - `Models/` — classes de domínio (entidades) mapeadas pelo EF Core.
-- `Extensions/` — métodos de extensão `MapTo...` que convertem DTOs em entidades e entidades em DTOs de leitura.
+- `Extensions/` — métodos de extensão `MapTo()` que convertem DTOs em entidades e entidades em DTOs de leitura, substituem o auto mapper.
 - `Services/` — serviços responsáveis pelas consultas das entidades e pelo carregamento das relações necessárias.
 - `Services/Core/QueryServicesCore.cs` — extensão que registra os serviços da aplicação no contêiner de injeção de dependência.
 - `Migrations/` — histórico de migrações do EF Core.

@@ -4,7 +4,7 @@
 
 Este repositório contém a API REST do projeto Airen, uma API feita em ASP.NET Core que expõe operações CRUD para as principais entidades do domínio (Personagem, Potentia, Afiliacao, Capitulo, Habilidade, Hobby, Parentesco, Tecnica, Versao e Volume).
 
-Ela fornece endpoints REST para gerenciar os recursos do domínio. A API utiliza Entity Framework Core com MySQL, AutoMapper para mapeamento entre DTOs e modelos.
+Ela fornece endpoints REST para gerenciar os recursos do domínio. A API utiliza Entity Framework Core com MySQL, DTOs e métodos de extensão para mapear dados entre as requisições e os modelos.
 
 ## Configuração
 
@@ -12,7 +12,7 @@ Ela fornece endpoints REST para gerenciar os recursos do domínio. A API utiliza
 	- .NET SDK 10
 	- MySQL (ou outro servidor compatível configurado na connection string)
 	- Configurar a connection string em `appsettings.json` com a chave `AirenConnection`.
-	- As dependências relevantes estão configuradas em `Program.cs` (DbContext, AutoMapper, Controllers, OpenAPI).
+	- As dependências relevantes estão configuradas em `Program.cs` (DbContext, controllers e serviços da aplicação).
 
 Exemplo (appsettings.json):
 
@@ -104,7 +104,7 @@ Cada controller segue o padrão REST básico com rotas no formato `/{Controller}
 - `PUT /Volume/{id}` — atualizar volume
 - `DELETE /Volume/{id}` — remover volume
 
-> Observação: os controllers usam `CreatedAtAction` nas criações e retornam `NoContent` para atualizações e exclusões bem-sucedidas.
+> Observação: os controllers usam `CreatedAtAction` nas criações, `Ok` nas consultas e atualizações, `NotFound` quando o recurso não existe e `NoContent` nas exclusões bem-sucedidas.
 
 ## Explicação da Arquitetura - classes
 
@@ -112,11 +112,13 @@ Cada controller segue o padrão REST básico com rotas no formato `/{Controller}
 - `Data/AirenContext.cs` — `DbContext` do EF Core que registra os `DbSet<>` para cada entidade. Configura relacionamentos (ex.: `Parentesco` possui chaves estrangeiras para `Personagem` e `Parente` com delete behavior `Restrict`).
 - `Data/DTOs/` — DTOs de entrada e saída usados para separar o modelo de domínio da interface HTTP.
 - `Models/` — classes de domínio (entidades) mapeadas pelo EF Core.
-- `Profiles/` — perfis do AutoMapper que definem mapeamentos entre DTOs e Models.
+- `Extensions/` — métodos de extensão `MapTo...` que convertem DTOs em entidades e entidades em DTOs de leitura.
+- `Services/` — serviços responsáveis pelas consultas das entidades e pelo carregamento das relações necessárias.
+- `Services/Core/QueryServicesCore.cs` — extensão que registra os serviços da aplicação no contêiner de injeção de dependência.
 - `Migrations/` — histórico de migrações do EF Core.
 
 Infraestrutura e padrões:
-- AutoMapper para conversão DTO ↔ Model.
+- Métodos de extensão para conversão DTO ↔ Model, sem dependência do AutoMapper.
 - EF Core com `UseLazyLoadingProxies()` para carregamento preguiçoso quando necessário.
 - MySQL como provedor de banco de dados (configurado em `Program.cs`).
 

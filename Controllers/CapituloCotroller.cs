@@ -1,7 +1,7 @@
 using AirenApi.Data;
 using AirenApi.Data.DTOs;
-using AirenApi.Models;
-using AutoMapper;
+using AirenApi.Profiles;
+using AirenApi.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AirenApi.Controllers;
@@ -11,50 +11,48 @@ namespace AirenApi.Controllers;
 public class CapituloController : ControllerBase {
 
     private AirenContext _context;
-    private IMapper _mapper;
+    private CapituloServices _services;
 
-    public CapituloController(AirenContext context, IMapper mapper) {
+    public CapituloController(AirenContext context, CapituloServices services) {
         _context = context;
-        _mapper = mapper;
+        _services = services;
     }
 
     [HttpPost]
     public IActionResult AdicionaCapitulo([FromBody] CreateCapituloDto capituloDto) {
-        var capitulo = _mapper.Map<Capitulo>(capituloDto);
+        var capitulo = capituloDto.MapToCapitulo();
         _context.Capitulos!.Add(capitulo);
         _context.SaveChanges();
         return CreatedAtAction(nameof(BuscaCapituloPorId), new {Id = capitulo.Id}, capitulo);
     }
 
     [HttpGet]
-    public IEnumerable<ReadCapituloDto> VerCapitulos() {
-        var listaCapitulosNaoMapeada = _context.Capitulos?.ToList();
-        var listaCapitulos = _mapper.Map<List<ReadCapituloDto>>(listaCapitulosNaoMapeada);
+    public ICollection<ReadCapituloDto> VerCapitulos() {
+        var listaCapitulos = _services.GetAll();
         return listaCapitulos;
     }
 
     [HttpGet("{id}")]
     public IActionResult BuscaCapituloPorId(int id) {
-        var capitulo = _mapper.Map<ReadCapituloDto>(_context.Capitulos?.First(c => c.Id == id));
+        var capitulo = _services.GetById(id);
         if (capitulo == null) return NotFound();
-        else return Ok(capitulo);
+        else return Ok(capitulo.MapToReadCapitulo());
     }
 
     [HttpPut("{id}")]
     public IActionResult AtualizaCapitulo(int id, [FromBody] UpdateCapituloDto capituloDto) {
-        Console.WriteLine(capituloDto.Numero);
-        var capitulo = _context.Capitulos?.First(c => c.Id == id);
+        var capitulo = _services.GetById(id);
         if (capitulo == null) return NotFound();
 
-        _mapper.Map(capituloDto, capitulo);
+        capituloDto.MapToCapitulo(capitulo);
         _context.SaveChanges();
 
-        return NoContent();
+        return Ok(capituloDto);
     } 
 
     [HttpDelete("{id}")]
     public IActionResult DeletaCapitulo (int id) {
-        var capitulo = _context.Capitulos?.First(c => c.Id == id);
+        var capitulo = _services.GetById(id);
         if (capitulo == null) return NotFound();
 
         _context.Capitulos!.Remove(capitulo);

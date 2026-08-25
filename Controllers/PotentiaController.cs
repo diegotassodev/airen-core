@@ -1,7 +1,7 @@
 using AirenApi.Data;
 using AirenApi.Data.DTOs;
-using AirenApi.Models;
-using AutoMapper;
+using AirenApi.Profiles;
+using AirenApi.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AirenApi.Controllers;
@@ -11,49 +11,48 @@ namespace AirenApi.Controllers;
 public class PotentiaController : ControllerBase {
 
     private AirenContext _context;
-    private IMapper _mapper;
+    private PotentiaService _service;
 
-    public PotentiaController(AirenContext context, IMapper mapper) {
+    public PotentiaController(AirenContext context, PotentiaService service) {
         _context = context;
-        _mapper = mapper;
+        _service = service;
     }
 
     [HttpPost]
     public IActionResult AdicionaPotentia([FromBody] CreatePotentiaDto potentiaDto) {
-        var potentia = _mapper.Map<Potentia>(potentiaDto);
+        var potentia = potentiaDto.MapToPotentia();
         _context.Potentias!.Add(potentia);
         _context.SaveChanges();
-        return CreatedAtAction(nameof(BuscaPotentiasPorId), new {Id = potentia.Id}, potentia);
+        return CreatedAtAction(nameof(BuscaPotentiaPorId), new {Id = potentia.Id}, potentia);
     }
 
     [HttpGet]
     public IEnumerable<ReadPotentiaDto> VerPotentias() {
-        var listaPotentiasNaoMapeada = _context.Potentias?.ToList();
-        var listaPotentias = _mapper.Map<List<ReadPotentiaDto>>(listaPotentiasNaoMapeada);
+        var listaPotentias = _service.GetAll();
         return listaPotentias;
     }
 
     [HttpGet("{id}")]
-    public IActionResult BuscaPotentiasPorId(int id) {
-        var potentia = _mapper.Map<ReadPotentiaDto>(_context.Potentias?.First(p => p.Id == id));
+    public IActionResult BuscaPotentiaPorId(int id) {
+        var potentia = _service.GetById(id);
         if (potentia == null) return NotFound();
-        else return Ok(potentia);
+        else return Ok(potentia.MapToReadPotentiaDto());
     }
 
     [HttpPut("{id}")]
-    public IActionResult AtualizaPotetia(int id, [FromBody] UpdatePotentiaDto potentiaDto) {
-        var potentia = _context.Potentias!.First(p => p.Id == id);
+    public IActionResult AtualizaPotentia(int id, [FromBody] UpdatePotentiaDto potentiaDto) {
+        var potentia = _service.GetById(id);
         if (potentia == null) return NotFound();
 
-        _mapper.Map(potentiaDto, potentia);
+        potentiaDto.MapToPotentia(potentia);
         _context.SaveChanges();
 
-        return NoContent();
+        return Ok(potentiaDto);
     } 
 
     [HttpDelete("{id}")]
     public IActionResult DeletaPotentia (int id) {
-        var potentia = _context.Potentias!.First(p => p.Id == id);
+        var potentia = _service.GetById(id);
         if (potentia == null) return NotFound();
 
         _context.Potentias!.Remove(potentia);

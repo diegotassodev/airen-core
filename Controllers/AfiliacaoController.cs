@@ -1,7 +1,8 @@
 using AirenApi.Data;
 using AirenApi.Data.DTOs;
 using AirenApi.Models;
-using AutoMapper;
+using AirenApi.Profiles;
+using AirenApi.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AirenApi.Controllers;
@@ -11,16 +12,16 @@ namespace AirenApi.Controllers;
 public class AfiliacaoController : ControllerBase {
 
     private AirenContext _context;
-    private IMapper _mapper;
+    private AfiliacaoServices _services;
 
-    public AfiliacaoController(AirenContext context, IMapper mapper) {
+    public AfiliacaoController(AirenContext context, AfiliacaoServices services) {
         _context = context;
-        _mapper = mapper;
+        _services = services;
     }
 
     [HttpPost]
     public IActionResult AdicionaAfiliacao([FromBody] CreateAfiliacaoDto afiliacaoDto) {
-        var afiliacao = _mapper.Map<Afiliacao>(afiliacaoDto);
+        var afiliacao = afiliacaoDto.MapToAfiliacao();
         _context.Afiliacaos!.Add(afiliacao);
         _context.SaveChanges();
         return CreatedAtAction(nameof(BuscaAfiliacaoPorId), new {Id = afiliacao.Id}, afiliacao);
@@ -28,32 +29,31 @@ public class AfiliacaoController : ControllerBase {
 
     [HttpGet]
     public IEnumerable<ReadAfiliacaoDto> VerAfiliacoes() {
-        var listaAfiliacoesNaoMapeada = _context.Afiliacaos?.ToList();
-        var listaAfiliacoes = _mapper.Map<List<ReadAfiliacaoDto>>(listaAfiliacoesNaoMapeada);
+        var listaAfiliacoes = _services.GetAll();
         return listaAfiliacoes;
     }
 
     [HttpGet("{id}")]
     public IActionResult BuscaAfiliacaoPorId(int id) {
-        var afiliacao = _mapper.Map<ReadAfiliacaoDto>(_context.Afiliacaos?.First(a => a.Id == id));
+        var afiliacao = _services.GetById(id);
         if (afiliacao == null) return NotFound();
-        else return Ok(afiliacao);
+        else return Ok(afiliacao.MapToReadAfiliacao());
     }
 
     [HttpPut("{id}")]
     public IActionResult AtualizaAfiliacao(int id, [FromBody] UpdateAfiliacaoDto afiliacaoDto) {
-        var afiliacao = _context.Afiliacaos?.First(a => a.Id == id);
+        var afiliacao = _services.GetById(id);
         if (afiliacao == null) return NotFound();
 
-        _mapper.Map(afiliacaoDto, afiliacao);
+        afiliacaoDto.MapToAfiliacao(afiliacao);
         _context.SaveChanges();
 
-        return NoContent();
+        return Ok(afiliacaoDto);
     } 
 
     [HttpDelete("{id}")]
     public IActionResult DeletaAfiliacao (int id) {
-        var afiliacao = _context.Afiliacaos?.First(a => a.Id == id);
+        var afiliacao = _services.GetById(id);
         if (afiliacao == null) return NotFound();
 
         _context.Afiliacaos!.Remove(afiliacao);

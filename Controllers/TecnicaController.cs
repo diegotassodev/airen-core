@@ -1,7 +1,7 @@
 using AirenApi.Data;
 using AirenApi.Data.DTOs;
-using AirenApi.Models;
-using AutoMapper;
+using AirenApi.Profiles;
+using AirenApi.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AirenApi.Controllers;
@@ -11,16 +11,16 @@ namespace AirenApi.Controllers;
 public class TecnicaController : ControllerBase {
 
     private AirenContext _context;
-    private IMapper _mapper;
+    private TecnicaService _service;
 
-    public TecnicaController(AirenContext context, IMapper mapper) {
+    public TecnicaController(AirenContext context, TecnicaService service) {
         _context = context;
-        _mapper = mapper;
+        _service = service;
     }
 
     [HttpPost]
     public IActionResult AdicionaTecnica([FromBody] CreateTecnicaDto tecnicaDto) {
-        var tecnica = _mapper.Map<Tecnica>(tecnicaDto);
+        var tecnica = tecnicaDto.MapToTecnica();
         _context.Tecnicas!.Add(tecnica);
         _context.SaveChanges();
         return CreatedAtAction(nameof(BuscaTecnicaPorId), new {Id = tecnica.Id}, tecnica);
@@ -28,32 +28,31 @@ public class TecnicaController : ControllerBase {
 
     [HttpGet]
     public IEnumerable<ReadTecnicaDto> VerTecnicas() {
-        var listaTecnicasNaoMapeada = _context.Tecnicas?.ToList();
-        var listaTecnicas = _mapper.Map<List<ReadTecnicaDto>>(listaTecnicasNaoMapeada);
+        var listaTecnicas = _service.GetAll();
         return listaTecnicas;
     }
 
     [HttpGet("{id}")]
     public IActionResult BuscaTecnicaPorId(int id) {
-        var tecnica = _mapper.Map<ReadTecnicaDto>(_context.Tecnicas?.First(t => t.Id == id));
+        var tecnica = _service.GetById(id);
         if (tecnica == null) return NotFound();
-        else return Ok(tecnica);
+        else return Ok(tecnica.MapToReadTecnica());
     }
 
     [HttpPut("{id}")]
     public IActionResult AtualizaTecnica(int id, [FromBody] UpdateTecnicaDto tecnicaDto) {
-        var tecnica = _context.Tecnicas?.First(t => t.Id == id);
+        var tecnica = _service.GetById(id);
         if (tecnica == null) return NotFound();
 
-        _mapper.Map(tecnicaDto, tecnica);
+        tecnicaDto.MapToTecnica(tecnica);
         _context.SaveChanges();
 
-        return NoContent();
+        return Ok(tecnicaDto);
     } 
 
     [HttpDelete("{id}")]
     public IActionResult DeletaTecnica (int id) {
-        var tecnica = _context.Tecnicas?.First(t => t.Id == id);
+        var tecnica = _service.GetById(id);
         if (tecnica == null) return NotFound();
 
         _context.Tecnicas!.Remove(tecnica);

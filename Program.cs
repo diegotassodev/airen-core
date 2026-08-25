@@ -1,19 +1,16 @@
-using System.Text.Json.Serialization;
 using AirenApi.Data;
+using AirenApi.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("AirenConnection");
 
 builder.Services.AddDbContext<AirenContext>(opts => opts.UseLazyLoadingProxies().UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
-builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddControllers();
-builder.Services.AddOpenApi();
+
+builder.Services.AddApplicationServices();
 
 var app = builder.Build();
-
-if (app.Environment.IsDevelopment()) app.MapOpenApi();
-
 app.UseHttpsRedirection();
 
 app.MapControllers();

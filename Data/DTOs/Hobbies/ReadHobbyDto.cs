@@ -1,6 +1,3 @@
-using System.ComponentModel.DataAnnotations;
-using AirenApi.Models;
-
 namespace AirenApi.Data.DTOs;
 
 public class ReadHobbyDto {

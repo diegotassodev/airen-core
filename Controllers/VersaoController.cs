@@ -1,7 +1,7 @@
 using AirenApi.Data;
 using AirenApi.Data.DTOs;
-using AirenApi.Models;
-using AutoMapper;
+using AirenApi.Profiles;
+using AirenApi.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AirenApi.Controllers;
@@ -11,16 +11,16 @@ namespace AirenApi.Controllers;
 public class VersaoController : ControllerBase {
 
     private AirenContext _context;
-    private IMapper _mapper;
+    private VersaoService _service;
 
-    public VersaoController(AirenContext context, IMapper mapper) {
+    public VersaoController(AirenContext context, VersaoService service) {
         _context = context;
-        _mapper = mapper;
+        _service = service;
     }
 
     [HttpPost]
     public IActionResult AdicionaVersao([FromBody] CreateVersaoDto versaoDto) {
-        var versao = _mapper.Map<Versao>(versaoDto);
+        var versao = versaoDto.MapToVersao();
         _context.Versoes!.Add(versao);
         _context.SaveChanges();
         return CreatedAtAction(nameof(BuscaVersaoPorId), new {Id = versao.Id}, versao);
@@ -28,32 +28,31 @@ public class VersaoController : ControllerBase {
 
     [HttpGet]
     public IEnumerable<ReadVersaoDto> VerVersoes() {
-        var listaVersoesNaoMapeada = _context.Versoes?.ToList();
-        var listaVersoes = _mapper.Map<List<ReadVersaoDto>>(listaVersoesNaoMapeada);
+        var listaVersoes = _service.GetAll();
         return listaVersoes;
     }
 
     [HttpGet("{id}")]
     public IActionResult BuscaVersaoPorId(int id) {
-        var versao = _mapper.Map<ReadVersaoDto>(_context.Versoes?.First(v => v.Id == id));
+        var versao = _service.GetById(id);
         if (versao == null) return NotFound();
-        else return Ok(versao);
+        else return Ok(versao.MapToReadVersao());
     }
 
     [HttpPut("{id}")]
     public IActionResult AtualizaVersao(int id, [FromBody] UpdateVersaoDto versaoDto) {
-        var versao = _context.Versoes?.First(v => v.Id == id);
+        var versao = _service.GetById(id);
         if (versao == null) return NotFound();
 
-        _mapper.Map(versaoDto, versao);
+        versaoDto.MapToVersao(versao);
         _context.SaveChanges();
 
-        return NoContent();
+        return Ok(versaoDto);
     } 
 
     [HttpDelete("{id}")]
     public IActionResult DeletaVersao (int id) {
-        var versao = _context.Versoes?.First(v => v.Id == id);
+        var versao = _service.GetById(id);
         if (versao == null) return NotFound();
 
         _context.Versoes!.Remove(versao);

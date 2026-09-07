@@ -1,8 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using AirenApi.Models;
+using Airen.Api.Models;
 
-namespace AirenApi.Data.DTOs;
+namespace Airen.Api.Data.DTOs;
 
 public class UpdateCapituloDto {
 

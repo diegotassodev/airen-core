@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
-using AirenApi.Models;
+using Airen.Api.Models;
 
-namespace AirenApi.Data.DTOs;
+namespace Airen.Api.Data.DTOs;
 
 public class UpdateParentescoDto {
 

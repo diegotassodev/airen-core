@@ -1,4 +1,4 @@
-namespace AirenApi.Data.DTOs;
+namespace Airen.Api.Data.DTOs;
 
 public class ReadHobbyDto {
 

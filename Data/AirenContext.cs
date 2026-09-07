@@ -1,7 +1,7 @@
-using AirenApi.Models;
+using Airen.Api.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace AirenApi.Data;
+namespace Airen.Api.Data;
 
 public class AirenContext : DbContext {
 

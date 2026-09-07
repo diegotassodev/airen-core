@@ -1,4 +1,5 @@
-namespace AirenApi.Services;
+namespace Airen.Api.Services;
+
 public static class QueryServicesCore {
 
     public static IServiceCollection AddApplicationServices(this IServiceCollection service) {

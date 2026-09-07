@@ -1,6 +1,7 @@
-using AirenApi.Data.DTOs;
-using AirenApi.Models;
-namespace AirenApi.Profiles;
+using Airen.Api.Data.DTOs;
+using Airen.Api.Models;
+
+namespace Airen.Api.Profiles;
 
 public static class CapituloExtensions {
 

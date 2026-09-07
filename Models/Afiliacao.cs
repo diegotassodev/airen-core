@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace AirenApi.Models;
+namespace Airen.Api.Models;
 
 public class Afiliacao {
 

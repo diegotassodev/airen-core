@@ -1,11 +1,11 @@
-using AirenApi.Data;
-using AirenApi.Data.DTOs;
-using AirenApi.Models;
-using AirenApi.Profiles;
-using AirenApi.Services;
+using Airen.Api.Data;
+using Airen.Api.Data.DTOs;
+using Airen.Api.Models;
+using Airen.Api.Profiles;
+using Airen.Api.Services;
 using Microsoft.AspNetCore.Mvc;
 
-namespace AirenApi.Controllers;
+namespace Airen.Api.Controllers;
 
 [ApiController]
 [Route("[controller]")]

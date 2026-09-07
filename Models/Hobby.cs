@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace AirenApi.Models;
+namespace Airen.Api.Models;
 
 public class Hobby {
 

@@ -1,7 +1,7 @@
-using AirenApi.Data;
-using AirenApi.Data.DTOs;
-using AirenApi.Profiles;
-using AirenApi.Services;
+using Airen.Api.Data;
+using Airen.Api.Data.DTOs;
+using Airen.Api.Profiles;
+using Airen.Api.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AirenApi.Controllers;

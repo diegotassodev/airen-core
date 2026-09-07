@@ -1,10 +1,10 @@
-using AirenApi.Data;
-using AirenApi.Data.DTOs;
-using AirenApi.Models;
-using AirenApi.Profiles;
+using Airen.Api.Data;
+using Airen.Api.Data.DTOs;
+using Airen.Api.Models;
+using Airen.Api.Profiles;
 using Microsoft.EntityFrameworkCore;
 
-namespace AirenApi.Services;
+namespace Airen.Api.Services;
 
 public class HobbyService {
 

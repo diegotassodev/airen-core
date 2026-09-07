@@ -1,5 +1,5 @@
-using AirenApi.Data;
-using AirenApi.Services;
+using Airen.Api.Data;
+using Airen.Api.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);

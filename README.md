@@ -10,7 +10,7 @@ O repositório é dividido em quatro projetos. Cada projeto possui uma responsab
 flowchart LR
 		Admin[Airen.Admin\nAplicação de console] -->|HTTP| API[Airen.Api\nRest API]
 		Web[Airen.Web\nCliente Blazor WASM] -->|HTTP| API
-		API --> Infra[Airen.Infrastructure\nModelos e contexto EF Core]
+		API --> Infra[Airen.Infrastructure\nModelos e Contexto]
 		Infra --> DB[(MySQL)]
 ```
 
@@ -21,7 +21,7 @@ Airen.Admin -> Airen.Api -> Airen.Infrastructure -> MySQL
 Airen.Web   -> Airen.Api
 ```
 
-Na prática, a API é o ponto central de execução. `Airen.Admin` já possui fluxos de administração que consomem endpoints HTTP. `Airen.Web` está preparado como cliente Blazor, mas ainda contém principalmente a estrutura inicial do template e não implementa os fluxos do domínio.
+Na prática, a API é o ponto central de execução. `Airen.Admin` já possui fluxos de administração que consomem endpoints HTTP. `Airen.Web` está preparado como cliente Blazor.
 
 ## Projetos
 
@@ -71,24 +71,13 @@ Exemplos de recursos: `Personagem`, `Potentia`, `Habilidade`, `Hobby`, `Parentes
 
 O programa inicia em `PersonagemCore`, exibe um menu e encaminha a escolha para o fluxo correspondente. Os fluxos de criação usam `HttpClient` para chamar a API; interfaces e serviços internos organizam a navegação e as telas de console. O mesmo padrão é usado para operações relacionadas a personagens, habilidades, hobbies, potentias, técnicas e versões.
 
-Como o Admin acessa a API por HTTPS local, `GenerateHttpHandler` configura o `HttpClientHandler` para aceitar o certificado de desenvolvimento. Isso é conveniente para o ambiente local, mas deve ser revisto antes de qualquer uso em produção.
+Como o Admin acessa a API por HTTPS local, `GenerateHttpHandler` configura o `HttpClientHandler` para aceitar o certificado de desenvolvimento.
 
 ### Airen.Web
 
 É o cliente web em Blazor WebAssembly. Sua motivação é oferecer uma interface visual para consulta e edição do universo Airen, acessível pelo navegador e capaz de consumir a mesma API usada pelo Admin.
 
-Atualmente ele está em fase inicial:
-
-- `Program.cs` inicializa o Blazor WebAssembly e registra um `HttpClient`.
-- A página inicial ainda é a tela padrão de boas-vindas.
-- A página `Weather` é um exemplo do template e consulta `sample-data/weather.json`.
-- Ainda não existem páginas de domínio conectadas aos endpoints de personagens e demais entidades.
-
-Portanto, o fluxo pretendido é `Airen.Web -> Airen.Api`, mas a implementação dos recursos de negócio no Web ainda precisa ser feita.
-
-## Modelo lógico do domínio
-
-O catálogo é composto por entidades de conteúdo e entidades de organização. `Personagem` é o núcleo das relações: pode possuir habilidades, hobbies, técnicas, potentias, afiliações e parentescos. `Volume`, `Capitulo` e `Versao` organizam o conteúdo narrativo e suas versões. Os DTOs da API representam os dados expostos aos clientes sem obrigar as interfaces a usar diretamente as entidades do banco.
+Atualmente ele está em fase de desenvolvimento....
 
 ## Como executar
 
@@ -111,14 +100,18 @@ Exemplo:
 ### API
 
 ```bash
-dotnet run --project Airen.Api/Airen.Api.csproj
+cd Airen.Api
+dotnet run
 ```
 
 Para criar ou aplicar migrations:
 
 ```bash
-dotnet ef migrations add NomeDaMigration --project Airen.Api/Airen.Api.csproj
-dotnet ef database update --project Airen.Api/Airen.Api.csproj
+cd Airen.Infrastructure
+
+dotnet ef migrations add NomeDaMigration --project Airen.Infrastructure.csproj --startup-project ../Airen.Api/Airen.Api.csproj
+
+dotnet ef database update --project Airen.Infrastructure.csproj --startup-project ../Airen.Api/Airen.Api.csproj
 ```
 
 ### Admin
@@ -126,17 +119,15 @@ dotnet ef database update --project Airen.Api/Airen.Api.csproj
 Com a API disponível, execute:
 
 ```bash
-dotnet run --project Airen.Admin/AirenAdmin.csproj
+cd Airen.Admin
+dotnet run
 ```
 
 ### Web
 
 ```bash
-dotnet run --project Airen.Web/Airen.Web.csproj
+cd Airen.Web
+dotnet run
 ```
 
 O Web e o Admin precisam apontar para a URL em que a API estiver executando. Antes de usar operações que alterem dados, confirme também a conexão da API com o MySQL.
-
-## Direção da solução
-
-O desenho atual separa bem persistência, backend e clientes. A evolução natural é concluir os componentes de domínio do `Airen.Web`, padronizar a configuração da URL da API nos clientes e ampliar os testes dos controllers, serviços e mapeamentos. Assim, o mesmo contrato REST continuará atendendo tanto a ferramenta administrativa quanto a futura interface pública.

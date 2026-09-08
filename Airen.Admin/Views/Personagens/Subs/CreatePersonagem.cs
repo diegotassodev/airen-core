@@ -51,7 +51,7 @@ public class CreatePersonagem : IPersonagemView {
             opcao = string.Empty;
         }
 
-                var personagemDto = new CreatePersonagemDto() {
+        var personagemDto = new CreatePersonagemDto() {
             Nome = nomeFantasia,
             NomeOriginal = nome,
             DataNascimento = dataNascimento,

@@ -8,21 +8,60 @@ O repositório é dividido em cinco projetos. Cada projeto possui uma responsabi
 
 ```mermaid
 flowchart LR
-		Admin[Airen.Admin\nAplicação de console] -->|HTTP| API[Airen.Api\nRest API]
-		Web[Airen.Web\nCliente Blazor WASM] -->|HTTP| API
-		API --> Contracts[Airen.Contracts\nDTOs compartilhados]
-		API --> Infra[Airen.Infrastructure\nModelos e Contexto]
-		Contracts -.->|referencia os modelos necessários| Infra
-		Infra --> DB[(MySQL)]
+    Admin[Airen.Admin]
+    Web[Airen.Web]
+    Contracts[Airen.Contracts<br/>DTOs]
+    API[Airen.Api<br/>API REST]
+    Infra[Airen.Infrastructure<br/>Persistência]
+    DB[(MySQL)]
+
+    Admin -->|HTTP| API
+    Web -->|HTTP| API
+    Admin -.-> Contracts
+    Web -.-> Contracts
+    API -.-> Contracts
+    API --> Infra --> DB
+
+    Admin -.->| | Infra
+    Contracts -.->| | Infra
 ```
 
-As dependências entre projetos são:
+O fluxo de execução é `Cliente -> API -> Infraestrutura -> Banco`. Os clientes não acessam o banco diretamente: enviam e recebem JSON através da API, e os DTOs em `.Contracts` definem o formato desses payloads.
+
+### Dependências diretas entre projetos
 
 ```text
-Airen.Admin -> Airen.Api -> Airen.Infrastructure -> MySQL
-Airen.Web   -> Airen.Api
-Airen.Api   -> Airen.Contracts
+Airen.Api          -> .Contracts, .Infrastructure
+Airen.Admin        -> .Contracts, .Infrastructure
+Airen.Web          -> .Contracts
+Airen.Contracts    -> .Infrastructure
 ```
+
+`Airen.Contracts -> Airen.Infrastructure` é uma dependência de compilação real:
+vários DTOs importam `Airen.Infrastructure.Models`. Ela funciona hoje, mas mistura
+contratos públicos com modelos de persistência. O desenho preferível é mover os
+tipos compartilhados dos DTOs para `Airen.Contracts` e fazer o mapeamento somente
+na API; assim, `Contracts` fica independente da infraestrutura.
+
+`Airen.Admin -> Airen.Infrastructure` também existe no projeto atual. Como o fluxo
+de uso do Admin é HTTP, essa referência deve ser removida quando nenhum código de
+persistência ou modelo for mais consumido diretamente pelo console.
+
+### Pacotes e tecnologias
+
+| Projeto | Papel | Dependências principais |
+| --- | --- | --- |
+| `Airen.Api` | API REST | ASP.NET Core; EF Core `9.0.11`; Pomelo MySQL `9.0.0` |
+| `Airen.Infrastructure` | Persistência | EF Core `9.0.11`; proxies; Pomelo MySQL `9.0.0` |
+| `Airen.Contracts` | DTOs compartilhados | Referência atual para `Airen.Infrastructure` |
+| `Airen.Admin` | Cliente de console | Referências para `Contracts` e `Infrastructure` |
+| `Airen.Web` | Cliente Blazor WASM | Blazor WebAssembly `10.0.10`; `Microsoft.Extensions.Http` `10.0.11` |
+
+Todos os projetos usam `net10.0`. O backend ainda usa pacotes do EF Core `9.x`,
+enquanto o cliente Web usa pacotes `10.x`; alinhar essas versões é recomendável
+para reduzir incompatibilidades futuras. Embora `Microsoft.EntityFrameworkCore.SqlServer`
+esteja referenciado, o `Program.cs` configura o provider MySQL; remova o pacote SQL
+Server se ele não for necessário.
 
 Na prática, a API é o ponto central de execução. `Airen.Admin` já possui fluxos de administração que consomem endpoints HTTP. `Airen.Web` está preparado como cliente Blazor. `Airen.Contracts` concentra os tipos usados na comunicação para que os clientes e a API compartilhem o mesmo formato de dados.
 

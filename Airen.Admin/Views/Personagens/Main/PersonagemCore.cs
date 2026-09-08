@@ -1,6 +1,7 @@
-using AirenAdmin.Interfaces;
-using AirenAdmin.Views.Services;
-namespace AirenAdmin.Views;
+using Airen.Admin.Interfaces;
+using Airen.Admin.Views.Services;
+
+namespace Airen.Admin.Views;
 
 public class PersonagemCore : IPersonagemView {
 

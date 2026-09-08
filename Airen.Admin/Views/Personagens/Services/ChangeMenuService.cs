@@ -1,5 +1,6 @@
-using AirenAdmin.Interfaces;
-namespace AirenAdmin.Views.Services;
+using Airen.Admin.Interfaces;
+
+namespace Airen.Admin.Views.Services;
 
 public class ChangeMenuService {
 

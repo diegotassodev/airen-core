@@ -1,4 +1,4 @@
-namespace AirenAdmin.Services;
+namespace Airen.Admin.Services;
 
 public class GenerateHttpHandler {
     

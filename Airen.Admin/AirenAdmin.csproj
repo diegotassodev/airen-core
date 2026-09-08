@@ -1,7 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference Include="..\Airen.Api\AirenApi.csproj" />
+    <ProjectReference Include="..\Airen.Api\Airen.Api.csproj" />
+    <ProjectReference Include="..\Airen.Infrastructure\Airen.Infrastructure.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

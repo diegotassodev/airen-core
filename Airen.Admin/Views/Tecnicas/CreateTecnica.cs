@@ -1,12 +1,12 @@
 
-using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
-using AirenAdmin.Interfaces;
-using AirenAdmin.Services;
-using AirenApi.Data.DTOs;
-using AirenApi.Models;
-namespace AirenAdmin.Views;
+using Airen.Admin.Interfaces;
+using Airen.Admin.Services;
+using Airen.Api.DTOs;
+using Airen.Admin.Views;
+
+namespace Airen.Admin.Views;
 
 public class CreateTecnica : IHobbyView {
     

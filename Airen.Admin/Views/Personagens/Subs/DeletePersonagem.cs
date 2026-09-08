@@ -1,5 +1,6 @@
-using AirenAdmin.Interfaces;
-namespace AirenAdmin.Views;
+using Airen.Admin.Interfaces;
+
+namespace Airen.Admin.Views;
 
 public class DeletePersonagem : IPersonagemView {
     

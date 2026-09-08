@@ -1,6 +1,7 @@
+using Airen.Admin.Interfaces;
 
-using AirenAdmin.Interfaces;
-namespace AirenAdmin.Views;
+namespace Airen.Admin.Views;
+
 
 public class SearchPersonagem : IPersonagemView {
     

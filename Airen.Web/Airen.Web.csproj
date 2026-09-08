@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Airen.Api\Airen.Api.csproj" />
+    <ProjectReference Include="..\Airen.Contracts\Airen.Contracts.csproj" />
   </ItemGroup>
 
 </Project>

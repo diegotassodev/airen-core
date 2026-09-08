@@ -1,4 +1,4 @@
-using Airen.Api.DTOs;
+using Airen.Contracts.DTOs;
 using Airen.Infrastructure.Models;
 
 namespace Airen.Api.Mappers;

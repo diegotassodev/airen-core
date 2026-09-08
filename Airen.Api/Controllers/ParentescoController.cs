@@ -1,7 +1,7 @@
 using Airen.Infrastructure.Context;
 using Airen.Infrastructure.Models;
 
-using Airen.Api.DTOs;
+using Airen.Contracts.DTOs;
 using Airen.Api.Mappers;
 using Airen.Api.Services;
 using Microsoft.AspNetCore.Mvc;

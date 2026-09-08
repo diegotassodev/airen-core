@@ -3,7 +3,7 @@ using System.Text;
 using System.Text.Json;
 using Airen.Admin.Interfaces;
 using Airen.Admin.Services;
-using Airen.Api.DTOs;
+using Airen.Contracts.DTOs;
 using Airen.Infrastructure.Models;
 
 namespace Airen.Admin.Views;

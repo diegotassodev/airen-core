@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Airen.Infrastructure\Airen.Infrastructure.csproj" />
+    <ProjectReference Include="..\Airen.Contracts\Airen.Contracts.csproj" />
   </ItemGroup>
 
 </Project>

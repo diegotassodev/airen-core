@@ -1,7 +1,60 @@
 ﻿@page "/"
+@inject IDialogService dialogService
 
-<PageTitle>Home</PageTitle>
+<PageTitle> Home </PageTitle>
+<div class="landing">
+    <main class="hero">
+        <div class="hero-content">
+            <MudText Typo="Typo.overline" Class="hero-overline">
+                Seja Bem Vindo ao Banco de Operações da Fundação.
+            </MudText>
 
-<h1>Hello, world!</h1>
+            <MudText Typo="Typo.h1">
+                <b> Banco de Operações da Fundação</b>
+            </MudText>
 
-Welcome to your new app.
+            <MudText
+                Typo="Typo.body1"
+                Class="hero-description">
+
+                Tome cuidado com as suas alterações... 
+                Você não vai querer que a Diretora te mate não é mesmo?
+
+            </MudText>
+
+            <div class="hero-actions">
+
+                <MudButton
+                    OnClick="OpenModal"
+                    Variant="Variant.Filled"
+                    Color="Color.Primary"
+                    Size="Size.Large"
+                    EndIcon="@Icons.Material.Filled.ArrowForward">
+
+                    Para saber mais...
+
+                </MudButton>
+
+            </div>
+
+        </div>
+
+        <div class="hero-image">
+            <div class="image-background"></div>
+            <img src="images/fundacao.png" alt="Hakira" />
+        </div>
+    </main>
+</div>
+
+@code {
+
+    private readonly DialogOptions options = new DialogOptions {
+        MaxWidth = MaxWidth.Medium,
+        NoHeader = true,
+        CloseOnEscapeKey = true
+    };
+
+    private async void OpenModal() {
+        await dialogService.ShowAsync<ModalFundacao>("Fundação Potentia", options);
+    }
+}

@@ -1,0 +1,36 @@
+
+@inject VolumesAPI api
+
+@if (volumes is not null) {
+    foreach (var volume in volumes) {
+        <MudContainer style="padding: 10px">
+            <MudCard>
+                <MudCardContent>
+                    <MudText> <b> Nome do Volume: </b> @volume.Nome</MudText>
+                    <MudText Typo="Typo.body2"> <b> Número do Volume: </b>@volume.Numero </MudText>
+                    <MudText Typo="Typo.body2"> <b> Número de Capítulos: </b> @volume.Capitulos!.Count() </MudText>
+                </MudCardContent>
+                <MudCardActions>
+                    <MudButton Variant="Variant.Text" Color="Color.Primary"> Saiba Mais </MudButton>
+                </MudCardActions>
+            </MudCard>
+        </MudContainer>
+    }
+}
+else {
+    <MudCard>
+        <MudCardContent>
+            <MudText> Erro </MudText>
+            <MudText Typo="Typo.body2"> Não conseguimos encontrar nenhum volume. </MudText>
+        </MudCardContent>
+    </MudCard>
+}
+
+@code {
+    public IEnumerable<ReadVolumeDto>? volumes {get;set;}
+
+    protected override async Task OnInitializedAsync() {
+        volumes = await api.GetVolumeAsync();
+    }
+
+}

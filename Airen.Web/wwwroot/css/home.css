@@ -1,0 +1,103 @@
+.landing {
+    min-height: 100vh;
+    background: #F7FAFC;
+    overflow: hidden;
+}
+
+.hero {
+    max-width: 1300px;
+
+    margin: auto;
+
+    display: grid;
+    grid-template-columns: 52% 48%;
+
+    align-items: center;
+
+    padding: 10px;
+}
+
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+
+    padding-bottom: 50px;
+}
+
+.hero-overline {
+    color: #43A5D2;
+
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+
+.hero h1 {
+    margin: 18px 0 25px;
+
+    max-width: 650px;
+
+    font-family: Georgia, serif;
+
+    font-size: clamp(55px, 5vw, 78px);
+
+    line-height: 0.98;
+
+    letter-spacing: -3px;
+
+    color: #263238;
+}
+
+
+.hero h1 span {
+    color: #43A5D2;
+}
+
+
+.hero-description {
+    max-width: 500px;
+
+    color: #607D8B;
+
+    line-height: 1.7;
+
+    font-size: 16px;
+}
+
+.hero-actions {
+    display: flex;
+    align-items: center;
+
+    gap: 14px;
+
+    margin-top: 32px;
+}
+
+.hero-actions .mud-button-root {
+    border-radius: 8px;
+    padding: 12px 24px;
+}
+
+.hero-image {
+    position: relative;
+
+    height: 620px;
+
+    display: flex;
+
+    justify-content: center;
+    align-items: center;
+}
+
+
+.hero-image img {
+    position: relative;
+
+    z-index: 2;
+    max-width: 110%;
+
+    object-fit: contain;
+
+    filter: drop-shadow(20px 20px black)
+}

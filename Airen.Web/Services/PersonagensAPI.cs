@@ -1,17 +1,18 @@
 using System.Net.Http.Json;
-using Microsoft.Extensions.Http;
+using Airen.Contracts.DTOs;
 
 namespace Airen.Web.Services;
 
-public class PersonagensApi {
+public class PersonagensAPI {
 
     private readonly HttpClient? _httpClient;
 
-    public PersonagensApi(IHttpClientFactory factory) {
+    public PersonagensAPI(IHttpClientFactory factory) {
         _httpClient = factory.CreateClient("API");
     }
 
-    public void GetPersonagensAsync() {
-        return _httpClient.GetFromJsonAsync<>();
+    public async Task<IEnumerable<ReadPersonagemDto>> GetPersonagensAsync() {
+        var listaPersonagens = await _httpClient!.GetFromJsonAsync<IEnumerable<ReadPersonagemDto>>("Personagem");
+        return listaPersonagens!;
     }
 }

@@ -37,16 +37,6 @@ Airen.Web          -> .Contracts
 Airen.Contracts    -> .Infrastructure
 ```
 
-`Airen.Contracts -> Airen.Infrastructure` é uma dependência de compilação real:
-vários DTOs importam `Airen.Infrastructure.Models`. Ela funciona hoje, mas mistura
-contratos públicos com modelos de persistência. O desenho preferível é mover os
-tipos compartilhados dos DTOs para `Airen.Contracts` e fazer o mapeamento somente
-na API; assim, `Contracts` fica independente da infraestrutura.
-
-`Airen.Admin -> Airen.Infrastructure` também existe no projeto atual. Como o fluxo
-de uso do Admin é HTTP, essa referência deve ser removida quando nenhum código de
-persistência ou modelo for mais consumido diretamente pelo console.
-
 ### Pacotes e tecnologias
 
 | Projeto | Papel | Dependências principais |
@@ -57,13 +47,6 @@ persistência ou modelo for mais consumido diretamente pelo console.
 | `Airen.Admin` | Cliente de console | Referências para `Contracts` e `Infrastructure` |
 | `Airen.Web` | Cliente Blazor WASM | Blazor WebAssembly `10.0.10`; `Microsoft.Extensions.Http` `10.0.11` |
 
-Todos os projetos usam `net10.0`. O backend ainda usa pacotes do EF Core `9.x`,
-enquanto o cliente Web usa pacotes `10.x`; alinhar essas versões é recomendável
-para reduzir incompatibilidades futuras. Embora `Microsoft.EntityFrameworkCore.SqlServer`
-esteja referenciado, o `Program.cs` configura o provider MySQL; remova o pacote SQL
-Server se ele não for necessário.
-
-Na prática, a API é o ponto central de execução. `Airen.Admin` já possui fluxos de administração que consomem endpoints HTTP. `Airen.Web` está preparado como cliente Blazor. `Airen.Contracts` concentra os tipos usados na comunicação para que os clientes e a API compartilhem o mesmo formato de dados.
 
 ## Projetos
 
@@ -104,7 +87,7 @@ O funcionamento lógico de uma requisição é:
 4. Os métodos de extensão fazem o mapeamento entre os DTOs de `Airen.Contracts` e os modelos persistidos.
 5. O controller devolve a resposta HTTP, normalmente `Ok`, `CreatedAtAction`, `NotFound` ou `NoContent`.
 
-Há controllers e serviços para as entidades principais. O `Program.cs` registra o contexto com MySQL, os serviços da aplicação e os controllers. A conexão é lida da chave `AirenConnection` em `appsettings.json`. Os DTOs utilizados pelos endpoints são mantidos em `Airen.Contracts`, fora da camada de persistência.
+Há controllers e serviços para as entidades principais. O `Program.cs` registra o contexto com MySQL, os serviços da aplicação e os controllers. A conexão é lida da chave `AirenConnection` em `appsettings.json`. Os DTOs utilizados pelos endpoints são mantidos em `Airen.Contracts`.
 
 Os endpoints seguem o padrão REST:
 
@@ -128,9 +111,26 @@ Como o Admin acessa a API por HTTPS local, `GenerateHttpHandler` configura o `Ht
 
 ### Airen.Web
 
-É o cliente web em Blazor WebAssembly. Sua motivação é oferecer uma interface visual para consulta e edição do universo Airen, acessível pelo navegador e capaz de consumir a mesma API usada pelo Admin.
+É o cliente web em Blazor WebAssembly. Sua motivação é oferecer uma interface visual para consulta e exploração do universo Airen, consumindo a mesma API usada pelo Admin e pelo restante da solução.
 
-Atualmente ele está em fase de desenvolvimento....
+A aplicação atual já conta com uma estrutura inicial funcional de navegação e apresentação de dados:
+
+- Layout e navbar com identidade visual própria da Fundação Potentia.
+- Página inicial com apresentação editorial e modal informativo.
+- Rotas de navegação para `/` (home), `/personagens` e `/volumes`.
+- Componentes `CardsPersonagens` e `CardsVolumes` para exibir listas vindas da API.
+- Consumo de endpoints REST por meio de classes de serviço (`PersonagensAPI` e `VolumesAPI`).
+- Integração com MudBlazor para UI responsiva e visual moderno.
+
+O front-end usa `HttpClientFactory` com o nome `API` e espera a URL configurada em `Airen.Web/wwwroot/appsettings.json`:
+
+```json
+{
+  "API-Server": "https://localhost:7245"
+}
+```
+
+Essa configuração deve apontar para a URL em que a `Airen.Api` está rodando.
 
 ## Como executar
 
@@ -178,9 +178,19 @@ dotnet run
 
 ### Web
 
+A aplicação web é um projeto Blazor WebAssembly que acessa a API REST via `HttpClient` configurado em `Airen.Web/wwwroot/appsettings.json`.
+
 ```bash
 cd Airen.Web
 dotnet run
 ```
+
+Se a API estiver rodando em outra porta, ajuste o valor de `API-Server` no arquivo `Airen.Web/wwwroot/appsettings.json` antes de iniciar a aplicação web.
+
+Rotas principais da interface:
+
+- `/` — página inicial com apresentação temática.
+- `/personagens` — lista personagens consumindo `GET /Personagem`.
+- `/volumes` — lista volumes consumindo `GET /Volume`.
 
 O Web e o Admin precisam apontar para a URL em que a API estiver executando. Antes de usar operações que alterem dados, confirme também a conexão da API com o MySQL.

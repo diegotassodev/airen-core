@@ -12,7 +12,7 @@ Ela fornece endpoints REST para gerenciar os recursos do domínio. A API utiliza
 	- .NET SDK 10
 	- MySQL (ou outro servidor compatível configurado na connection string)
 	- Configurar a connection string em `appsettings.json` com a chave `AirenConnection`.
-	- As dependências relevantes estão configuradas em `Program.cs` (DbContext, controllers e serviços da aplicação).
+	- As dependências relevantes estão configuradas em `Program.cs` (DbContext, controllers e repositories da aplicação).
 
 Exemplo (appsettings.json):
 
@@ -113,8 +113,8 @@ Cada controller segue o padrão REST básico com rotas no formato `/{Controller}
 - `Data/DTOs/` — DTOs de entrada e saída usados para separar o modelo de domínio da interface HTTP.
 - `Models/` — classes de domínio (entidades) mapeadas pelo EF Core.
 - `Extensions/` — métodos de extensão `MapTo()` que convertem DTOs em entidades e entidades em DTOs de leitura, substituem o auto mapper.
-- `Services/` — serviços responsáveis pelas consultas das entidades e pelo carregamento das relações necessárias.
-- `Services/Core/QueryServicesCore.cs` — extensão que registra os serviços da aplicação no contêiner de injeção de dependência.
+- `Repositories/` — repositories responsáveis pelas consultas e operações CRUD das entidades, incluindo o carregamento das relações necessárias.
+- `Repositories/Core/QueryRepositoryCore.cs` — extensão que registra os repositories da aplicação no contêiner de injeção de dependência.
 - `Migrations/` — histórico de migrações do EF Core.
 
 Infraestrutura e padrões:

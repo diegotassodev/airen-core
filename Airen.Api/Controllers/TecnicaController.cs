@@ -1,4 +1,3 @@
-using Airen.Infrastructure.Context;
 using Airen.Infrastructure.Models;
 
 using Airen.Contracts.DTOs;
@@ -10,55 +9,56 @@ namespace Airen.Api.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class TecnicaController : ControllerBase {
+public class TecnicaController : ControllerBase 
+{
+    private IRepository<Tecnica, ReadTecnicaDto, UpdateTecnicaDto> _repository;
 
-    private AirenContext _context;
-    private IRepository<Tecnica, ReadTecnicaDto> _repository;
-
-    public TecnicaController(AirenContext context, IRepository<Tecnica, ReadTecnicaDto> repository) {
-        _context = context;
+    public TecnicaController(IRepository<Tecnica, ReadTecnicaDto, UpdateTecnicaDto> repository) 
+    {
         _repository = repository;
     }
 
     [HttpPost]
-    public IActionResult AdicionaTecnica([FromBody] CreateTecnicaDto tecnicaDto) {
+    public IActionResult AdicionaTecnica([FromBody] CreateTecnicaDto tecnicaDto) 
+    {
         var tecnica = tecnicaDto.MapToTecnica();
-        _context.Tecnicas!.Add(tecnica);
-        _context.SaveChanges();
+        _repository.Create(tecnica);
         return CreatedAtAction(nameof(BuscaTecnicaPorId), new {Id = tecnica.Id}, tecnica);
     }
 
     [HttpGet]
-    public IEnumerable<ReadTecnicaDto> VerTecnicas() {
-        var listaTecnicas = _repository.GetAll();
+    public IEnumerable<ReadTecnicaDto> VerTecnicas() 
+    {
+        var listaTecnicas = _repository.ReadAll();
         return listaTecnicas;
     }
 
     [HttpGet("{id}")]
-    public IActionResult BuscaTecnicaPorId(int id) {
-        var tecnica = _repository.GetById(id);
+    public IActionResult BuscaTecnicaPorId(int id) 
+    {
+        var tecnica = _repository.ReadById(id);
         if (tecnica == null) return NotFound();
         else return Ok(tecnica.MapToReadTecnica());
     }
 
     [HttpPut("{id}")]
-    public IActionResult AtualizaTecnica(int id, [FromBody] UpdateTecnicaDto tecnicaDto) {
-        var tecnica = _repository.GetById(id);
+    public IActionResult AtualizaTecnica(int id, [FromBody] UpdateTecnicaDto tecnicaDto) 
+    {
+        var tecnica = _repository.ReadById(id);
         if (tecnica == null) return NotFound();
 
-        tecnicaDto.MapToTecnica(tecnica);
-        _context.SaveChanges();
+        _repository.Update(tecnicaDto, tecnica);
 
         return Ok(tecnicaDto);
     } 
 
     [HttpDelete("{id}")]
-    public IActionResult DeletaTecnica (int id) {
-        var tecnica = _repository.GetById(id);
+    public IActionResult DeletaTecnica (int id) 
+    {
+        var tecnica = _repository.ReadById(id);
         if (tecnica == null) return NotFound();
 
-        _context.Tecnicas!.Remove(tecnica);
-        _context.SaveChanges();
+        _repository.Delete(tecnica);
 
         return NoContent();
     }

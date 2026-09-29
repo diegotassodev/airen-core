@@ -1,7 +1,10 @@
 namespace Airen.Api.Repositories;
 
-public interface IRepository<T, ReadT>
+public interface IRepository<T, ReadT, UpdateT>
 {
-    public IEnumerable<ReadT> GetAll();
-    public T? GetById(int id);
+    public void Create (T obj);
+    public IEnumerable<ReadT> ReadAll();
+    public T? ReadById(int id);
+    public void Update (UpdateT dto, T obj);
+    public void Delete (T obj);
 }

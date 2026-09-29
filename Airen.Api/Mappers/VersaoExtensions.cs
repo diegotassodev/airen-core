@@ -3,10 +3,13 @@ using Airen.Infrastructure.Models;
 
 namespace Airen.Api.Mappers;
 
-public static class VersaoExtensions {
+public static class VersaoExtensions 
+{
 
-    public static Versao MapToVersao (this CreateVersaoDto dto) {
-        return new Versao {
+    public static Versao MapToVersao (this CreateVersaoDto dto) 
+    {
+        return new Versao 
+        {
             Nome = dto.Nome,
             Genero = dto.Genero,
             UrlImagem = dto.UrlImagem,
@@ -18,7 +21,8 @@ public static class VersaoExtensions {
         };
     }
 
-    public static void MapToVersao(this UpdateVersaoDto dto, Versao versao) {
+    public static void MapToVersao(this UpdateVersaoDto dto, Versao versao) 
+    {
         versao.Nome = dto.Nome;
         versao.Genero = dto.Genero;
         versao.UrlImagem = dto.UrlImagem;
@@ -29,8 +33,10 @@ public static class VersaoExtensions {
         versao.IdPersonagem = dto.IdPersonagem;
     }
 
-    public static ReadVersaoDto MapToReadVersao (this Versao obj) {
-        return new ReadVersaoDto {
+    public static ReadVersaoDto MapToReadVersao (this Versao obj) 
+    {
+        return new ReadVersaoDto 
+        {
             Id = obj.Id,
             NomePersonagem = obj.Personagem!.Nome,
             Nome = obj.Nome,

@@ -3,10 +3,12 @@ using Airen.Infrastructure.Models;
 
 namespace Airen.Api.Mappers;
 
-public static class PotentiaExtensions {
-
-    public static Potentia MapToPotentia (this CreatePotentiaDto dto) {
-        return new Potentia {
+public static class PotentiaExtensions 
+{
+    public static Potentia MapToPotentia (this CreatePotentiaDto dto) 
+    {
+        return new Potentia 
+        {
             Nome = dto.Nome,
             Descricao = dto.Descricao,
             LinkMusica = dto.LinkMusica,
@@ -14,15 +16,18 @@ public static class PotentiaExtensions {
         };
     }
 
-    public static void MapToPotentia(this UpdatePotentiaDto dto, Potentia potentia) {
+    public static void MapToPotentia(this UpdatePotentiaDto dto, Potentia potentia) 
+    {
         potentia.Nome = dto.Nome;
         potentia.Descricao = dto.Descricao;
         potentia.LinkMusica = dto.LinkMusica;
         potentia.PersonagemId = dto.PersonagemId;
     }
 
-    public static ReadPotentiaDto MapToReadPotentiaDto (this Potentia obj) {
-        return new ReadPotentiaDto {
+    public static ReadPotentiaDto MapToReadPotentiaDto (this Potentia obj) 
+    {
+        return new ReadPotentiaDto 
+        {
             Id = obj.Id,
             Nome = obj.Nome,
             Descricao = obj.Descricao,

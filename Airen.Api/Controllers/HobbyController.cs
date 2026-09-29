@@ -1,4 +1,3 @@
-using Airen.Infrastructure.Context;
 using Airen.Infrastructure.Models;
 
 using Airen.Contracts.DTOs;
@@ -10,55 +9,56 @@ namespace Airen.Api.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class HobbyController : ControllerBase {
+public class HobbyController : ControllerBase 
+{
+    private IRepository<Hobby, ReadHobbyDto, UpdateHobbyDto> _repository;
 
-    private AirenContext _context;
-    private IRepository<Hobby, ReadHobbyDto> _repository;
-
-    public HobbyController(AirenContext context, IRepository<Hobby, ReadHobbyDto> repository) {
-        _context = context;
+    public HobbyController(IRepository<Hobby, ReadHobbyDto, UpdateHobbyDto> repository) 
+    {
         _repository = repository;
     }
 
     [HttpPost]
-    public IActionResult AdicionarHobby([FromBody] CreateHobbyDto hobbyDto) {
+    public IActionResult AdicionarHobby([FromBody] CreateHobbyDto hobbyDto) 
+    {
         var hobby = hobbyDto.MapToHobby();
-        _context.Hobbies!.Add(hobby);
-        _context.SaveChanges();
+        _repository.Create(hobby);
         return CreatedAtAction(nameof(BuscaHobbyPorId), new {Id = hobby.Id}, hobby);
     }
 
     [HttpGet]
-    public IEnumerable<ReadHobbyDto> VerHobbies() {
-        var listaHobbies = _repository.GetAll();
+    public IEnumerable<ReadHobbyDto> VerHobbies() 
+    {
+        var listaHobbies = _repository.ReadAll();
         return listaHobbies;
     }
 
     [HttpGet("{id}")]
-    public IActionResult BuscaHobbyPorId(int id) {
-        var hobby = _repository.GetById(id);
+    public IActionResult BuscaHobbyPorId(int id) 
+    {
+        var hobby = _repository.ReadById(id);
         if (hobby == null) return NotFound();
         else return Ok(hobby.MapToReadHobby());
     }
 
     [HttpPut("{id}")]
-    public IActionResult AtualizaHobby(int id, [FromBody] UpdateHobbyDto hobbyDto) {
-        var hobby = _repository.GetById(id);
+    public IActionResult AtualizaHobby(int id, [FromBody] UpdateHobbyDto hobbyDto) 
+    {
+        var hobby = _repository.ReadById(id);
         if (hobby == null) return NotFound();
 
-        hobbyDto.MapToHobby(hobby);
-        _context.SaveChanges();
+        _repository.Update(hobbyDto, hobby);
 
         return Ok(hobbyDto);
     } 
 
     [HttpDelete("{id}")]
-    public IActionResult DeletaHobby (int id) {
-        var hobby = _repository.GetById(id);
+    public IActionResult DeletaHobby (int id) 
+    {
+        var hobby = _repository.ReadById(id);
         if (hobby == null) return NotFound();
 
-        _context.Hobbies!.Remove(hobby);
-        _context.SaveChanges();
+        _repository.Delete(hobby);
 
         return NoContent();
     }

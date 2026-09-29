@@ -1,30 +1,49 @@
+using Airen.Api.Mappers;
+using Airen.Api.Repositories;
+using Airen.Contracts.DTOs;
 using Airen.Infrastructure.Context;
 using Airen.Infrastructure.Models;
-
-using Airen.Contracts.DTOs;
-using Airen.Api.Mappers;
 using Microsoft.EntityFrameworkCore;
 
-namespace Airen.Api.Repositories;
-
-public class PotentiaRepository : IRepository<Potentia, ReadPotentiaDto> {
-
+public class PotentiaRepository : IRepository<Potentia, ReadPotentiaDto, UpdatePotentiaDto>
+{
     private AirenContext _context;
 
-    public PotentiaRepository(AirenContext context) {
+    public PotentiaRepository(AirenContext context) 
+    {
         _context = context;
     }
 
-    public IEnumerable<ReadPotentiaDto> GetAll() {
+    public void Create(Potentia potentia)
+    {
+        _context.Potentias!.Add(potentia);
+        _context.SaveChanges();
+    }
+
+    public IEnumerable<ReadPotentiaDto> ReadAll() 
+    {
         return _context.Potentias!
             .Include(p => p.Habilidades)
             .Include(p => p.Personagem)
             .Select(p => p.MapToReadPotentiaDto()).ToList();
     }
 
-    public Potentia? GetById(int id) {
-        var potentia = _context.Potentias!.FirstOrDefault(p => p.Id == id);
+    public Potentia? ReadById(int id) 
+    {
+        var potentia =_context.Potentias!.FirstOrDefault(p => p.Id == id);
         if (potentia is not null) return potentia;
         else return null;
+    }
+
+    public void Update(UpdatePotentiaDto potentiaDto, Potentia potentia)
+    {
+        potentiaDto.MapToPotentia(potentia);
+        _context.SaveChanges();
+    }
+
+    public void Delete(Potentia potentia)
+    {
+        _context.Potentias!.Remove(potentia);
+        _context.SaveChanges();
     }
 }

@@ -1,29 +1,47 @@
+using Airen.Api.Mappers;
+using Airen.Api.Repositories;
+using Airen.Contracts.DTOs;
 using Airen.Infrastructure.Context;
 using Airen.Infrastructure.Models;
-
-using Airen.Contracts.DTOs;
-using Airen.Api.Mappers;
 using Microsoft.EntityFrameworkCore;
 
-namespace Airen.Api.Repositories;
-
-public class CapituloRepository : IRepository<Capitulo, ReadCapituloDto> {
-
+public class CapituloRepository : IRepository<Capitulo, ReadCapituloDto, UpdateCapituloDto>
+{
     private AirenContext _context;
 
-    public CapituloRepository(AirenContext context) {
+    public CapituloRepository(AirenContext context) 
+    {
         _context = context;
     }
 
-    public IEnumerable<ReadCapituloDto> GetAll() {
+    public void Create(Capitulo capitulo)
+    {
+        _context.Capitulos!.Add(capitulo);
+        _context.SaveChanges();
+    }
+
+    public IEnumerable<ReadCapituloDto> ReadAll() {
         return _context.Capitulos!
             .Include(c => c.Volume)
             .Select(c => c.MapToReadCapitulo()).ToList();
     }
 
-    public Capitulo? GetById(int id) {
-        var capitulo =_context.Capitulos!.FirstOrDefault(a => a.Id == id);
+    public Capitulo? ReadById(int id) 
+    {
+        var capitulo =_context.Capitulos!.FirstOrDefault(c => c.Id == id);
         if (capitulo is not null) return capitulo;
         else return null;
+    }
+
+    public void Update(UpdateCapituloDto capituloDto, Capitulo capitulo)
+    {
+        capituloDto.MapToCapitulo(capitulo);
+        _context.SaveChanges();
+    }
+
+    public void Delete(Capitulo capitulo)
+    {
+        _context.Capitulos!.Remove(capitulo);
+        _context.SaveChanges();
     }
 }

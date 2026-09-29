@@ -3,10 +3,12 @@ using Airen.Infrastructure.Models;
 
 namespace Airen.Api.Mappers;
 
-public static class PersonagemExtensions {
-
-    public static Personagem MapToPersonagem (this CreatePersonagemDto dto) {
-        return new Personagem {
+public static class PersonagemExtensions 
+{
+    public static Personagem MapToPersonagem (this CreatePersonagemDto dto) 
+    {
+        return new Personagem 
+        {
             Nome = dto.Nome,
             NomeOriginal = dto.NomeOriginal,
             Biografia = dto.Biografia,
@@ -15,7 +17,8 @@ public static class PersonagemExtensions {
         };
     }
 
-    public static void MapToPersonagem(this UpdatePersonagemDto dto, Personagem personagem) {
+    public static void MapToPersonagem(this UpdatePersonagemDto dto, Personagem personagem) 
+    {
         personagem.Nome = dto.Nome;
         personagem.NomeOriginal = dto.NomeOriginal;
         personagem.Biografia = dto.Biografia;
@@ -23,8 +26,10 @@ public static class PersonagemExtensions {
         personagem.EstaVivo = dto.EstaVivo;
     }
 
-    public static ReadPersonagemDto MapToReadPersonagem (this Personagem obj) {
-        return new ReadPersonagemDto {
+    public static ReadPersonagemDto MapToReadPersonagem (this Personagem obj) 
+    {
+        return new ReadPersonagemDto 
+        {
             Id = obj.Id,
             Nome = obj.Nome,
             NomeOriginal = obj.NomeOriginal,
@@ -35,7 +40,6 @@ public static class PersonagemExtensions {
             Versoes = (ICollection<ReadVersaoDto>)obj.Versoes!.Select(v => v.MapToReadVersao()).ToList(),
             Afiliacoes = (ICollection<ReadAfiliacaoDto>)obj.Afiliacoes!.Select(a => a.MapToReadAfiliacao()).ToList(),
             Parentes = (ICollection<ReadParentescoDto>)obj.Parentes!.Select(p => p.MapToReadParentesco()).ToList()
-
         };
     }
 }

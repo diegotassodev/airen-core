@@ -1,4 +1,3 @@
-using Airen.Infrastructure.Context;
 using Airen.Infrastructure.Models;
 
 using Airen.Contracts.DTOs;
@@ -10,55 +9,56 @@ namespace Airen.Api.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class VolumeController : ControllerBase {
+public class VolumeController : ControllerBase 
+{
+    private IRepository<Volume, ReadVolumeDto, UpdateVolumeDto> _repository;
 
-    private AirenContext _context;
-    private IRepository<Volume, ReadVolumeDto> _repository;
-
-    public VolumeController(AirenContext context, IRepository<Volume, ReadVolumeDto> repository) {
-        _context = context;
+    public VolumeController(IRepository<Volume, ReadVolumeDto, UpdateVolumeDto> repository) 
+    {
         _repository = repository;
     }
 
     [HttpPost]
-    public IActionResult AdicionaVolume([FromBody] CreateVolumeDto volumeDto) {
+    public IActionResult AdicionaVolume([FromBody] CreateVolumeDto volumeDto) 
+    {
         var volume = volumeDto.MapToVolume();
-        _context.Volumes!.Add(volume);
-        _context.SaveChanges();
+        _repository.Create(volume);
         return CreatedAtAction(nameof(BuscaVolumePorId), new {Id = volume.Id}, volume);
     }
 
     [HttpGet]
-    public IEnumerable<ReadVolumeDto> VerVolumes() {
-        var listaVolumes = _repository.GetAll();
+    public IEnumerable<ReadVolumeDto> VerVolumes() 
+    {
+        var listaVolumes = _repository.ReadAll();
         return listaVolumes;
     }
 
     [HttpGet("{id}")]
-    public IActionResult BuscaVolumePorId(int id) {
-        var volume = _repository.GetById(id);
+    public IActionResult BuscaVolumePorId(int id)
+    {
+        var volume = _repository.ReadById(id);
         if (volume == null) return NotFound();
         else return Ok(volume.MapToReadVolume());
     }
 
     [HttpPut("{id}")]
-    public IActionResult AtualizaVolume(int id, [FromBody] UpdateVolumeDto volumeDto) {
-        var volume = _repository.GetById(id);
+    public IActionResult AtualizaVolume(int id, [FromBody] UpdateVolumeDto volumeDto) 
+    {
+        var volume = _repository.ReadById(id);
         if (volume == null) return NotFound();
 
-        volumeDto.MapToVolume(volume);
-        _context.SaveChanges();
+        _repository.Update(volumeDto, volume);
 
         return Ok(volumeDto);
     } 
 
     [HttpDelete("{id}")]
-    public IActionResult DeletaVolume (int id) {
-        var volume = _repository.GetById(id);
+    public IActionResult DeletaVolume (int id) 
+    {
+        var volume = _repository.ReadById(id);
         if (volume == null) return NotFound();
 
-        _context.Volumes!.Remove(volume);
-        _context.SaveChanges();
+        _repository.Delete(volume);
 
         return NoContent();
     }

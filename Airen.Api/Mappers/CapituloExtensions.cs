@@ -3,10 +3,12 @@ using Airen.Infrastructure.Models;
 
 namespace Airen.Api.Mappers;
 
-public static class CapituloExtensions {
-
-    public static Capitulo MapToCapitulo(this CreateCapituloDto dto) {
-        return new Capitulo {
+public static class CapituloExtensions 
+{
+    public static Capitulo MapToCapitulo(this CreateCapituloDto dto) 
+    {
+        return new Capitulo 
+        {
             Numero = dto.Numero,
             Titulo = dto.Titulo,
             Resumo = dto.Resumo,
@@ -15,7 +17,8 @@ public static class CapituloExtensions {
         };
     }
 
-    public static void MapToCapitulo(this UpdateCapituloDto dto, Capitulo capitulo) {
+    public static void MapToCapitulo(this UpdateCapituloDto dto, Capitulo capitulo) 
+    {
         capitulo.Numero = dto.Numero;
         capitulo.Titulo = dto.Titulo;
         capitulo.Resumo = dto.Resumo;
@@ -23,8 +26,10 @@ public static class CapituloExtensions {
         capitulo.IdVolume = dto.IdVolume;
     }
 
-    public static ReadCapituloDto MapToReadCapitulo(this Capitulo obj) {
-        return new ReadCapituloDto {
+    public static ReadCapituloDto MapToReadCapitulo(this Capitulo obj) 
+    {
+        return new ReadCapituloDto 
+        {
             Id = obj.Id,
             Numero = obj.Numero,
             Titulo = obj.Titulo,

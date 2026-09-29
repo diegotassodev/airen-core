@@ -1,4 +1,3 @@
-using Airen.Infrastructure.Context;
 using Airen.Infrastructure.Models;
 
 using Airen.Contracts.DTOs;
@@ -10,55 +9,56 @@ namespace Airen.Api.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class HabilidadeController : ControllerBase {
+public class HabilidadeController : ControllerBase 
+{
+    private IRepository<Habilidade, ReadHabilidadeDto, UpdateHabilidadeDto> _repository;
 
-    private AirenContext _context;
-    private IRepository<Habilidade, ReadHabilidadeDto> _repository;
-
-    public HabilidadeController(AirenContext context, IRepository<Habilidade, ReadHabilidadeDto> repository) {
-        _context = context;
+    public HabilidadeController(IRepository<Habilidade, ReadHabilidadeDto, UpdateHabilidadeDto> repository) 
+    {
         _repository = repository;
     }
 
     [HttpPost]
-    public IActionResult AdicionarHabilidade([FromBody] CreateHabilidadeDto habilidadeDto) {
+    public IActionResult AdicionarHabilidade([FromBody] CreateHabilidadeDto habilidadeDto) 
+    {
         var habilidade = habilidadeDto.MapToHabilidade();
-        _context.Habilidades!.Add(habilidade);
-        _context.SaveChanges();
+        _repository.Create(habilidade);
         return CreatedAtAction(nameof(BuscaHabilidadePorId), new {Id = habilidade.Id}, habilidade);
     }
 
     [HttpGet]
-    public IEnumerable<ReadHabilidadeDto> VerHabilidades() {
-        var listaHabilidades = _repository.GetAll();
+    public IEnumerable<ReadHabilidadeDto> VerHabilidades() 
+    {
+        var listaHabilidades = _repository.ReadAll();
         return listaHabilidades;
     }
 
     [HttpGet("{id}")]
-    public IActionResult BuscaHabilidadePorId(int id) {
-        var habilidade = _repository.GetById(id);
+    public IActionResult BuscaHabilidadePorId(int id) 
+    {
+        var habilidade = _repository.ReadById(id);
         if (habilidade == null) return NotFound();
         else return Ok(habilidade.MapToReadHabilidade());
     }
 
     [HttpPut("{id}")]
-    public IActionResult AtualizaHabilidade(int id, [FromBody] UpdateHabilidadeDto habilidadeDto) {
-        var habilidade = _repository.GetById(id);
+    public IActionResult AtualizaHabilidade(int id, [FromBody] UpdateHabilidadeDto habilidadeDto) 
+    {
+        var habilidade = _repository.ReadById(id);
         if (habilidade == null) return NotFound();
 
-        habilidadeDto.MapToHabilidade(habilidade);
-        _context.SaveChanges();
+        _repository.Update(habilidadeDto, habilidade);
 
         return Ok(habilidadeDto);
     } 
 
     [HttpDelete("{id}")]
-    public IActionResult DeletaHabilidade (int id) {
-        var habilidade = _repository.GetById(id);
+    public IActionResult DeletaHabilidade (int id) 
+    {
+        var habilidade = _repository.ReadById(id);
         if (habilidade == null) return NotFound();
 
-        _context.Habilidades!.Remove(habilidade);
-        _context.SaveChanges();
+        _repository.Delete(habilidade);
 
         return NoContent();
     }

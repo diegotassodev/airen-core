@@ -5,17 +5,17 @@ using Airen.Contracts.DTOs;
 using Airen.Api.Mappers;
 using Microsoft.EntityFrameworkCore;
 
-namespace Airen.Api.Services;
+namespace Airen.Api.Repositories;
 
-public class VersaoService {
+public class VersaoRepository : IRepository<Versao, ReadVersaoDto> {
 
     private AirenContext _context;
 
-    public VersaoService(AirenContext context) {
+    public VersaoRepository(AirenContext context) {
         _context = context;
     }
 
-    public ICollection<ReadVersaoDto> GetAll() {
+    public IEnumerable<ReadVersaoDto> GetAll() {
         return _context.Versoes!
             .Include(v => v.Personagem)
             .Include(v => v.Tecnicas)

@@ -5,17 +5,17 @@ using Airen.Contracts.DTOs;
 using Airen.Api.Mappers;
 using Microsoft.EntityFrameworkCore;
 
-namespace Airen.Api.Services;
+namespace Airen.Api.Repositories;
 
-public class VolumeService {
+public class VolumeRepository : IRepository<Volume, ReadVolumeDto>{
 
     private AirenContext _context;
 
-    public VolumeService(AirenContext context) {
+    public VolumeRepository(AirenContext context) {
         _context = context;
     }
 
-    public ICollection<ReadVolumeDto> GetAll() {
+    public IEnumerable<ReadVolumeDto> GetAll() {
         return _context.Volumes!
             .Include(v => v.Capitulos)
             .Select(v => v.MapToReadVolume()).ToList();

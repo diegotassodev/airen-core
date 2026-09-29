@@ -3,8 +3,8 @@ using Airen.Infrastructure.Models;
 
 using Airen.Contracts.DTOs;
 using Airen.Api.Mappers;
-using Airen.Api.Services;
 using Microsoft.AspNetCore.Mvc;
+using Airen.Api.Repositories;
 
 namespace Airen.Api.Controllers;
 
@@ -13,11 +13,11 @@ namespace Airen.Api.Controllers;
 public class HabilidadeController : ControllerBase {
 
     private AirenContext _context;
-    private HabilidadeServices _services;
+    private IRepository<Habilidade, ReadHabilidadeDto> _repository;
 
-    public HabilidadeController(AirenContext context, HabilidadeServices services) {
+    public HabilidadeController(AirenContext context, IRepository<Habilidade, ReadHabilidadeDto> repository) {
         _context = context;
-        _services = services;
+        _repository = repository;
     }
 
     [HttpPost]
@@ -30,20 +30,20 @@ public class HabilidadeController : ControllerBase {
 
     [HttpGet]
     public IEnumerable<ReadHabilidadeDto> VerHabilidades() {
-        var listaHabilidades = _services.GetAll();
+        var listaHabilidades = _repository.GetAll();
         return listaHabilidades;
     }
 
     [HttpGet("{id}")]
     public IActionResult BuscaHabilidadePorId(int id) {
-        var habilidade = _services.GetById(id);
+        var habilidade = _repository.GetById(id);
         if (habilidade == null) return NotFound();
         else return Ok(habilidade.MapToReadHabilidade());
     }
 
     [HttpPut("{id}")]
     public IActionResult AtualizaHabilidade(int id, [FromBody] UpdateHabilidadeDto habilidadeDto) {
-        var habilidade = _services.GetById(id);
+        var habilidade = _repository.GetById(id);
         if (habilidade == null) return NotFound();
 
         habilidadeDto.MapToHabilidade(habilidade);
@@ -54,7 +54,7 @@ public class HabilidadeController : ControllerBase {
 
     [HttpDelete("{id}")]
     public IActionResult DeletaHabilidade (int id) {
-        var habilidade = _services.GetById(id);
+        var habilidade = _repository.GetById(id);
         if (habilidade == null) return NotFound();
 
         _context.Habilidades!.Remove(habilidade);

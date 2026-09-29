@@ -1,4 +1,4 @@
-using Airen.Api.Services;
+using Airen.Api.Repositories;
 using Airen.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,7 +17,7 @@ builder.Services.AddCors(
     }));
 
 
-builder.Services.AddApplicationServices();
+builder.Services.AddApplicationRepositories();
 
 var app = builder.Build();
 

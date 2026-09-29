@@ -3,7 +3,7 @@ using Airen.Infrastructure.Models;
 
 using Airen.Contracts.DTOs;
 using Airen.Api.Mappers;
-using Airen.Api.Services;
+using Airen.Api.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Airen.Api.Controllers;
@@ -13,11 +13,11 @@ namespace Airen.Api.Controllers;
 public class AfiliacaoController : ControllerBase {
 
     private AirenContext _context;
-    private AfiliacaoServices _services;
+    private IRepository<Afiliacao, ReadAfiliacaoDto> _repository;
 
-    public AfiliacaoController(AirenContext context, AfiliacaoServices services) {
+    public AfiliacaoController(AirenContext context, IRepository<Afiliacao, ReadAfiliacaoDto> repository) {
         _context = context;
-        _services = services;
+        _repository = repository;
     }
 
     [HttpPost]
@@ -30,20 +30,20 @@ public class AfiliacaoController : ControllerBase {
 
     [HttpGet]
     public IEnumerable<ReadAfiliacaoDto> VerAfiliacoes() {
-        var listaAfiliacoes = _services.GetAll();
+        var listaAfiliacoes = _repository.GetAll();
         return listaAfiliacoes;
     }
 
     [HttpGet("{id}")]
     public IActionResult BuscaAfiliacaoPorId(int id) {
-        var afiliacao = _services.GetById(id);
+        var afiliacao = _repository.GetById(id);
         if (afiliacao == null) return NotFound();
         else return Ok(afiliacao.MapToReadAfiliacao());
     }
 
     [HttpPut("{id}")]
     public IActionResult AtualizaAfiliacao(int id, [FromBody] UpdateAfiliacaoDto afiliacaoDto) {
-        var afiliacao = _services.GetById(id);
+        var afiliacao = _repository.GetById(id);
         if (afiliacao == null) return NotFound();
 
         afiliacaoDto.MapToAfiliacao(afiliacao);
@@ -54,7 +54,7 @@ public class AfiliacaoController : ControllerBase {
 
     [HttpDelete("{id}")]
     public IActionResult DeletaAfiliacao (int id) {
-        var afiliacao = _services.GetById(id);
+        var afiliacao = _repository.GetById(id);
         if (afiliacao == null) return NotFound();
 
         _context.Afiliacaos!.Remove(afiliacao);

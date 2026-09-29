@@ -5,17 +5,17 @@ using Airen.Contracts.DTOs;
 using Airen.Api.Mappers;
 using Microsoft.EntityFrameworkCore;
 
-namespace Airen.Api.Services;
+namespace Airen.Api.Repositories;
 
-public class ParentescoService {
+public class ParentescoRepository : IRepository<Parentesco, ReadParentescoDto> {
 
     private AirenContext _context;
 
-    public ParentescoService(AirenContext context) {
+    public ParentescoRepository(AirenContext context) {
         _context = context;
     }
 
-    public ICollection<ReadParentescoDto> GetAll() {
+    public IEnumerable<ReadParentescoDto> GetAll() {
         return _context.Parentescos!
             .Include(p => p.Personagem)
             .Include(p => p.Parente)

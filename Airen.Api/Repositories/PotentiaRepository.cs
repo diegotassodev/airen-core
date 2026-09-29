@@ -5,17 +5,17 @@ using Airen.Contracts.DTOs;
 using Airen.Api.Mappers;
 using Microsoft.EntityFrameworkCore;
 
-namespace Airen.Api.Services;
+namespace Airen.Api.Repositories;
 
-public class PotentiaService {
+public class PotentiaRepository : IRepository<Potentia, ReadPotentiaDto> {
 
     private AirenContext _context;
 
-    public PotentiaService(AirenContext context) {
+    public PotentiaRepository(AirenContext context) {
         _context = context;
     }
 
-    public ICollection<ReadPotentiaDto> GetAll() {
+    public IEnumerable<ReadPotentiaDto> GetAll() {
         return _context.Potentias!
             .Include(p => p.Habilidades)
             .Include(p => p.Personagem)

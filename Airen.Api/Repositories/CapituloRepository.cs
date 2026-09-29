@@ -5,17 +5,17 @@ using Airen.Contracts.DTOs;
 using Airen.Api.Mappers;
 using Microsoft.EntityFrameworkCore;
 
-namespace Airen.Api.Services;
+namespace Airen.Api.Repositories;
 
-public class CapituloServices {
+public class CapituloRepository : IRepository<Capitulo, ReadCapituloDto> {
 
     private AirenContext _context;
 
-    public CapituloServices(AirenContext context) {
+    public CapituloRepository(AirenContext context) {
         _context = context;
     }
 
-    public ICollection<ReadCapituloDto> GetAll() {
+    public IEnumerable<ReadCapituloDto> GetAll() {
         return _context.Capitulos!
             .Include(c => c.Volume)
             .Select(c => c.MapToReadCapitulo()).ToList();

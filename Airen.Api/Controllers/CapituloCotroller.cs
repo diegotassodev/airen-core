@@ -3,7 +3,7 @@ using Airen.Infrastructure.Models;
 
 using Airen.Contracts.DTOs;
 using Airen.Api.Mappers;
-using Airen.Api.Services;
+using Airen.Api.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Airen.Api.Controllers;
@@ -13,11 +13,11 @@ namespace Airen.Api.Controllers;
 public class CapituloController : ControllerBase {
 
     private AirenContext _context;
-    private CapituloServices _services;
+    private IRepository<Capitulo, ReadCapituloDto> _repository;
 
-    public CapituloController(AirenContext context, CapituloServices services) {
+    public CapituloController(AirenContext context, IRepository<Capitulo, ReadCapituloDto> repository) {
         _context = context;
-        _services = services;
+        _repository = repository;
     }
 
     [HttpPost]
@@ -29,21 +29,21 @@ public class CapituloController : ControllerBase {
     }
 
     [HttpGet]
-    public ICollection<ReadCapituloDto> VerCapitulos() {
-        var listaCapitulos = _services.GetAll();
+    public IEnumerable<ReadCapituloDto> VerCapitulos() {
+        var listaCapitulos = _repository.GetAll();
         return listaCapitulos;
     }
 
     [HttpGet("{id}")]
     public IActionResult BuscaCapituloPorId(int id) {
-        var capitulo = _services.GetById(id);
+        var capitulo = _repository.GetById(id);
         if (capitulo == null) return NotFound();
         else return Ok(capitulo.MapToReadCapitulo());
     }
 
     [HttpPut("{id}")]
     public IActionResult AtualizaCapitulo(int id, [FromBody] UpdateCapituloDto capituloDto) {
-        var capitulo = _services.GetById(id);
+        var capitulo = _repository.GetById(id);
         if (capitulo == null) return NotFound();
 
         capituloDto.MapToCapitulo(capitulo);
@@ -54,7 +54,7 @@ public class CapituloController : ControllerBase {
 
     [HttpDelete("{id}")]
     public IActionResult DeletaCapitulo (int id) {
-        var capitulo = _services.GetById(id);
+        var capitulo = _repository.GetById(id);
         if (capitulo == null) return NotFound();
 
         _context.Capitulos!.Remove(capitulo);

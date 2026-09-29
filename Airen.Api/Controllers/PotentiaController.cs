@@ -3,7 +3,7 @@ using Airen.Infrastructure.Models;
 
 using Airen.Contracts.DTOs;
 using Airen.Api.Mappers;
-using Airen.Api.Services;
+using Airen.Api.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AirenApi.Controllers;
@@ -13,11 +13,11 @@ namespace AirenApi.Controllers;
 public class PotentiaController : ControllerBase {
 
     private AirenContext _context;
-    private PotentiaService _service;
+    private IRepository<Potentia, ReadPotentiaDto> _repository;
 
-    public PotentiaController(AirenContext context, PotentiaService service) {
+    public PotentiaController(AirenContext context, IRepository<Potentia, ReadPotentiaDto> repository) {
         _context = context;
-        _service = service;
+        _repository = repository;
     }
 
     [HttpPost]
@@ -30,20 +30,20 @@ public class PotentiaController : ControllerBase {
 
     [HttpGet]
     public IEnumerable<ReadPotentiaDto> VerPotentias() {
-        var listaPotentias = _service.GetAll();
+        var listaPotentias = _repository.GetAll();
         return listaPotentias;
     }
 
     [HttpGet("{id}")]
     public IActionResult BuscaPotentiaPorId(int id) {
-        var potentia = _service.GetById(id);
+        var potentia = _repository.GetById(id);
         if (potentia == null) return NotFound();
         else return Ok(potentia.MapToReadPotentiaDto());
     }
 
     [HttpPut("{id}")]
     public IActionResult AtualizaPotentia(int id, [FromBody] UpdatePotentiaDto potentiaDto) {
-        var potentia = _service.GetById(id);
+        var potentia = _repository.GetById(id);
         if (potentia == null) return NotFound();
 
         potentiaDto.MapToPotentia(potentia);
@@ -54,7 +54,7 @@ public class PotentiaController : ControllerBase {
 
     [HttpDelete("{id}")]
     public IActionResult DeletaPotentia (int id) {
-        var potentia = _service.GetById(id);
+        var potentia = _repository.GetById(id);
         if (potentia == null) return NotFound();
 
         _context.Potentias!.Remove(potentia);

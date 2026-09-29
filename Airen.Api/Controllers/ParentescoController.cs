@@ -3,7 +3,7 @@ using Airen.Infrastructure.Models;
 
 using Airen.Contracts.DTOs;
 using Airen.Api.Mappers;
-using Airen.Api.Services;
+using Airen.Api.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Airen.Api.Controllers;
@@ -13,11 +13,11 @@ namespace Airen.Api.Controllers;
 public class ParentescoController : ControllerBase {
 
     private AirenContext _context;
-    private ParentescoService _service;
+    private IRepository<Parentesco, ReadParentescoDto> _repository;
 
-    public ParentescoController(AirenContext context, ParentescoService service) {
+    public ParentescoController(AirenContext context, IRepository<Parentesco, ReadParentescoDto> repository) {
         _context = context;
-        _service = service;
+        _repository = repository;
     }
 
     [HttpPost]
@@ -30,20 +30,20 @@ public class ParentescoController : ControllerBase {
 
     [HttpGet]
     public IEnumerable<ReadParentescoDto> VerParentescos() {
-        var listaParentescos = _service.GetAll();
+        var listaParentescos = _repository.GetAll();
         return listaParentescos;
     }
 
     [HttpGet("{id}")]
     public IActionResult BuscaParentescoPorId(int id) {
-        var parentesco = _service.GetById(id);
+        var parentesco = _repository.GetById(id);
         if (parentesco == null) return NotFound();
         else return Ok(parentesco.MapToReadParentesco());
     }
 
     [HttpPut("{id}")]
     public IActionResult AtualizaParentesco(int id, [FromBody] UpdateParentescoDto parentescoDto) {
-        var parentesco = _service.GetById(id);
+        var parentesco = _repository.GetById(id);
         if (parentesco == null) return NotFound();
 
         parentescoDto.MapToParentesco(parentesco);
@@ -54,7 +54,7 @@ public class ParentescoController : ControllerBase {
 
     [HttpDelete("{id}")]
     public IActionResult DeletaParentesco (int id) {
-        var parentesco = _service.GetById(id);
+        var parentesco = _repository.GetById(id);
         if (parentesco == null) return NotFound();
 
         _context.Parentescos!.Remove(parentesco);

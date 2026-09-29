@@ -3,7 +3,7 @@ using Airen.Infrastructure.Models;
 
 using Airen.Contracts.DTOs;
 using Airen.Api.Mappers;
-using Airen.Api.Services;
+using Airen.Api.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Airen.Api.Controllers;
@@ -13,11 +13,11 @@ namespace Airen.Api.Controllers;
 public class VolumeController : ControllerBase {
 
     private AirenContext _context;
-    private VolumeService _services;
+    private IRepository<Volume, ReadVolumeDto> _repository;
 
-    public VolumeController(AirenContext context, VolumeService services) {
+    public VolumeController(AirenContext context, IRepository<Volume, ReadVolumeDto> repository) {
         _context = context;
-        _services = services;
+        _repository = repository;
     }
 
     [HttpPost]
@@ -30,20 +30,20 @@ public class VolumeController : ControllerBase {
 
     [HttpGet]
     public IEnumerable<ReadVolumeDto> VerVolumes() {
-        var listaVolumes = _services.GetAll();
+        var listaVolumes = _repository.GetAll();
         return listaVolumes;
     }
 
     [HttpGet("{id}")]
     public IActionResult BuscaVolumePorId(int id) {
-        var volume = _services.GetById(id);
+        var volume = _repository.GetById(id);
         if (volume == null) return NotFound();
         else return Ok(volume.MapToReadVolume());
     }
 
     [HttpPut("{id}")]
     public IActionResult AtualizaVolume(int id, [FromBody] UpdateVolumeDto volumeDto) {
-        var volume = _services.GetById(id);
+        var volume = _repository.GetById(id);
         if (volume == null) return NotFound();
 
         volumeDto.MapToVolume(volume);
@@ -54,7 +54,7 @@ public class VolumeController : ControllerBase {
 
     [HttpDelete("{id}")]
     public IActionResult DeletaVolume (int id) {
-        var volume = _services.GetById(id);
+        var volume = _repository.GetById(id);
         if (volume == null) return NotFound();
 
         _context.Volumes!.Remove(volume);

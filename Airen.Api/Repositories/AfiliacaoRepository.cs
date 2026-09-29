@@ -4,13 +4,13 @@ using Airen.Infrastructure.Models;
 using Airen.Contracts.DTOs;
 using Airen.Api.Mappers;
 
-namespace Airen.Api.Services;
+namespace Airen.Api.Repositories;
 
-public class AfiliacaoServices {
+public class AfiliacaoRepository : IRepository<Afiliacao, ReadAfiliacaoDto>{
 
     private AirenContext _context;
 
-    public AfiliacaoServices(AirenContext context) {
+    public AfiliacaoRepository(AirenContext context) {
         _context = context;
     }
 

@@ -3,7 +3,7 @@ using Airen.Infrastructure.Models;
 
 using Airen.Contracts.DTOs;
 using Airen.Api.Mappers;
-using Airen.Api.Services;
+using Airen.Api.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Airen.Api.Controllers;
@@ -13,11 +13,11 @@ namespace Airen.Api.Controllers;
 public class PersonagemController : ControllerBase {
 
     private AirenContext _context;
-    private PersonagemService _service;
+    private IRepository<Personagem, ReadPersonagemDto> _repository;
 
-    public PersonagemController(AirenContext context, PersonagemService service) {
+    public PersonagemController(AirenContext context, IRepository<Personagem, ReadPersonagemDto> repository) {
         _context = context;
-        _service = service;
+        _repository = repository;
     }
 
     [HttpPost]
@@ -30,20 +30,20 @@ public class PersonagemController : ControllerBase {
 
     [HttpGet]
     public IEnumerable<ReadPersonagemDto> VerPersonagens() {
-        var listaPersonagens = _service.GetAll();
+        var listaPersonagens = _repository.GetAll();
         return listaPersonagens;
     }
 
     [HttpGet("{id}")]
     public IActionResult BuscaPersonagemPorId(int id) {
-        var personagem = _service.GetById(id);
+        var personagem = _repository.GetById(id);
         if (personagem == null) return NotFound();
         else return Ok(personagem.MapToReadPersonagem());
     }
 
     [HttpPut("{id}")]
     public IActionResult AtualizaPersonagem(int id, [FromBody] UpdatePersonagemDto personagemDto) {
-        var personagem = _service.GetById(id);
+        var personagem = _repository.GetById(id);
         if (personagem == null) return NotFound();
 
         personagemDto.MapToPersonagem(personagem);
@@ -54,7 +54,7 @@ public class PersonagemController : ControllerBase {
 
     [HttpDelete("{id}")]
     public IActionResult DeletaPersonagem (int id) {
-        var personagem = _service.GetById(id);
+        var personagem = _repository.GetById(id);
         if (personagem == null) return NotFound();
 
         _context.Personagens!.Remove(personagem);

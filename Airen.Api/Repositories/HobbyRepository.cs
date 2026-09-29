@@ -5,17 +5,17 @@ using Airen.Contracts.DTOs;
 using Airen.Api.Mappers;
 using Microsoft.EntityFrameworkCore;
 
-namespace Airen.Api.Services;
+namespace Airen.Api.Repositories;
 
-public class HobbyService {
+public class HobbyRepository : IRepository<Hobby, ReadHobbyDto> {
 
     private AirenContext _context;
 
-    public HobbyService(AirenContext context) {
+    public HobbyRepository(AirenContext context) {
         _context = context;
     }
 
-    public ICollection<ReadHobbyDto> GetAll() {
+    public IEnumerable<ReadHobbyDto> GetAll() {
         return _context.Hobbies!
             .Include(h => h.Versao).Include(h => h.Versao!.Personagem)
             .Select(h => h.MapToReadHobby()).ToList();

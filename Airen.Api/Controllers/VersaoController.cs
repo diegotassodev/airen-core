@@ -3,7 +3,7 @@ using Airen.Infrastructure.Models;
 
 using Airen.Contracts.DTOs;
 using Airen.Api.Mappers;
-using Airen.Api.Services;
+using Airen.Api.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Airen.Api.Controllers;
@@ -13,11 +13,11 @@ namespace Airen.Api.Controllers;
 public class VersaoController : ControllerBase {
 
     private AirenContext _context;
-    private VersaoService _service;
+    private IRepository<Versao, ReadVersaoDto> _repository;
 
-    public VersaoController(AirenContext context, VersaoService service) {
+    public VersaoController(AirenContext context, IRepository<Versao, ReadVersaoDto> repository) {
         _context = context;
-        _service = service;
+        _repository = repository;
     }
 
     [HttpPost]
@@ -30,20 +30,20 @@ public class VersaoController : ControllerBase {
 
     [HttpGet]
     public IEnumerable<ReadVersaoDto> VerVersoes() {
-        var listaVersoes = _service.GetAll();
+        var listaVersoes = _repository.GetAll();
         return listaVersoes;
     }
 
     [HttpGet("{id}")]
     public IActionResult BuscaVersaoPorId(int id) {
-        var versao = _service.GetById(id);
+        var versao = _repository.GetById(id);
         if (versao == null) return NotFound();
         else return Ok(versao.MapToReadVersao());
     }
 
     [HttpPut("{id}")]
     public IActionResult AtualizaVersao(int id, [FromBody] UpdateVersaoDto versaoDto) {
-        var versao = _service.GetById(id);
+        var versao = _repository.GetById(id);
         if (versao == null) return NotFound();
 
         versaoDto.MapToVersao(versao);
@@ -54,7 +54,7 @@ public class VersaoController : ControllerBase {
 
     [HttpDelete("{id}")]
     public IActionResult DeletaVersao (int id) {
-        var versao = _service.GetById(id);
+        var versao = _repository.GetById(id);
         if (versao == null) return NotFound();
 
         _context.Versoes!.Remove(versao);

@@ -5,17 +5,17 @@ using Airen.Contracts.DTOs;
 using Airen.Api.Mappers;
 using Microsoft.EntityFrameworkCore;
 
-namespace Airen.Api.Services;
+namespace Airen.Api.Repositories;
 
-public class HabilidadeServices {
+public class HabilidadeRepository : IRepository<Habilidade, ReadHabilidadeDto> {
 
     private AirenContext _context;
 
-    public HabilidadeServices(AirenContext context) {
+    public HabilidadeRepository(AirenContext context) {
         _context = context;
     }
 
-    public ICollection<ReadHabilidadeDto> GetAll() {
+    public IEnumerable<ReadHabilidadeDto> GetAll() {
         return _context.Habilidades!
             .Include(h => h.Potentia)
             .Select(h => h.MapToReadHabilidade()).ToList();

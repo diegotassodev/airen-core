@@ -5,17 +5,17 @@ using Airen.Contracts.DTOs;
 using Airen.Api.Mappers;
 using Microsoft.EntityFrameworkCore;
 
-namespace Airen.Api.Services;
+namespace Airen.Api.Repositories;
 
-public class PersonagemService {
+public class PersonagemRepository : IRepository<Personagem, ReadPersonagemDto> {
 
     private AirenContext _context;
 
-    public PersonagemService(AirenContext context) {
+    public PersonagemRepository(AirenContext context) {
         _context = context;
     }
 
-    public ICollection<ReadPersonagemDto> GetAll() {
+    public IEnumerable<ReadPersonagemDto> GetAll() {
         return _context.Personagens!
             .Include(p => p.Potentia)
             .Include(p => p.Potentia!).ThenInclude(p => p.Habilidades)

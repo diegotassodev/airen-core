@@ -3,7 +3,7 @@ using Airen.Infrastructure.Models;
 
 using Airen.Contracts.DTOs;
 using Airen.Api.Mappers;
-using Airen.Api.Services;
+using Airen.Api.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Airen.Api.Controllers;
@@ -13,11 +13,11 @@ namespace Airen.Api.Controllers;
 public class HobbyController : ControllerBase {
 
     private AirenContext _context;
-    private HobbyService _service;
+    private IRepository<Hobby, ReadHobbyDto> _repository;
 
-    public HobbyController(AirenContext context, HobbyService service) {
+    public HobbyController(AirenContext context, IRepository<Hobby, ReadHobbyDto> repository) {
         _context = context;
-        _service = service;
+        _repository = repository;
     }
 
     [HttpPost]
@@ -30,20 +30,20 @@ public class HobbyController : ControllerBase {
 
     [HttpGet]
     public IEnumerable<ReadHobbyDto> VerHobbies() {
-        var listaHobbies = _service.GetAll();
+        var listaHobbies = _repository.GetAll();
         return listaHobbies;
     }
 
     [HttpGet("{id}")]
     public IActionResult BuscaHobbyPorId(int id) {
-        var hobby = _service.GetById(id);
+        var hobby = _repository.GetById(id);
         if (hobby == null) return NotFound();
         else return Ok(hobby.MapToReadHobby());
     }
 
     [HttpPut("{id}")]
     public IActionResult AtualizaHobby(int id, [FromBody] UpdateHobbyDto hobbyDto) {
-        var hobby = _service.GetById(id);
+        var hobby = _repository.GetById(id);
         if (hobby == null) return NotFound();
 
         hobbyDto.MapToHobby(hobby);
@@ -54,7 +54,7 @@ public class HobbyController : ControllerBase {
 
     [HttpDelete("{id}")]
     public IActionResult DeletaHobby (int id) {
-        var hobby = _service.GetById(id);
+        var hobby = _repository.GetById(id);
         if (hobby == null) return NotFound();
 
         _context.Hobbies!.Remove(hobby);

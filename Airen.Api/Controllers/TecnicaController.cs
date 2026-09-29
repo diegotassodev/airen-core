@@ -3,7 +3,7 @@ using Airen.Infrastructure.Models;
 
 using Airen.Contracts.DTOs;
 using Airen.Api.Mappers;
-using Airen.Api.Services;
+using Airen.Api.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Airen.Api.Controllers;
@@ -13,11 +13,11 @@ namespace Airen.Api.Controllers;
 public class TecnicaController : ControllerBase {
 
     private AirenContext _context;
-    private TecnicaService _service;
+    private IRepository<Tecnica, ReadTecnicaDto> _repository;
 
-    public TecnicaController(AirenContext context, TecnicaService service) {
+    public TecnicaController(AirenContext context, IRepository<Tecnica, ReadTecnicaDto> repository) {
         _context = context;
-        _service = service;
+        _repository = repository;
     }
 
     [HttpPost]
@@ -30,20 +30,20 @@ public class TecnicaController : ControllerBase {
 
     [HttpGet]
     public IEnumerable<ReadTecnicaDto> VerTecnicas() {
-        var listaTecnicas = _service.GetAll();
+        var listaTecnicas = _repository.GetAll();
         return listaTecnicas;
     }
 
     [HttpGet("{id}")]
     public IActionResult BuscaTecnicaPorId(int id) {
-        var tecnica = _service.GetById(id);
+        var tecnica = _repository.GetById(id);
         if (tecnica == null) return NotFound();
         else return Ok(tecnica.MapToReadTecnica());
     }
 
     [HttpPut("{id}")]
     public IActionResult AtualizaTecnica(int id, [FromBody] UpdateTecnicaDto tecnicaDto) {
-        var tecnica = _service.GetById(id);
+        var tecnica = _repository.GetById(id);
         if (tecnica == null) return NotFound();
 
         tecnicaDto.MapToTecnica(tecnica);
@@ -54,7 +54,7 @@ public class TecnicaController : ControllerBase {
 
     [HttpDelete("{id}")]
     public IActionResult DeletaTecnica (int id) {
-        var tecnica = _service.GetById(id);
+        var tecnica = _repository.GetById(id);
         if (tecnica == null) return NotFound();
 
         _context.Tecnicas!.Remove(tecnica);

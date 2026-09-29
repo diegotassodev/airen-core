@@ -5,17 +5,17 @@ using Airen.Contracts.DTOs;
 using Airen.Api.Mappers;
 using Microsoft.EntityFrameworkCore;
 
-namespace Airen.Api.Services;
+namespace Airen.Api.Repositories;
 
-public class TecnicaService {
+public class TecnicaRepository : IRepository<Tecnica, ReadTecnicaDto> {
 
     private AirenContext _context;
 
-    public TecnicaService(AirenContext context) {
+    public TecnicaRepository(AirenContext context) {
         _context = context;
     }
 
-    public ICollection<ReadTecnicaDto> GetAll() {
+    public IEnumerable<ReadTecnicaDto> GetAll() {
         return _context.Tecnicas!
             .Include(t => t.Versao)
             .Select(t => t.MapToReadTecnica()).ToList();

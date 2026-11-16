@@ -23,14 +23,14 @@ public class HobbyController : ControllerBase
     {
         var hobby = hobbyDto.MapToHobby();
         _repository.Create(hobby);
-        return CreatedAtAction(nameof(BuscaHobbyPorId), new {Id = hobby.Id}, hobby);
+        return CreatedAtAction(nameof(BuscaHobbyPorId), new {Id = hobby.Id}, hobby.MapToReadHobby());
     }
 
     [HttpGet]
-    public IEnumerable<ReadHobbyDto> VerHobbies() 
+    public IActionResult VerHobbies() 
     {
         var listaHobbies = _repository.ReadAll();
-        return listaHobbies;
+        return Ok(listaHobbies);
     }
 
     [HttpGet("{id}")]
@@ -38,13 +38,13 @@ public class HobbyController : ControllerBase
     {
         var hobby = _repository.ReadById(id);
         if (hobby == null) return NotFound();
-        else return Ok(hobby.MapToReadHobby());
+        else return Ok(hobby);
     }
 
     [HttpPut("{id}")]
     public IActionResult AtualizaHobby(int id, [FromBody] UpdateHobbyDto hobbyDto) 
     {
-        var hobby = _repository.ReadById(id);
+        var hobby = _repository.ReadEntityById(id);
         if (hobby == null) return NotFound();
 
         _repository.Update(hobbyDto, hobby);
@@ -55,7 +55,7 @@ public class HobbyController : ControllerBase
     [HttpDelete("{id}")]
     public IActionResult DeletaHobby (int id) 
     {
-        var hobby = _repository.ReadById(id);
+        var hobby = _repository.ReadEntityById(id);
         if (hobby == null) return NotFound();
 
         _repository.Delete(hobby);

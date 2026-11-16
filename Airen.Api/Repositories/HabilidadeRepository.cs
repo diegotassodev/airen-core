@@ -14,10 +14,11 @@ public class HabilidadeRepository : IRepository<Habilidade, ReadHabilidadeDto, U
         _context = context;
     }
 
-    public void Create(Habilidade habilidade)
+    public ReadHabilidadeDto Create(Habilidade habilidade)
     {
         _context.Habilidades!.Add(habilidade);
         _context.SaveChanges();
+        return habilidade.MapToReadHabilidade();
     }
 
     public IEnumerable<ReadHabilidadeDto> ReadAll() 
@@ -27,17 +28,25 @@ public class HabilidadeRepository : IRepository<Habilidade, ReadHabilidadeDto, U
             .Select(h => h.MapToReadHabilidade()).ToList();
     }
 
-    public Habilidade? ReadById(int id) 
+    public ReadHabilidadeDto? ReadById(int id) 
+    {
+        var habilidade =_context.Habilidades!.FirstOrDefault(h => h.Id == id);
+        if (habilidade is not null) return habilidade.MapToReadHabilidade();
+        else return null;
+    }
+
+    public Habilidade? ReadEntityById(int id) 
     {
         var habilidade =_context.Habilidades!.FirstOrDefault(h => h.Id == id);
         if (habilidade is not null) return habilidade;
         else return null;
     }
 
-    public void Update(UpdateHabilidadeDto habilidadeDto, Habilidade habilidade)
+    public ReadHabilidadeDto? Update(UpdateHabilidadeDto habilidadeDto, Habilidade habilidade)
     {
-        habilidadeDto.MapToHabilidade(habilidade);
+        var novaHabilidade = habilidadeDto.MapToHabilidade(habilidade);
         _context.SaveChanges();
+        return novaHabilidade.MapToReadHabilidade();
     }
 
     public void Delete(Habilidade habilidade)

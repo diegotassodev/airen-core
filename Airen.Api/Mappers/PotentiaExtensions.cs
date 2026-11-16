@@ -16,12 +16,13 @@ public static class PotentiaExtensions
         };
     }
 
-    public static void MapToPotentia(this UpdatePotentiaDto dto, Potentia potentia) 
+    public static Potentia MapToPotentia(this UpdatePotentiaDto dto, Potentia potentia) 
     {
         potentia.Nome = dto.Nome;
         potentia.Descricao = dto.Descricao;
         potentia.LinkMusica = dto.LinkMusica;
         potentia.PersonagemId = dto.PersonagemId;
+        return potentia;
     }
 
     public static ReadPotentiaDto MapToReadPotentiaDto (this Potentia obj) 
@@ -33,7 +34,7 @@ public static class PotentiaExtensions
             Descricao = obj.Descricao,
             LinkMusica = obj.LinkMusica,
             NomePersonagem = obj.Personagem!.Nome,
-            ListaHabilidades = (ICollection<ReadHabilidadeDto>)obj.Habilidades!.Select(h => h.MapToReadHabilidade()).ToList()
+            ListaHabilidades = obj.Habilidades?.Select(h => h.MapToReadHabilidade()).ToList()
         };
     }
 }

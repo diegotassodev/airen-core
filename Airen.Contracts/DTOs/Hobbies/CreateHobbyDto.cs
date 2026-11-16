@@ -3,7 +3,7 @@ using Airen.Infrastructure.Models;
 
 namespace Airen.Contracts.DTOs;
 
-public class CreateHobbyDto {
+public record CreateHobbyDto {
 
     [Required (ErrorMessage = "O nome não foi definido")]
     public string? Nome {get;set;}

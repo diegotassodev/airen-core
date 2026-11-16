@@ -14,30 +14,39 @@ public class TecnicaRepository : IRepository<Tecnica, ReadTecnicaDto, UpdateTecn
         _context = context;
     }
 
-    public void Create(Tecnica tecnica)
+    public ReadTecnicaDto Create(Tecnica tecnica)
     {
         _context.Tecnicas!.Add(tecnica);
         _context.SaveChanges();
+        return tecnica.MapToReadTecnica();
     }
 
     public IEnumerable<ReadTecnicaDto> ReadAll() 
     {
         return _context.Tecnicas!
-            .Include(t => t.Versao)
+            .Include(t => t.Versao).ThenInclude(v => v!.Personagem)
             .Select(t => t.MapToReadTecnica()).ToList();
     }
 
-    public Tecnica? ReadById(int id) 
+    public ReadTecnicaDto? ReadById(int id) 
+    {
+        var tecnica =_context.Tecnicas!.FirstOrDefault(p => p.Id == id);
+        if (tecnica is not null) return tecnica.MapToReadTecnica();
+        else return null;
+    }
+
+    public Tecnica? ReadEntityById(int id) 
     {
         var tecnica =_context.Tecnicas!.FirstOrDefault(p => p.Id == id);
         if (tecnica is not null) return tecnica;
         else return null;
     }
 
-    public void Update(UpdateTecnicaDto tecnicaDto, Tecnica tecnica)
+    public ReadTecnicaDto? Update(UpdateTecnicaDto tecnicaDto, Tecnica tecnica)
     {
-        tecnicaDto.MapToTecnica(tecnica);
+        var novaTecnica = tecnicaDto.MapToTecnica(tecnica);
         _context.SaveChanges();
+        return novaTecnica.MapToReadTecnica();
     }
 
     public void Delete(Tecnica tecnica)

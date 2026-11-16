@@ -1,0 +1,62 @@
+@using Airen.Web.Pages.Tables.Volumes.Modals
+
+@inject IDialogService dialogService
+@inject VolumesAPI api
+
+@if (volumes is not null) {
+    <MudTable T="ReadVolumeDto"
+        Items="@volumes" 
+        Hover="true" 
+        Breakpoint="Breakpoint.Sm"
+        style="padding: 15px;"
+        OnRowClick="OpenModal">
+        
+        <ToolBarContent>
+            <MudText Typo="Typo.h6">Volumes</MudText>
+        </ToolBarContent>
+        <HeaderContent>
+            <MudTh>ID</MudTh>
+            <MudTh>Nome</MudTh>
+            <MudTh>Número</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Id">@context.Id</MudTd>
+            <MudTd DataLabel="Nome">@context.Nome</MudTd>
+            <MudTd DataLabel="Numero">@context.Numero</MudTd>
+        </RowTemplate>
+    </MudTable>
+}
+else {
+    <MudCard>
+        <MudCardContent>
+            <MudText> Erro </MudText>
+            <MudText Typo="Typo.body2"> Não conseguimos encontrar nenhum volume. </MudText>
+        </MudCardContent>
+    </MudCard>
+}
+
+@code {
+    public IEnumerable<ReadVolumeDto>? volumes {get;set;}
+
+    protected override async Task OnInitializedAsync() {
+        volumes = await api.GetVolumeAsync();
+    }
+
+    private async void OpenModal(TableRowClickEventArgs<ReadVolumeDto> args)
+    {
+        var volume = args.Item;
+
+        var parameters = new DialogParameters<ModalVolume>
+        {
+            {v => v.volume, volume}
+        };
+
+        var options = new DialogOptions
+        {
+            CloseOnEscapeKey = true,
+        };
+
+        await dialogService.ShowAsync<ModalVolume>(parameters, options);
+    }
+
+}

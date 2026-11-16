@@ -16,12 +16,13 @@ public static class TecnicaExtensions
         };
     }
 
-    public static void MapToTecnica(this UpdateTecnicaDto dto, Tecnica tecnica) 
+    public static Tecnica MapToTecnica(this UpdateTecnicaDto dto, Tecnica tecnica) 
     {
         tecnica.Nome = dto.Nome;
         tecnica.Descricao = dto.Descricao;
         tecnica.Categoria = dto.Categoria;
         tecnica.IdVersao = dto.IdVersao;
+        return tecnica;
     }
 
     public static ReadTecnicaDto MapToReadTecnica (this Tecnica obj) 

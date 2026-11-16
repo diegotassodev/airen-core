@@ -23,14 +23,14 @@ public class PersonagemController : ControllerBase
     {
         var personagem = personagemDto.MapToPersonagem();
         _repository.Create(personagem);
-        return CreatedAtAction(nameof(BuscaPersonagemPorId), new {Id = personagem.Id}, personagem);
+        return CreatedAtAction(nameof(BuscaPersonagemPorId), new {Id = personagem.Id}, personagem.MapToReadPersonagem());
     }
 
     [HttpGet]
-    public IEnumerable<ReadPersonagemDto> VerPersonagens() 
+    public IActionResult VerPersonagens() 
     {
         var listaPersonagens = _repository.ReadAll();
-        return listaPersonagens;
+        return Ok(listaPersonagens);
     }
 
     [HttpGet("{id}")]
@@ -38,13 +38,13 @@ public class PersonagemController : ControllerBase
     {
         var personagem = _repository.ReadById(id);
         if (personagem == null) return NotFound();
-        else return Ok(personagem.MapToReadPersonagem());
+        else return Ok(personagem);
     }
 
     [HttpPut("{id}")]
     public IActionResult AtualizaPersonagem(int id, [FromBody] UpdatePersonagemDto personagemDto) 
     {
-        var personagem = _repository.ReadById(id);
+        var personagem = _repository.ReadEntityById(id);
         if (personagem == null) return NotFound();
 
         _repository.Update(personagemDto, personagem);
@@ -55,7 +55,7 @@ public class PersonagemController : ControllerBase
     [HttpDelete("{id}")]
     public IActionResult DeletaPersonagem (int id) 
     {
-        var personagem = _repository.ReadById(id);
+        var personagem = _repository.ReadEntityById(id);
         if (personagem == null) return NotFound();
 
         _repository.Delete(personagem);

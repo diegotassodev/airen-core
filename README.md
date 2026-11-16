@@ -45,7 +45,7 @@ Airen.Contracts    -> .Infrastructure
 | `Airen.Infrastructure` | Persistência | EF Core `9.0.11`; proxies; Pomelo MySQL `9.0.0` |
 | `Airen.Contracts` | DTOs compartilhados | Referência atual para `Airen.Infrastructure` |
 | `Airen.Admin` | Cliente de console | Referências para `Contracts` e `Infrastructure` |
-| `Airen.Web` | Cliente Blazor WASM | Blazor WebAssembly `10.0.10`; `Microsoft.Extensions.Http` `10.0.11` |
+| `Airen.Web` | Cliente Blazor WASM | Blazor WebAssembly `10.0.10`; Mud Blazor `9.9.0`; `Microsoft.Extensions.Http` `10.0.11` |
 
 
 ## Projetos

@@ -23,14 +23,14 @@ public class ParentescoController : ControllerBase
     {
         var parentesco = parentescoDto.MapToParentesco();
         _repository.Create(parentesco);
-        return CreatedAtAction(nameof(BuscaParentescoPorId), new {Id = parentesco.Id}, parentesco);
+        return CreatedAtAction(nameof(BuscaParentescoPorId), new {Id = parentesco.Id}, parentesco.MapToReadParentesco());
     }
 
     [HttpGet]
-    public IEnumerable<ReadParentescoDto> VerParentescos() 
+    public IActionResult VerParentescos() 
     {
         var listaParentescos = _repository.ReadAll();
-        return listaParentescos;
+        return Ok(listaParentescos);
     }
 
     [HttpGet("{id}")]
@@ -38,13 +38,13 @@ public class ParentescoController : ControllerBase
     {
         var parentesco = _repository.ReadById(id);
         if (parentesco == null) return NotFound();
-        else return Ok(parentesco.MapToReadParentesco());
+        else return Ok(parentesco);
     }
 
     [HttpPut("{id}")]
     public IActionResult AtualizaParentesco(int id, [FromBody] UpdateParentescoDto parentescoDto) 
     {
-        var parentesco = _repository.ReadById(id);
+        var parentesco = _repository.ReadEntityById(id);
         if (parentesco == null) return NotFound();
 
         _repository.Update(parentescoDto, parentesco);
@@ -55,7 +55,7 @@ public class ParentescoController : ControllerBase
     [HttpDelete("{id}")]
     public IActionResult DeletaParentesco (int id) 
     {
-        var parentesco = _repository.ReadById(id);
+        var parentesco = _repository.ReadEntityById(id);
         if (parentesco == null) return NotFound();
 
         _repository.Delete(parentesco);

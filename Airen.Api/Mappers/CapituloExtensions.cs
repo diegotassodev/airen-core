@@ -17,13 +17,26 @@ public static class CapituloExtensions
         };
     }
 
-    public static void MapToCapitulo(this UpdateCapituloDto dto, Capitulo capitulo) 
+    public static Capitulo MapToCapitulo(this UpdateCapituloDto dto) 
+    {
+        return new Capitulo 
+        {
+            Numero = dto.Numero,
+            Titulo = dto.Titulo,
+            Resumo = dto.Resumo,
+            NumeroPaginas = dto.NumeroPaginas,
+            IdVolume = dto.IdVolume
+        };
+    }
+
+    public static Capitulo MapToCapitulo(this UpdateCapituloDto dto, Capitulo capitulo) 
     {
         capitulo.Numero = dto.Numero;
         capitulo.Titulo = dto.Titulo;
         capitulo.Resumo = dto.Resumo;
         capitulo.NumeroPaginas = dto.NumeroPaginas;
         capitulo.IdVolume = dto.IdVolume;
+        return capitulo;
     }
 
     public static ReadCapituloDto MapToReadCapitulo(this Capitulo obj) 

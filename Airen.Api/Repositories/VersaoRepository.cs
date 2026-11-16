@@ -14,10 +14,11 @@ public class VersaoRepository : IRepository<Versao, ReadVersaoDto, UpdateVersaoD
         _context = context;
     }
 
-    public void Create(Versao versao)
+    public ReadVersaoDto Create(Versao versao)
     {
         _context.Versoes!.Add(versao);
         _context.SaveChanges();
+        return versao.MapToReadVersao();
     }
 
     public IEnumerable<ReadVersaoDto> ReadAll() 
@@ -30,17 +31,25 @@ public class VersaoRepository : IRepository<Versao, ReadVersaoDto, UpdateVersaoD
             .Select(v => v.MapToReadVersao()).ToList();
     }
 
-    public Versao? ReadById(int id) 
+    public ReadVersaoDto? ReadById(int id) 
+    {
+        var versao =_context.Versoes!.FirstOrDefault(p => p.Id == id);
+        if (versao is not null) return versao.MapToReadVersao();
+        else return null;
+    }
+
+    public Versao? ReadEntityById(int id) 
     {
         var versao =_context.Versoes!.FirstOrDefault(p => p.Id == id);
         if (versao is not null) return versao;
         else return null;
     }
 
-    public void Update(UpdateVersaoDto versaoDto, Versao versao)
+    public ReadVersaoDto? Update(UpdateVersaoDto versaoDto, Versao versao)
     {
-        versaoDto.MapToVersao(versao);
+        var novaVersao = versaoDto.MapToVersao(versao);
         _context.SaveChanges();
+        return novaVersao.MapToReadVersao();
     }
 
     public void Delete(Versao versao)

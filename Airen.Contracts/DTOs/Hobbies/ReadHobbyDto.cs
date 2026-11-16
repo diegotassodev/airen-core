@@ -1,6 +1,6 @@
 namespace Airen.Contracts.DTOs;
 
-public class ReadHobbyDto {
+public record ReadHobbyDto {
 
     public int Id {get;set;}
     public string? Nome {get;set;}

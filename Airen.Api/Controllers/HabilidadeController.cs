@@ -23,14 +23,14 @@ public class HabilidadeController : ControllerBase
     {
         var habilidade = habilidadeDto.MapToHabilidade();
         _repository.Create(habilidade);
-        return CreatedAtAction(nameof(BuscaHabilidadePorId), new {Id = habilidade.Id}, habilidade);
+        return CreatedAtAction(nameof(BuscaHabilidadePorId), new {Id = habilidade.Id}, habilidade.MapToReadHabilidade());
     }
 
     [HttpGet]
-    public IEnumerable<ReadHabilidadeDto> VerHabilidades() 
+    public IActionResult VerHabilidades() 
     {
         var listaHabilidades = _repository.ReadAll();
-        return listaHabilidades;
+        return Ok(listaHabilidades);
     }
 
     [HttpGet("{id}")]
@@ -38,13 +38,13 @@ public class HabilidadeController : ControllerBase
     {
         var habilidade = _repository.ReadById(id);
         if (habilidade == null) return NotFound();
-        else return Ok(habilidade.MapToReadHabilidade());
+        else return Ok(habilidade);
     }
 
     [HttpPut("{id}")]
     public IActionResult AtualizaHabilidade(int id, [FromBody] UpdateHabilidadeDto habilidadeDto) 
     {
-        var habilidade = _repository.ReadById(id);
+        var habilidade = _repository.ReadEntityById(id);
         if (habilidade == null) return NotFound();
 
         _repository.Update(habilidadeDto, habilidade);
@@ -55,7 +55,7 @@ public class HabilidadeController : ControllerBase
     [HttpDelete("{id}")]
     public IActionResult DeletaHabilidade (int id) 
     {
-        var habilidade = _repository.ReadById(id);
+        var habilidade = _repository.ReadEntityById(id);
         if (habilidade == null) return NotFound();
 
         _repository.Delete(habilidade);

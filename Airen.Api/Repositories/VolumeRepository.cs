@@ -14,10 +14,11 @@ public class VolumeRepository : IRepository<Volume, ReadVolumeDto, UpdateVolumeD
         _context = context;
     }
 
-    public void Create(Volume volume)
+    public ReadVolumeDto Create(Volume volume)
     {
         _context.Volumes!.Add(volume);
         _context.SaveChanges();
+        return volume.MapToReadVolume();
     }
 
     public IEnumerable<ReadVolumeDto> ReadAll() 
@@ -27,17 +28,25 @@ public class VolumeRepository : IRepository<Volume, ReadVolumeDto, UpdateVolumeD
             .Select(v => v.MapToReadVolume()).ToList();
     }
 
-    public Volume? ReadById(int id) 
+    public ReadVolumeDto? ReadById(int id) 
+    {
+        var volume =_context.Volumes!.FirstOrDefault(p => p.Id == id);
+        if (volume is not null) return volume.MapToReadVolume();
+        else return null;
+    }
+
+    public Volume? ReadEntityById(int id) 
     {
         var volume =_context.Volumes!.FirstOrDefault(p => p.Id == id);
         if (volume is not null) return volume;
         else return null;
     }
 
-    public void Update(UpdateVolumeDto volumeDto, Volume volume)
+    public ReadVolumeDto? Update(UpdateVolumeDto volumeDto, Volume volume)
     {
         volumeDto.MapToVolume(volume);
         _context.SaveChanges();
+        return volume.MapToReadVolume();
     }
 
     public void Delete(Volume volume)

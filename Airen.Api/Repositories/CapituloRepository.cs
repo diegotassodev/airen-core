@@ -14,10 +14,11 @@ public class CapituloRepository : IRepository<Capitulo, ReadCapituloDto, UpdateC
         _context = context;
     }
 
-    public void Create(Capitulo capitulo)
+    public ReadCapituloDto? Create(Capitulo capitulo)
     {
         _context.Capitulos!.Add(capitulo);
         _context.SaveChanges();
+        return capitulo.MapToReadCapitulo();
     }
 
     public IEnumerable<ReadCapituloDto> ReadAll() {
@@ -26,17 +27,27 @@ public class CapituloRepository : IRepository<Capitulo, ReadCapituloDto, UpdateC
             .Select(c => c.MapToReadCapitulo()).ToList();
     }
 
-    public Capitulo? ReadById(int id) 
+    public ReadCapituloDto? ReadById(int id) 
     {
         var capitulo =_context.Capitulos!.FirstOrDefault(c => c.Id == id);
+        if (capitulo is not null) return capitulo.MapToReadCapitulo();
+        else return null;
+    }
+
+    public Capitulo? ReadEntityById(int id) 
+    {
+        var capitulo = _context.Capitulos!
+            .Include(c => c.Volume)
+            .FirstOrDefault(c => c.Id == id);
         if (capitulo is not null) return capitulo;
         else return null;
     }
 
-    public void Update(UpdateCapituloDto capituloDto, Capitulo capitulo)
+    public ReadCapituloDto? Update(UpdateCapituloDto capituloDto, Capitulo capitulo)
     {
-        capituloDto.MapToCapitulo(capitulo);
+        var novoCapitulo = capituloDto.MapToCapitulo(capitulo);
         _context.SaveChanges();
+        return novoCapitulo.MapToReadCapitulo();
     }
 
     public void Delete(Capitulo capitulo)

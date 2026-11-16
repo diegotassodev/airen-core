@@ -2,17 +2,7 @@
 
 @if (personagens is not null) {
     foreach (var personagem in personagens) {
-        <MudContainer style="padding: 10px">
-            <MudCard>
-                <MudCardContent>
-                    <MudText> <b>Nome do Personagem:</b> @personagem.Nome</MudText>
-                    <MudText Typo="Typo.body2"> <b>Biografia:</b> @personagem.Biografia </MudText>
-                </MudCardContent>
-                <MudCardActions>
-                    <MudButton Variant="Variant.Text" Color="Color.Primary"> Saiba Mais </MudButton>
-                </MudCardActions>
-            </MudCard>
-        </MudContainer>
+
     }
 }
 else {

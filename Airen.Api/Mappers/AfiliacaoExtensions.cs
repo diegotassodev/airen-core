@@ -13,10 +13,19 @@ public static class AfiliacaoExtensions
         };
     }
 
-    public static void MapToAfiliacao(this UpdateAfiliacaoDto dto, Afiliacao afiliacao) 
+    public static Afiliacao MapToAfiliacao(this UpdateAfiliacaoDto dto) 
+    {
+        return new Afiliacao {
+            Nome = dto.Nome,
+            Descricao = dto.Descricao
+        };
+    }
+
+    public static Afiliacao MapToAfiliacao(this UpdateAfiliacaoDto dto, Afiliacao afiliacao) 
     {
         afiliacao.Nome = dto.Nome;
         afiliacao.Descricao = dto.Descricao;
+        return afiliacao;
     }
 
     public static ReadAfiliacaoDto MapToReadAfiliacao (this Afiliacao obj) 

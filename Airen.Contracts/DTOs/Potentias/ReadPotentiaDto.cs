@@ -3,7 +3,7 @@ using Airen.Infrastructure.Models;
 
 namespace Airen.Contracts.DTOs;
 
-public class ReadPotentiaDto {
+public record ReadPotentiaDto {
 
     public int Id {get;set;}
     public string? Nome {get;set;}

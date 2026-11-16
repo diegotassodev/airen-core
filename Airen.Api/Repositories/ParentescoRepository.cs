@@ -14,10 +14,11 @@ public class ParentescoRepository : IRepository<Parentesco, ReadParentescoDto, U
         _context = context;
     }
 
-    public void Create(Parentesco parentesco)
+    public ReadParentescoDto Create(Parentesco parentesco)
     {
         _context.Parentescos!.Add(parentesco);
         _context.SaveChanges();
+        return parentesco.MapToReadParentesco();
     }
 
     public IEnumerable<ReadParentescoDto> ReadAll() 
@@ -28,17 +29,25 @@ public class ParentescoRepository : IRepository<Parentesco, ReadParentescoDto, U
             .Select(p => p.MapToReadParentesco()).ToList();
     }
 
-    public Parentesco? ReadById(int id) 
+    public ReadParentescoDto? ReadById(int id) 
+    {
+        var parentesco =_context.Parentescos!.FirstOrDefault(p => p.Id == id);
+        if (parentesco is not null) return parentesco.MapToReadParentesco();
+        else return null;
+    }
+
+    public Parentesco? ReadEntityById(int id) 
     {
         var parentesco =_context.Parentescos!.FirstOrDefault(p => p.Id == id);
         if (parentesco is not null) return parentesco;
         else return null;
     }
 
-    public void Update(UpdateParentescoDto parentescoDto, Parentesco parentesco)
+    public ReadParentescoDto? Update(UpdateParentescoDto parentescoDto, Parentesco parentesco)
     {
-        parentescoDto.MapToParentesco(parentesco);
+        var novoParentesco = parentescoDto.MapToParentesco(parentesco);
         _context.SaveChanges();
+        return novoParentesco.MapToReadParentesco();
     }
 
     public void Delete(Parentesco parentesco)

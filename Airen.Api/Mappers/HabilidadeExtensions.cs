@@ -15,11 +15,22 @@ public static class HabilidadeExtensions
         };
     }
 
-    public static void MapToHabilidade(this UpdateHabilidadeDto dto, Habilidade habilidade) 
+    public static Habilidade MapToHabilidade(this UpdateHabilidadeDto dto) 
+    {
+        return new Habilidade 
+        {
+            Nome = dto.Nome,
+            Descricao = dto.Descricao,
+            IdPotentia = dto.IdPotentia
+        };
+    }
+
+    public static Habilidade MapToHabilidade(this UpdateHabilidadeDto dto, Habilidade habilidade) 
     {
         habilidade.Nome = dto.Nome;
         habilidade.Descricao = dto.Descricao;
         habilidade.IdPotentia = dto.IdPotentia;
+        return habilidade;
     }
 
     public static ReadHabilidadeDto MapToReadHabilidade(this Habilidade obj) 
@@ -27,7 +38,7 @@ public static class HabilidadeExtensions
         return new ReadHabilidadeDto 
         {
             Id = obj.Id,
-            Nome = obj.Descricao,
+            Nome = obj.Nome,
             Descricao = obj.Descricao,
             NomePotentia = obj.Potentia!.Nome
         };

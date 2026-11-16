@@ -23,14 +23,14 @@ public class VersaoController : ControllerBase
     {
         var versao = versaoDto.MapToVersao();
         _repository.Create(versao);
-        return CreatedAtAction(nameof(BuscaVersaoPorId), new {Id = versao.Id}, versao);
+        return CreatedAtAction(nameof(BuscaVersaoPorId), new {Id = versao.Id}, versao.MapToReadVersao());
     }
 
     [HttpGet]
-    public IEnumerable<ReadVersaoDto> VerVersoes() 
+    public IActionResult VerVersoes() 
     {
         var listaVersoes = _repository.ReadAll();
-        return listaVersoes;
+        return Ok(listaVersoes);
     }
 
     [HttpGet("{id}")]
@@ -38,13 +38,13 @@ public class VersaoController : ControllerBase
     {
         var versao = _repository.ReadById(id);
         if (versao == null) return NotFound();
-        else return Ok(versao.MapToReadVersao());
+        else return Ok(versao);
     }
 
     [HttpPut("{id}")]
     public IActionResult AtualizaVersao(int id, [FromBody] UpdateVersaoDto versaoDto) 
     {
-        var versao = _repository.ReadById(id);
+        var versao = _repository.ReadEntityById(id);
         if (versao == null) return NotFound();
 
         _repository.Update(versaoDto, versao);
@@ -55,7 +55,7 @@ public class VersaoController : ControllerBase
     [HttpDelete("{id}")]
     public IActionResult DeletaVersao (int id) 
     {
-        var versao = _repository.ReadById(id);
+        var versao = _repository.ReadEntityById(id);
         if (versao == null) return NotFound();
 
         _repository.Delete(versao);

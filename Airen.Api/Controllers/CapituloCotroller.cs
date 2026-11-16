@@ -22,15 +22,17 @@ public class CapituloController : ControllerBase
     public IActionResult AdicionaCapitulo([FromBody] CreateCapituloDto capituloDto) 
     {
         var capitulo = capituloDto.MapToCapitulo();
+
         _repository.Create(capitulo);
-        return CreatedAtAction(nameof(BuscaCapituloPorId), new {Id = capitulo.Id}, capitulo);
+        
+        return CreatedAtAction(nameof(BuscaCapituloPorId), new {Id = capitulo.Id}, capitulo.MapToReadCapitulo());
     }
 
     [HttpGet]
-    public IEnumerable<ReadCapituloDto> VerCapitulos() 
+    public IActionResult VerCapitulos() 
     {
         var listaCapitulos = _repository.ReadAll();
-        return listaCapitulos;
+        return Ok(listaCapitulos);
     }
 
     [HttpGet("{id}")]
@@ -38,24 +40,24 @@ public class CapituloController : ControllerBase
     {
         var capitulo = _repository.ReadById(id);
         if (capitulo == null) return NotFound();
-        else return Ok(capitulo.MapToReadCapitulo());
+        else return Ok(capitulo);
     }
 
     [HttpPut("{id}")]
     public IActionResult AtualizaCapitulo(int id, [FromBody] UpdateCapituloDto capituloDto) 
     {
-        var capitulo = _repository.ReadById(id);
+        var capitulo = _repository.ReadEntityById(id);
         if (capitulo == null) return NotFound();
 
-        _repository.Update(capituloDto, capitulo);
+        var capituloAtualizado = _repository.Update(capituloDto, capitulo);
 
-        return Ok(capituloDto);
+        return Ok(capituloAtualizado);
     } 
 
     [HttpDelete("{id}")]
     public IActionResult DeletaCapitulo (int id) 
     {
-        var capitulo = _repository.ReadById(id);
+        var capitulo = _repository.ReadEntityById(id);
         if (capitulo == null) return NotFound();
 
         _repository.Delete(capitulo);

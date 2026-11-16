@@ -14,10 +14,11 @@ public class PersonagemRepository : IRepository<Personagem, ReadPersonagemDto, U
         _context = context;
     }
 
-    public void Create(Personagem personagem)
+    public ReadPersonagemDto Create(Personagem personagem)
     {
         _context.Personagens!.Add(personagem);
         _context.SaveChanges();
+        return personagem.MapToReadPersonagem();
     }
 
     public IEnumerable<ReadPersonagemDto> ReadAll() 
@@ -33,17 +34,25 @@ public class PersonagemRepository : IRepository<Personagem, ReadPersonagemDto, U
             .Select(p => p.MapToReadPersonagem()).ToList();
     }
 
-    public Personagem? ReadById(int id) 
+    public ReadPersonagemDto? ReadById(int id) 
+    {
+        var personagem =_context.Personagens!.FirstOrDefault(p => p.Id == id);
+        if (personagem is not null) return personagem.MapToReadPersonagem();
+        else return null;
+    }
+
+    public Personagem? ReadEntityById(int id) 
     {
         var personagem =_context.Personagens!.FirstOrDefault(p => p.Id == id);
         if (personagem is not null) return personagem;
         else return null;
     }
 
-    public void Update(UpdatePersonagemDto personagemDto, Personagem personagem)
+    public ReadPersonagemDto? Update(UpdatePersonagemDto personagemDto, Personagem personagem)
     {
-        personagemDto.MapToPersonagem(personagem);
+        var novoPersonagem = personagemDto.MapToPersonagem(personagem);
         _context.SaveChanges();
+        return novoPersonagem.MapToReadPersonagem();
     }
 
     public void Delete(Personagem personagem)

@@ -15,11 +15,12 @@ public static class HobbyExtensions
         };
     }
 
-    public static void MapToHobby(this UpdateHobbyDto dto, Hobby hobby) 
+    public static Hobby MapToHobby(this UpdateHobbyDto dto, Hobby hobby) 
     {
         hobby.Nome = dto.Nome;
         hobby.Descricao = dto.Descricao;
         hobby.IdVersao = dto.IdVersao;
+        return hobby;
     }
 
     public static ReadHobbyDto MapToReadHobby (this Hobby obj) 

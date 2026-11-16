@@ -3,7 +3,7 @@ using Airen.Infrastructure.Models;
 
 namespace Airen.Contracts.DTOs;
 
-public class CreateParentescoDto {
+public record CreateParentescoDto {
 
     [Required (ErrorMessage = "O id do personagem não foi definido")]
     public int IdPersonagem {get;set;}

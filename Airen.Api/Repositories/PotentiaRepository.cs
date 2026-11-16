@@ -14,10 +14,11 @@ public class PotentiaRepository : IRepository<Potentia, ReadPotentiaDto, UpdateP
         _context = context;
     }
 
-    public void Create(Potentia potentia)
+    public ReadPotentiaDto Create(Potentia potentia)
     {
         _context.Potentias!.Add(potentia);
         _context.SaveChanges();
+        return potentia.MapToReadPotentiaDto();
     }
 
     public IEnumerable<ReadPotentiaDto> ReadAll() 
@@ -28,17 +29,25 @@ public class PotentiaRepository : IRepository<Potentia, ReadPotentiaDto, UpdateP
             .Select(p => p.MapToReadPotentiaDto()).ToList();
     }
 
-    public Potentia? ReadById(int id) 
+    public ReadPotentiaDto? ReadById(int id) 
+    {
+        var potentia =_context.Potentias!.FirstOrDefault(p => p.Id == id);
+        if (potentia is not null) return potentia.MapToReadPotentiaDto();
+        else return null;
+    }
+
+    public Potentia? ReadEntityById(int id) 
     {
         var potentia =_context.Potentias!.FirstOrDefault(p => p.Id == id);
         if (potentia is not null) return potentia;
         else return null;
     }
 
-    public void Update(UpdatePotentiaDto potentiaDto, Potentia potentia)
+    public ReadPotentiaDto? Update(UpdatePotentiaDto potentiaDto, Potentia potentia)
     {
-        potentiaDto.MapToPotentia(potentia);
+        var novaPotentia = potentiaDto.MapToPotentia(potentia);
         _context.SaveChanges();
+        return novaPotentia.MapToReadPotentiaDto();
     }
 
     public void Delete(Potentia potentia)

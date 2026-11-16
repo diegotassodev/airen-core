@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Airen.Web;
 using Airen.Web.Services;
-using MudBlazor;
 using MudBlazor.Services;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
@@ -13,7 +12,6 @@ var apiServer = builder.Configuration["API-Server"];
 
 builder.Services.AddTransient<PersonagensAPI>();
 builder.Services.AddTransient<VolumesAPI>();
-
 
 builder.Services.AddHttpClient("API", client => {
     client.BaseAddress = new Uri(apiServer!);

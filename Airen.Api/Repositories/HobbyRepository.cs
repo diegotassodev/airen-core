@@ -14,10 +14,11 @@ public class HobbyRepository : IRepository<Hobby, ReadHobbyDto, UpdateHobbyDto>
         _context = context;
     }
 
-    public void Create(Hobby hobby)
+    public ReadHobbyDto Create(Hobby hobby)
     {
         _context.Hobbies!.Add(hobby);
         _context.SaveChanges();
+        return hobby.MapToReadHobby();
     }
 
     public IEnumerable<ReadHobbyDto> ReadAll() 
@@ -27,17 +28,25 @@ public class HobbyRepository : IRepository<Hobby, ReadHobbyDto, UpdateHobbyDto>
             .Select(h => h.MapToReadHobby()).ToList();
     }
 
-    public Hobby? ReadById(int id) 
+    public ReadHobbyDto? ReadById(int id) 
+    {
+        var hobby =_context.Hobbies!.FirstOrDefault(h => h.Id == id);
+        if (hobby is not null) return hobby.MapToReadHobby();
+        else return null;
+    }
+
+    public Hobby? ReadEntityById(int id) 
     {
         var hobby =_context.Hobbies!.FirstOrDefault(h => h.Id == id);
         if (hobby is not null) return hobby;
         else return null;
     }
 
-    public void Update(UpdateHobbyDto hobbyDto, Hobby hobby)
+    public ReadHobbyDto? Update(UpdateHobbyDto hobbyDto, Hobby hobby)
     {
-        hobbyDto.MapToHobby(hobby);
+        var novoHobby = hobbyDto.MapToHobby(hobby);
         _context.SaveChanges();
+        return novoHobby.MapToReadHobby();
     }
 
     public void Delete(Hobby hobby)

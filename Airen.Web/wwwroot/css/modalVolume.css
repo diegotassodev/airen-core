@@ -1,0 +1,211 @@
+.volume-dialog {
+    border-radius: 4px;
+    overflow: visible;
+}
+
+.volume-header {
+    padding: 42px 48px 34px;
+    background: #171717;
+    color: #f5f1e8;
+    border-radius: 5px;
+}
+
+.volume-header-content {
+    max-width: 850px;
+    margin: 0 auto;
+}
+
+.volume-label {
+    display: block;
+    margin-bottom: 10px;
+    color: #a9a9a9;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+}
+
+.volume-title {
+    font-family: Georgia, 'Times New Roman', Times, serif;    
+    font-size: 2rem;
+    font-weight: 500;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+}
+
+.volume-divider {
+    width: 15px;
+    height: 1px;
+    margin: 14px 0 10px;
+}
+
+.volume-message {
+    max-width: 700px;
+    color: #bdbdbd;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-size: 0.95rem;
+    font-style: italic;
+    line-height: 1.7;
+}
+
+.document {
+    max-width: 850px;
+    margin: 0 auto;
+    padding: 42px 48px 55px;
+}
+
+.cover-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 42px;
+}
+
+.volume-cover {
+    width: min(100%, 320px);
+    max-height: 450px;
+    object-fit: cover;
+    border-radius: 2px;
+    box-shadow:
+        0 12px 30px rgba(0, 0, 0, 0.18),
+        0 2px 6px rgba(0, 0, 0, 0.12);
+}
+
+.metadata {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    border-top: 1px solid #d8d4ca;
+    border-bottom: 1px solid #d8d4ca;
+    margin-bottom: 48px;
+}
+
+.metadata-item {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 18px 20px;
+}
+
+.metadata-item + .metadata-item {
+    border-left: 1px solid #d8d4ca;
+}
+
+.metadata-label {
+    color: #85827a;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+}
+
+.metadata-value {
+    color: #252525;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-size: 0.95rem;
+}
+
+.section-heading {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin-bottom: 28px;
+}
+
+.section-number {
+    color: #171717;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+}
+
+.section-title {
+    color: #202020;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-size: 1.45rem;
+    font-weight: 500;
+}
+
+.section-subtitle {
+    margin-top: 2px;
+    color: #85827a;
+    font-size: 0.78rem;
+}
+
+.chapter-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border-top: 1px solid #d8d4ca;
+}
+
+.chapter {
+    display: grid;
+    grid-template-columns: 58px 1fr;
+    padding: 27px 0;
+    border-bottom: 1px solid #d8d4ca;
+}
+
+.chapter-number {
+    color: #171717;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-size: 1.1rem;
+    font-weight: 500;
+    padding-top: 2px;
+}
+
+.chapter-content {
+    min-width: 0;
+}
+
+.chapter-title {
+    color: #242424;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-size: 1.15rem;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+.chapter-summary {
+    margin-top: 9px;
+    color: #68655f;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-size: 0.91rem;
+    line-height: 1.7;
+}
+
+.chapter-footer {
+    margin-top: 13px;
+    color: #96928a;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+@media (max-width: 650px) {
+
+    .volume-header {
+        padding: 30px 24px;
+    }
+
+    .volume-title {
+        font-size: 1.55rem;
+    }
+
+    .document {
+        padding: 30px 24px 40px;
+    }
+
+    .metadata {
+        grid-template-columns: 1fr;
+    }
+
+    .metadata-item + .metadata-item {
+        border-left: none;
+        border-top: 1px solid #d8d4ca;
+    }
+
+    .chapter {
+        grid-template-columns: 42px 1fr;
+    }
+}

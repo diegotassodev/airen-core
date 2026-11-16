@@ -3,7 +3,7 @@ using Airen.Infrastructure.Models;
 
 namespace Airen.Contracts.DTOs;
 
-public class ReadParentescoDto {
+public record ReadParentescoDto {
 
     public int Id {get;set;}
     public virtual string? NomePersonagem {get;set;}

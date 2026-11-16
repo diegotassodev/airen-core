@@ -4,7 +4,7 @@ using Airen.Infrastructure.Models;
 
 namespace Airen.Contracts.DTOs;
 
-public class CreateCapituloDto {
+public record CreateCapituloDto {
 
     [Required (ErrorMessage = "O número do capítulo não foi definido")]
     public int Numero {get;set;}

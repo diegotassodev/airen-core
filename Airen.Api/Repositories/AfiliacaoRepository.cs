@@ -15,10 +15,11 @@ public class AfiliacaoRepository : IRepository<Afiliacao, ReadAfiliacaoDto, Upda
         _context = context;
     }
 
-    public void Create(Afiliacao afiliacao)
+    public ReadAfiliacaoDto Create(Afiliacao afiliacao)
     {
         _context.Afiliacaos!.Add(afiliacao);
         _context.SaveChanges();
+        return afiliacao.MapToReadAfiliacao();
     }
 
     public IEnumerable<ReadAfiliacaoDto> ReadAll() 
@@ -26,17 +27,25 @@ public class AfiliacaoRepository : IRepository<Afiliacao, ReadAfiliacaoDto, Upda
         return _context.Afiliacaos!.Select(a => a.MapToReadAfiliacao()).ToList();
     }
 
-    public Afiliacao? ReadById(int id) 
+    public ReadAfiliacaoDto? ReadById(int id) 
+    {
+        var afiliacao =_context.Afiliacaos!.FirstOrDefault(a => a.Id == id);
+        if (afiliacao is not null) return afiliacao.MapToReadAfiliacao();
+        else return null;
+    }
+
+    public Afiliacao? ReadEntityById(int id) 
     {
         var afiliacao =_context.Afiliacaos!.FirstOrDefault(a => a.Id == id);
         if (afiliacao is not null) return afiliacao;
         else return null;
     }
 
-    public void Update(UpdateAfiliacaoDto afiliacaoDto, Afiliacao afiliacao)
+    public ReadAfiliacaoDto? Update(UpdateAfiliacaoDto afiliacaoDto, Afiliacao afiliacao)
     {
-        afiliacaoDto.MapToAfiliacao(afiliacao);
+        var novaAfiliacao = afiliacaoDto.MapToAfiliacao(afiliacao);
         _context.SaveChanges();
+        return novaAfiliacao.MapToReadAfiliacao();
     }
 
     public void Delete(Afiliacao afiliacao)

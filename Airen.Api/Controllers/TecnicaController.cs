@@ -23,14 +23,14 @@ public class TecnicaController : ControllerBase
     {
         var tecnica = tecnicaDto.MapToTecnica();
         _repository.Create(tecnica);
-        return CreatedAtAction(nameof(BuscaTecnicaPorId), new {Id = tecnica.Id}, tecnica);
+        return CreatedAtAction(nameof(BuscaTecnicaPorId), new {Id = tecnica.Id}, tecnica.MapToReadTecnica());
     }
 
     [HttpGet]
-    public IEnumerable<ReadTecnicaDto> VerTecnicas() 
+    public IActionResult VerTecnicas() 
     {
         var listaTecnicas = _repository.ReadAll();
-        return listaTecnicas;
+        return Ok(listaTecnicas);
     }
 
     [HttpGet("{id}")]
@@ -38,13 +38,13 @@ public class TecnicaController : ControllerBase
     {
         var tecnica = _repository.ReadById(id);
         if (tecnica == null) return NotFound();
-        else return Ok(tecnica.MapToReadTecnica());
+        else return Ok(tecnica);
     }
 
     [HttpPut("{id}")]
     public IActionResult AtualizaTecnica(int id, [FromBody] UpdateTecnicaDto tecnicaDto) 
     {
-        var tecnica = _repository.ReadById(id);
+        var tecnica = _repository.ReadEntityById(id);
         if (tecnica == null) return NotFound();
 
         _repository.Update(tecnicaDto, tecnica);
@@ -55,7 +55,7 @@ public class TecnicaController : ControllerBase
     [HttpDelete("{id}")]
     public IActionResult DeletaTecnica (int id) 
     {
-        var tecnica = _repository.ReadById(id);
+        var tecnica = _repository.ReadEntityById(id);
         if (tecnica == null) return NotFound();
 
         _repository.Delete(tecnica);

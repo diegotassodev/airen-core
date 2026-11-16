@@ -2,7 +2,7 @@ using Airen.Infrastructure.Models;
 
 namespace Airen.Contracts.DTOs;
 
-public class ReadVolumeDto {
+public record ReadVolumeDto {
 
     public int Id {get;set;}
     public int Numero {get;set;}

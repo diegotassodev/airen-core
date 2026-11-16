@@ -17,13 +17,14 @@ public static class VolumeExtensions
         };
     }
 
-    public static void MapToVolume(this UpdateVolumeDto dto, Volume volume) 
+    public static Volume MapToVolume(this UpdateVolumeDto dto, Volume volume) 
     {
         volume.Numero = dto.Numero;
         volume.Nome = dto.Nome;
         volume.DataLancamento = dto.DataLancamento;
         volume.MensagemVolume = dto.MensagemVolume;
         volume.UrlCapa = dto.UrlCapa;
+        return volume;
     }
 
     public static ReadVolumeDto MapToReadVolume (this Volume obj) 
@@ -36,7 +37,7 @@ public static class VolumeExtensions
             DataLancamento = obj.DataLancamento,
             MensagemVolume = obj.MensagemVolume,
             UrlCapa = obj.UrlCapa,
-            Capitulos = (ICollection<ReadCapituloDto>)obj.Capitulos!.Select(c => c.MapToReadCapitulo()).ToList()
+            Capitulos = obj.Capitulos?.Select(c => c.MapToReadCapitulo()).ToList()
         };
     }
 }

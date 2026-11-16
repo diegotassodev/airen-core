@@ -17,13 +17,14 @@ public static class PersonagemExtensions
         };
     }
 
-    public static void MapToPersonagem(this UpdatePersonagemDto dto, Personagem personagem) 
+    public static Personagem MapToPersonagem(this UpdatePersonagemDto dto, Personagem personagem) 
     {
         personagem.Nome = dto.Nome;
         personagem.NomeOriginal = dto.NomeOriginal;
         personagem.Biografia = dto.Biografia;
         personagem.DataNascimento = dto.DataNascimento;
         personagem.EstaVivo = dto.EstaVivo;
+        return personagem;
     }
 
     public static ReadPersonagemDto MapToReadPersonagem (this Personagem obj) 
@@ -37,9 +38,9 @@ public static class PersonagemExtensions
             DataNascimento = obj.DataNascimento,
             EstaVivo = obj.EstaVivo,
             Potentia = obj.Potentia?.MapToReadPotentiaDto(),
-            Versoes = (ICollection<ReadVersaoDto>)obj.Versoes!.Select(v => v.MapToReadVersao()).ToList(),
-            Afiliacoes = (ICollection<ReadAfiliacaoDto>)obj.Afiliacoes!.Select(a => a.MapToReadAfiliacao()).ToList(),
-            Parentes = (ICollection<ReadParentescoDto>)obj.Parentes!.Select(p => p.MapToReadParentesco()).ToList()
+            Versoes = obj.Versoes?.Select(v => v.MapToReadVersao()).ToList(),
+            Afiliacoes = obj.Afiliacoes?.Select(a => a.MapToReadAfiliacao()).ToList(),
+            Parentes = obj.Parentes?.Select(p => p.MapToReadParentesco()).ToList()
         };
     }
 }

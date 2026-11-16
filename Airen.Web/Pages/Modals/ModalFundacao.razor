@@ -1,12 +1,26 @@
 <MudDialog>
-    <DialogContent>
-        <MudText Typo ="Typo.h6" Align="Align.Center"> <b> Fundação Potentia </b> </MudText>
-        <MudText Typo="Typo.body2"> A fundação potentia foi fundada no volume 2. </MudText>
+    
+    <TitleContent>
+        <MudText class = "dialog-title" Typo="Typo.h5"> Fundação Potentia </MudText>
+    </TitleContent>
+
+    <DialogContent >
+       <MudText class = "dialog-text" Typo="Typo.body1">
+            A Fundação Potentia é uma organização privada que atua na catalogação, contenção e assistência a portadores de Potentia. É guiada pela ética e pelo respeito aos direitos humanos fundamentais, visando acolher os afetados e reabilitar os corrompidos, oferecendo-lhes um novo propósito.
+        </MudText>
     </DialogContent>
+
+    <DialogActions>
+        <MudButton OnClick="Sair" Color="Color.Primary">Sair</MudButton>
+    </DialogActions>
+
 </MudDialog>
+
 
 @code {
 
     [CascadingParameter]
     public IMudDialogInstance? ModalDialog {get;set;}
+
+    private void Sair() => ModalDialog!.Close();
 }

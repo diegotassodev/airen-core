@@ -3,7 +3,7 @@ using Airen.Infrastructure.Models;
 
 namespace Airen.Contracts.DTOs;
 
-public class UpdateVolumeDto {
+public record UpdateVolumeDto {
 
     [Required (ErrorMessage = "O número do volume não foi definido")]
     public int Numero {get;set;}

@@ -21,7 +21,7 @@ public static class VersaoExtensions
         };
     }
 
-    public static void MapToVersao(this UpdateVersaoDto dto, Versao versao) 
+    public static Versao MapToVersao(this UpdateVersaoDto dto, Versao versao) 
     {
         versao.Nome = dto.Nome;
         versao.Genero = dto.Genero;
@@ -31,6 +31,7 @@ public static class VersaoExtensions
         versao.Descricao = dto.Descricao;
         versao.Personalidade = dto.Personalidade;
         versao.IdPersonagem = dto.IdPersonagem;
+        return versao;
     }
 
     public static ReadVersaoDto MapToReadVersao (this Versao obj) 
@@ -46,9 +47,9 @@ public static class VersaoExtensions
             UrlImagem = obj.UrlImagem,
             IdadeInicial = obj.IdadeInicial,
             IdadeFinal = obj.IdadeFinal,
-            Tecnicas = (ICollection<ReadTecnicaDto>)obj.Tecnicas!.Select(t => t.MapToReadTecnica()).ToList(),
-            Hobbies = (ICollection<ReadHobbyDto>)obj.Hobbies!.Select(h => h.MapToReadHobby()).ToList(),
-            Volumes = (ICollection<ReadVolumeDto>)obj.Volumes!.Select(V => V.MapToReadVolume()).ToList()
+            Tecnicas = obj.Tecnicas?.Select(t => t.MapToReadTecnica()).ToList(),
+            Hobbies = obj.Hobbies?.Select(h => h.MapToReadHobby()).ToList(),
+            Volumes = obj.Volumes?.Select(V => V.MapToReadVolume()).ToList()
         };
     }
 }

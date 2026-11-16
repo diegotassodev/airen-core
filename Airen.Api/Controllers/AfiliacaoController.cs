@@ -25,14 +25,14 @@ public class AfiliacaoController : ControllerBase
 
         _repository.Create(afiliacao);
 
-        return CreatedAtAction(nameof(BuscaAfiliacaoPorId), new {Id = afiliacao.Id}, afiliacao);
+        return CreatedAtAction(nameof(BuscaAfiliacaoPorId), new {Id = afiliacao.Id}, afiliacao.MapToReadAfiliacao());
     }
 
     [HttpGet]
-    public IEnumerable<ReadAfiliacaoDto> VerAfiliacoes() 
+    public IActionResult VerAfiliacoes() 
     {
         var listaAfiliacoes = _repository.ReadAll();
-        return listaAfiliacoes;
+        return Ok(listaAfiliacoes);
     }
 
     [HttpGet("{id}")]
@@ -40,23 +40,23 @@ public class AfiliacaoController : ControllerBase
     {
         var afiliacao = _repository.ReadById(id);
         if (afiliacao == null) return NotFound();
-        else return Ok(afiliacao.MapToReadAfiliacao());
+        else return Ok(afiliacao);
     }
 
     [HttpPut("{id}")]
     public IActionResult AtualizaAfiliacao(int id, [FromBody] UpdateAfiliacaoDto afiliacaoDto) 
     {
-        var afiliacao = _repository.ReadById(id);
+        var afiliacao = _repository.ReadEntityById(id);
         if (afiliacao == null) return NotFound();
 
         _repository.Update(afiliacaoDto, afiliacao);
 
-        return Ok(afiliacaoDto);
+        return Ok(afiliacaoDto.MapToAfiliacao().MapToReadAfiliacao());
     } 
 
     [HttpDelete("{id}")]
     public IActionResult DeletaAfiliacao (int id) {
-        var afiliacao = _repository.ReadById(id);
+        var afiliacao = _repository.ReadEntityById(id);
         if (afiliacao == null) return NotFound();
 
         _repository.Delete(afiliacao);

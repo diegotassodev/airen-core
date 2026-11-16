@@ -15,11 +15,12 @@ public static class ParentescoExtensions
         };
     }
 
-    public static void MapToParentesco(this UpdateParentescoDto dto, Parentesco parentesco) 
+    public static Parentesco MapToParentesco(this UpdateParentescoDto dto, Parentesco parentesco) 
     {
         parentesco.IdPersonagem = dto.IdPersonagem;
         parentesco.IdParente = dto.IdParente;
         parentesco.TipoParentesco = dto.TipoParentesco;
+        return parentesco;
     }
 
     public static ReadParentescoDto MapToReadParentesco (this Parentesco obj) 

@@ -1,0 +1,130 @@
+@using System.Globalization
+@inject IDialogService dialogService
+
+<MudDialog Class="volume-dialog">
+
+    <TitleContent>
+        <div class="volume-header">
+            <div class="volume-header-content">
+                <span class="volume-label">
+                    VOLUME @volume?.Numero
+                </span>
+
+                <MudText Class="volume-title">
+                    @volume?.Nome
+                </MudText>
+
+                <div class="volume-divider"></div>
+
+                <MudText Class="volume-message">
+                    @volume?.MensagemVolume
+                </MudText>
+            </div>
+        </div>
+    </TitleContent>
+
+    <DialogContent>
+        <div class="document">
+
+            @if (!string.IsNullOrWhiteSpace(volume?.UrlCapa))
+            {
+                <div class="cover-container">
+                    <MudImage Src="@volume.UrlCapa"
+                              Alt="@($"Capa do volume {volume.Nome}")"
+                              Class="volume-cover" />
+                </div>
+            }
+
+            <div class="metadata">
+                <div class="metadata-item">
+                    <span class="metadata-label">PUBLICAÇÃO</span>
+                    <span class="metadata-value">
+                        @(volume?.DataLancamento?.ToString(
+                            "d 'de' MMMM 'de' yyyy",
+                            new CultureInfo("pt-BR")
+                        ))
+                    </span>
+                </div>
+
+                <div class="metadata-item">
+                    <span class="metadata-label">NÚMERO DE CAPÍTULOS</span>
+                    <span class="metadata-value">
+                        @(volume?.Capitulos?.Count() ?? 0)
+                    </span>
+                </div>
+            </div>
+
+            @if (volume?.Capitulos?.Count() > 0)
+            {
+                <section class="chapters">
+                    <div class="section-heading">
+                        <div>
+                            <MudText Class="section-title"> Capítulos </MudText>
+                        </div>
+                    </div>
+
+                    <div class="chapter-list">
+
+                        @foreach (var capitulo in volume.Capitulos)
+                        {
+                            <article class="chapter">
+
+                                <div class="chapter-number">
+                                    @capitulo.Numero.ToString("00")
+                                </div>
+
+                                <div class="chapter-content">
+                                    <MudText Class="chapter-title">
+                                        @capitulo.Titulo
+                                    </MudText>
+
+                                    <MudText Class="chapter-summary">
+                                        @capitulo.Resumo
+                                    </MudText>
+                                    
+                                    <div class="chapter-footer">
+                                        <span>
+                                            @capitulo.NumeroPaginas páginas
+                                        </span>
+                                    </div>
+                                </div>
+                            </article>
+                        }
+                    </div>
+                </section>
+            }
+        </div>
+    </DialogContent>
+
+    <DialogActions>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="(() => OpenModal(volume!))"> Editar </MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Error"> Excluir </MudButton>
+    </DialogActions>
+
+</MudDialog>
+
+@code {
+
+    [CascadingParameter]
+    public IMudDialogInstance? ModalDialog { get; set; }
+
+    [Parameter]
+    public ReadVolumeDto? volume { get; set; }
+
+    private async void OpenModal(ReadVolumeDto volumeDto)
+    {
+        var options = new DialogOptions {
+            MaxWidth = MaxWidth.ExtraExtraLarge,
+            FullWidth = true,
+            CloseButton = true,
+            CloseOnEscapeKey = true
+        };
+
+        var parameters = new DialogParameters<ModalEditarVolume>
+        {
+            {v => v.volume, volume}
+        };
+
+        await dialogService.ShowAsync<ModalEditarVolume>(parameters);
+    }
+}

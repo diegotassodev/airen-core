@@ -22,15 +22,17 @@ public class VolumeController : ControllerBase
     public IActionResult AdicionaVolume([FromBody] CreateVolumeDto volumeDto) 
     {
         var volume = volumeDto.MapToVolume();
+
         _repository.Create(volume);
-        return CreatedAtAction(nameof(BuscaVolumePorId), new {Id = volume.Id}, volume);
+        
+        return CreatedAtAction(nameof(BuscaVolumePorId), new {Id = volume.Id}, volume.MapToReadVolume());
     }
 
     [HttpGet]
-    public IEnumerable<ReadVolumeDto> VerVolumes() 
+    public IActionResult VerVolumes() 
     {
         var listaVolumes = _repository.ReadAll();
-        return listaVolumes;
+        return Ok(listaVolumes);
     }
 
     [HttpGet("{id}")]
@@ -38,13 +40,13 @@ public class VolumeController : ControllerBase
     {
         var volume = _repository.ReadById(id);
         if (volume == null) return NotFound();
-        else return Ok(volume.MapToReadVolume());
+        else return Ok(volume);
     }
 
     [HttpPut("{id}")]
     public IActionResult AtualizaVolume(int id, [FromBody] UpdateVolumeDto volumeDto) 
     {
-        var volume = _repository.ReadById(id);
+        var volume = _repository.ReadEntityById(id);
         if (volume == null) return NotFound();
 
         _repository.Update(volumeDto, volume);
@@ -55,7 +57,7 @@ public class VolumeController : ControllerBase
     [HttpDelete("{id}")]
     public IActionResult DeletaVolume (int id) 
     {
-        var volume = _repository.ReadById(id);
+        var volume = _repository.ReadEntityById(id);
         if (volume == null) return NotFound();
 
         _repository.Delete(volume);

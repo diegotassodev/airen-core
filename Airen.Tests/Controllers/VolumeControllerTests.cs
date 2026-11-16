@@ -26,7 +26,17 @@ public class VolumeControllerTests
             Numero = 2, 
             Nome = "Volume 2", 
             MensagemVolume = "Mensagem", 
-            UrlCapa = "capa" 
+            UrlCapa = "capa",
+            Capitulos =
+            [
+                new ReadCapituloDto
+                {
+                    Id = 10,
+                    Numero = 1,
+                    Titulo = "Capítulo de teste",
+                    NumeroVolume = 2
+                }
+            ]
         };
         var resultadoEsperado = new List<ReadVolumeDto> { volume };
         mock.Setup(repository => repository.ReadAll()).Returns(resultadoEsperado);
@@ -38,6 +48,7 @@ public class VolumeControllerTests
         var resultadoOk = Assert.IsType<OkObjectResult>(resultado);
         var volumes = Assert.IsAssignableFrom<IEnumerable<ReadVolumeDto>>(resultadoOk.Value);
         Assert.Equal(resultadoEsperado, volumes);
+        Assert.Equal(2, Assert.Single(Assert.Single(volumes).Capitulos!).NumeroVolume);
         mock.Verify(repository => repository.ReadAll(), Times.Once);
     }
 
@@ -50,7 +61,17 @@ public class VolumeControllerTests
             Numero = 2, 
             Nome = "Volume 2", 
             MensagemVolume = "Mensagem",
-            UrlCapa = "capa" 
+            UrlCapa = "capa",
+            Capitulos =
+            [
+                new ReadCapituloDto
+                {
+                    Id = 10,
+                    Numero = 1,
+                    Titulo = "Capítulo de teste",
+                    NumeroVolume = 2
+                }
+            ]
         };
         mock.Setup(repository => repository.ReadById(1)).Returns(resultadoEsperado);
 
@@ -59,7 +80,9 @@ public class VolumeControllerTests
 
         // Assert
         var resultadoOk = Assert.IsType<OkObjectResult>(resultado);
-        Assert.Equal(resultadoEsperado, Assert.IsType<ReadVolumeDto>(resultadoOk.Value));
+        var volumeRetornado = Assert.IsType<ReadVolumeDto>(resultadoOk.Value);
+        Assert.Equal(resultadoEsperado, volumeRetornado);
+        Assert.Equal(2, Assert.Single(volumeRetornado.Capitulos!).NumeroVolume);
         mock.Verify(repository => repository.ReadById(1), Times.Once);
     }
 

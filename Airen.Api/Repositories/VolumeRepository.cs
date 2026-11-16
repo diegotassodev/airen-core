@@ -23,14 +23,18 @@ public class VolumeRepository : IRepository<Volume, ReadVolumeDto, UpdateVolumeD
 
     public IEnumerable<ReadVolumeDto> ReadAll() 
     {
-        return _context.Volumes!
-            .Include(v => v.Capitulos)
-            .Select(v => v.MapToReadVolume()).ToList();
+        var volumes = _context.Volumes!
+            .Include(v => v.Capitulos!)
+            .ToList();
+
+        return volumes.Select(v => v.MapToReadVolume()).ToList();
     }
 
     public ReadVolumeDto? ReadById(int id) 
     {
-        var volume =_context.Volumes!.FirstOrDefault(p => p.Id == id);
+        var volume = _context.Volumes!
+            .Include(v => v.Capitulos!)
+            .FirstOrDefault(v => v.Id == id);
         if (volume is not null) return volume.MapToReadVolume();
         else return null;
     }

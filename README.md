@@ -194,3 +194,13 @@ Rotas principais da interface:
 - `/volumes` — lista volumes consumindo `GET /Volume`.
 
 O Web e o Admin precisam apontar para a URL em que a API estiver executando. Antes de usar operações que alterem dados, confirme também a conexão da API com o MySQL.
+
+### Testes automatizados
+
+Execute a suíte de testes da API e dos controllers com:
+
+```bash
+dotnet test Airen.Tests/Airen.Tests.csproj
+```
+
+Os testes cobrem as operações de leitura (lista e busca por ID) dos recursos da API. Os testes de volumes também verificam o retorno dos capítulos associados.

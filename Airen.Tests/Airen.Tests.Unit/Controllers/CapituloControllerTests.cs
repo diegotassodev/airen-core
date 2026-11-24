@@ -6,7 +6,7 @@ using Airen.Infrastructure.Models;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 
-namespace Airen.Tests.Controllers;
+namespace Airen.Tests.Unit.Controllers;
 
 public class CapituloControllerTests
 {

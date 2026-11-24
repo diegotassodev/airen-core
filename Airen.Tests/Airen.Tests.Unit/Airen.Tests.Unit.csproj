@@ -20,8 +20,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Airen.Contracts\Airen.Contracts.csproj" />
-    <ProjectReference Include="..\Airen.Api\Airen.Api.csproj" />
+    <ProjectReference Include="..\..\Airen.Contracts\Airen.Contracts.csproj" />
+    <ProjectReference Include="..\..\Airen.Api\Airen.Api.csproj" />
   </ItemGroup>
 
 </Project>

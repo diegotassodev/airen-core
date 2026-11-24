@@ -20,16 +20,19 @@ public class AfiliacoesAPI {
 
     public async Task PostAfiliacoesAsync (CreateAfiliacaoDto dto)
     {
-        await _httpClient!.PostAsJsonAsync("afiliacao", dto);
+        using var response = await _httpClient!.PostAsJsonAsync("afiliacao", dto);
+        response.EnsureSuccessStatusCode();
     }
 
     public async Task PutAfiliacoesAsync (ReadAfiliacaoDto readDto, UpdateAfiliacaoDto updateDto)
     {
-        await _httpClient!.PutAsJsonAsync($"afiliacao/{readDto.Id}", updateDto);
+        using var response = await _httpClient!.PutAsJsonAsync($"afiliacao/{readDto.Id}", updateDto);
+        response.EnsureSuccessStatusCode();
     }
 
     public async Task DeleteAfiliacoesAsync (ReadAfiliacaoDto readDto)
     {
-        await _httpClient!.DeleteAsync($"afiliacao/{readDto.Id}");
+        using var response = await _httpClient!.DeleteAsync($"afiliacao/{readDto.Id}");
+        response.EnsureSuccessStatusCode();
     }
 }

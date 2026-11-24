@@ -20,17 +20,20 @@ public class PersonagensAPI {
 
     public async Task PostPersonagensAsync(CreatePersonagemDto dto)
     {
-        await _httpClient!.PostAsJsonAsync("Personagem", dto);
+        using var response = await _httpClient!.PostAsJsonAsync("Personagem", dto);
+        response.EnsureSuccessStatusCode();
     }
 
     public async Task PutPersonagensAsync(ReadPersonagemDto readDto, UpdatePersonagemDto updateDto)
     {
-        await _httpClient!.PutAsJsonAsync($"Personagem/{readDto.Id}", updateDto);
+        using var response = await _httpClient!.PutAsJsonAsync($"Personagem/{readDto.Id}", updateDto);
+        response.EnsureSuccessStatusCode();
     }
 
     public async Task DeletePersonagensAsync(ReadPersonagemDto readDto)
     {
-        await _httpClient!.DeleteAsync($"Personagem/{readDto.Id}");
+        using var response = await _httpClient!.DeleteAsync($"Personagem/{readDto.Id}");
+        response.EnsureSuccessStatusCode();
     }
     
 }

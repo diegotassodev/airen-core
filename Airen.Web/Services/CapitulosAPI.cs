@@ -18,18 +18,24 @@ public class CapitulosAPI {
         return listaCapitulos!;
     }
 
-    public async Task PostCapitulosAsync (CreateCapituloDto dto)
+    public async Task<ReadCapituloDto> PostCapitulosAsync(CreateCapituloDto dto)
     {
-        await _httpClient!.PostAsJsonAsync("capitulo", dto);
+        using var response = await _httpClient!.PostAsJsonAsync("capitulo", dto);
+        response.EnsureSuccessStatusCode();
+
+        return await response.Content.ReadFromJsonAsync<ReadCapituloDto>()
+            ?? throw new InvalidOperationException("A API não retornou o capítulo criado.");
     }
 
-    public async Task PutCapitulosAsync (ReadCapituloDto readDto, UpdateCapituloDto updateDto)
+    public async Task PutCapitulosAsync(ReadCapituloDto readDto, UpdateCapituloDto updateDto)
     {
-        await _httpClient!.PutAsJsonAsync($"capitulo/{readDto.Id}", updateDto);
+        using var response = await _httpClient!.PutAsJsonAsync($"capitulo/{readDto.Id}", updateDto);
+        response.EnsureSuccessStatusCode();
     }
 
-    public async Task DeleteCapitulosAsync (ReadCapituloDto readDto)
+    public async Task DeleteCapitulosAsync(ReadCapituloDto readDto)
     {
-        await _httpClient!.DeleteAsync($"capitulo/{readDto.Id}");
+        using var response = await _httpClient!.DeleteAsync($"capitulo/{readDto.Id}");
+        response.EnsureSuccessStatusCode();
     }
 }

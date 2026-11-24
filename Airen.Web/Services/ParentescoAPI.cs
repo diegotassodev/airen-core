@@ -20,16 +20,19 @@ public class ParentescoAPI {
 
     public async Task PostParentescosAsync (CreateParentescoDto dto)
     {
-        await _httpClient!.PostAsJsonAsync("parentesco", dto);
+        using var response = await _httpClient!.PostAsJsonAsync("parentesco", dto);
+        response.EnsureSuccessStatusCode();
     }
 
     public async Task PutParentescosAsync (ReadParentescoDto readDto, UpdateParentescoDto updateDto)
     {
-        await _httpClient!.PutAsJsonAsync($"parentesco/{readDto.Id}", updateDto);
+        using var response = await _httpClient!.PutAsJsonAsync($"parentesco/{readDto.Id}", updateDto);
+        response.EnsureSuccessStatusCode();
     }
 
     public async Task DeleteParentescosAsync (ReadParentescoDto readDto)
     {
-        await _httpClient!.DeleteAsync($"parentesco/{readDto.Id}");
+        using var response = await _httpClient!.DeleteAsync($"parentesco/{readDto.Id}");
+        response.EnsureSuccessStatusCode();
     }
 }

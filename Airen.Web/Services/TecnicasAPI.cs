@@ -20,16 +20,19 @@ public class TecnicasAPI {
 
     public async Task PostTecnicasAsync (CreateTecnicaDto dto)
     {
-        await _httpClient!.PostAsJsonAsync("tecnica", dto);
+        using var response = await _httpClient!.PostAsJsonAsync("tecnica", dto);
+        response.EnsureSuccessStatusCode();
     }
 
     public async Task PutTecnicasAsync (ReadTecnicaDto readDto, UpdateTecnicaDto updateDto)
     {
-        await _httpClient!.PutAsJsonAsync($"tecnica/{readDto.Id}", updateDto);
+        using var response = await _httpClient!.PutAsJsonAsync($"tecnica/{readDto.Id}", updateDto);
+        response.EnsureSuccessStatusCode();
     }
 
     public async Task DeleteTecnicasAsync (ReadTecnicaDto readDto)
     {
-        await _httpClient!.DeleteAsync($"tecnica/{readDto.Id}");
+        using var response = await _httpClient!.DeleteAsync($"tecnica/{readDto.Id}");
+        response.EnsureSuccessStatusCode();
     }
 }

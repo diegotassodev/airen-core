@@ -18,18 +18,21 @@ public class VolumesAPI {
         return listaVolumes!;
     }
 
-    public async Task PostVolumesAsync (CreateVolumeDto dto)
+    public async Task PostVolumesAsync(CreateVolumeDto dto)
     {
-        await _httpClient!.PostAsJsonAsync("volume", dto);
+        using var response = await _httpClient!.PostAsJsonAsync("volume", dto);
+        response.EnsureSuccessStatusCode();
     }
 
-    public async Task PutVolumesAsync (ReadVolumeDto readDto, UpdateVolumeDto updateDto)
+    public async Task PutVolumesAsync(ReadVolumeDto readDto, UpdateVolumeDto updateDto)
     {
-        await _httpClient!.PutAsJsonAsync($"volume/{readDto.Id}", updateDto);
+        using var response = await _httpClient!.PutAsJsonAsync($"volume/{readDto.Id}", updateDto);
+        response.EnsureSuccessStatusCode();
     }
 
-    public async Task DeleteVolumesAsync (ReadVolumeDto readDto)
+    public async Task DeleteVolumesAsync(ReadVolumeDto readDto)
     {
-        await _httpClient!.DeleteAsync($"volume/{readDto.Id}");
+        using var response = await _httpClient!.DeleteAsync($"volume/{readDto.Id}");
+        response.EnsureSuccessStatusCode();
     }
 }

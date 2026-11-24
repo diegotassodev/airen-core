@@ -20,16 +20,19 @@ public class HobbiesAPI
 
     public async Task PostHobbiesAsync (CreateHobbyDto dto)
     {
-        await _httpClient!.PostAsJsonAsync("hobby", dto);
+        using var response = await _httpClient!.PostAsJsonAsync("hobby", dto);
+        response.EnsureSuccessStatusCode();
     }
 
     public async Task PutHobbiesAsync (ReadHobbyDto readDto, UpdateHobbyDto updateDto)
     {
-        await _httpClient!.PutAsJsonAsync($"hobby/{readDto.Id}", updateDto);
+        using var response = await _httpClient!.PutAsJsonAsync($"hobby/{readDto.Id}", updateDto);
+        response.EnsureSuccessStatusCode();
     }
 
     public async Task DeleteHobbiesAsync (ReadHobbyDto readDto)
     {
-        await _httpClient!.DeleteAsync($"hobby/{readDto.Id}");
+        using var response = await _httpClient!.DeleteAsync($"hobby/{readDto.Id}");
+        response.EnsureSuccessStatusCode();
     }
 }

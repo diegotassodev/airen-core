@@ -20,16 +20,19 @@ public class VersoesAPI {
 
     public async Task PostVersoesAsync (CreateVersaoDto dto)
     {
-        await _httpClient!.PostAsJsonAsync("versao", dto);
+        using var response = await _httpClient!.PostAsJsonAsync("versao", dto);
+        response.EnsureSuccessStatusCode();
     }
 
     public async Task PutVersoesAsync (ReadVersaoDto readDto, UpdateVersaoDto updateDto)
     {
-        await _httpClient!.PutAsJsonAsync($"versao/{readDto.Id}", updateDto);
+        using var response = await _httpClient!.PutAsJsonAsync($"versao/{readDto.Id}", updateDto);
+        response.EnsureSuccessStatusCode();
     }
 
     public async Task DeleteVersoesAsync (ReadVersaoDto readDto)
     {
-        await _httpClient!.DeleteAsync($"versao/{readDto.Id}");
+        using var response = await _httpClient!.DeleteAsync($"versao/{readDto.Id}");
+        response.EnsureSuccessStatusCode();
     }
 }

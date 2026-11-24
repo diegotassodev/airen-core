@@ -20,16 +20,19 @@ public class HabilidadesAPI {
 
     public async Task PostHabilidadesAsync (CreateHabilidadeDto dto)
     {
-        await _httpClient!.PostAsJsonAsync("habilidade", dto);
+        using var response = await _httpClient!.PostAsJsonAsync("habilidade", dto);
+        response.EnsureSuccessStatusCode();
     }
 
     public async Task PutHabilidadesAsync (ReadHabilidadeDto readDto, UpdateHabilidadeDto updateDto)
     {
-        await _httpClient!.PutAsJsonAsync($"habilidade/{readDto.Id}", updateDto);
+        using var response = await _httpClient!.PutAsJsonAsync($"habilidade/{readDto.Id}", updateDto);
+        response.EnsureSuccessStatusCode();
     }
 
     public async Task DeleteHabilidadesAsync (ReadHabilidadeDto readDto)
     {
-        await _httpClient!.DeleteAsync($"habilidade/{readDto.Id}");
+        using var response = await _httpClient!.DeleteAsync($"habilidade/{readDto.Id}");
+        response.EnsureSuccessStatusCode();
     }
 }

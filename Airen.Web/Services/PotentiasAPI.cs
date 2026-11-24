@@ -20,16 +20,19 @@ public class PotentiasAPI {
 
     public async Task PostPotentiasAsync (CreatePotentiaDto dto)
     {
-        await _httpClient!.PostAsJsonAsync("potentia", dto);
+        using var response = await _httpClient!.PostAsJsonAsync("potentia", dto);
+        response.EnsureSuccessStatusCode();
     }
 
     public async Task PutPotentiasAsync (ReadPotentiaDto readDto, UpdatePotentiaDto updateDto)
     {
-        await _httpClient!.PutAsJsonAsync($"potentia/{readDto.Id}", updateDto);
+        using var response = await _httpClient!.PutAsJsonAsync($"potentia/{readDto.Id}", updateDto);
+        response.EnsureSuccessStatusCode();
     }
 
     public async Task DeletePotentiasAsync (ReadPotentiaDto readDto)
     {
-        await _httpClient!.DeleteAsync($"potentia/{readDto.Id}");
+        using var response = await _httpClient!.DeleteAsync($"potentia/{readDto.Id}");
+        response.EnsureSuccessStatusCode();
     }
 }

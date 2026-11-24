@@ -14,8 +14,13 @@ public class VersaoRepository : IRepository<Versao, ReadVersaoDto, UpdateVersaoD
         _context = context;
     }
 
-    public ReadVersaoDto Create(Versao versao)
+    public ReadVersaoDto? Create(Versao versao)
     {
+        var personagem = _context.Personagens!.Find(versao.IdPersonagem);
+        if (personagem is null)
+            return null;
+
+        versao.Personagem = personagem;
         _context.Versoes!.Add(versao);
         _context.SaveChanges();
         return versao.MapToReadVersao();

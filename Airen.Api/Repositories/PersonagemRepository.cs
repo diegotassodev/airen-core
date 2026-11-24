@@ -57,6 +57,9 @@ public class PersonagemRepository : IRepository<Personagem, ReadPersonagemDto, U
 
     public void Delete(Personagem personagem)
     {
+        var parentescos = _context.Parentescos!
+            .Where(item => item.IdPersonagem == personagem.Id || item.IdParente == personagem.Id);
+        _context.Parentescos!.RemoveRange(parentescos);
         _context.Personagens!.Remove(personagem);
         _context.SaveChanges();
     }

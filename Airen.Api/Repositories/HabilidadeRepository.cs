@@ -14,8 +14,13 @@ public class HabilidadeRepository : IRepository<Habilidade, ReadHabilidadeDto, U
         _context = context;
     }
 
-    public ReadHabilidadeDto Create(Habilidade habilidade)
+    public ReadHabilidadeDto? Create(Habilidade habilidade)
     {
+        var potentia = _context.Potentias!.Find(habilidade.IdPotentia);
+        if (potentia is null)
+            return null;
+
+        habilidade.Potentia = potentia;
         _context.Habilidades!.Add(habilidade);
         _context.SaveChanges();
         return habilidade.MapToReadHabilidade();

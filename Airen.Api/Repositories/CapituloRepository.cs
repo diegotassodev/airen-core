@@ -16,6 +16,11 @@ public class CapituloRepository : IRepository<Capitulo, ReadCapituloDto, UpdateC
 
     public ReadCapituloDto? Create(Capitulo capitulo)
     {
+        if (capitulo.IdVolume is not int idVolume) return null;
+        var volume = _context.Volumes!.Find(idVolume);
+        if (volume is null) return null;
+
+        capitulo.Volume = volume;
         _context.Capitulos!.Add(capitulo);
         _context.SaveChanges();
         return capitulo.MapToReadCapitulo();
@@ -29,7 +34,9 @@ public class CapituloRepository : IRepository<Capitulo, ReadCapituloDto, UpdateC
 
     public ReadCapituloDto? ReadById(int id) 
     {
-        var capitulo =_context.Capitulos!.FirstOrDefault(c => c.Id == id);
+        var capitulo = _context.Capitulos!
+            .Include(c => c.Volume)
+            .FirstOrDefault(c => c.Id == id);
         if (capitulo is not null) return capitulo.MapToReadCapitulo();
         else return null;
     }

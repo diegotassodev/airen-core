@@ -22,10 +22,10 @@ public class CapituloController : ControllerBase
     public IActionResult AdicionaCapitulo([FromBody] CreateCapituloDto capituloDto) 
     {
         var capitulo = capituloDto.MapToCapitulo();
+        var capituloCriado = _repository.Create(capitulo);
+        if (capituloCriado is null) return BadRequest("O volume informado para o capítulo não existe.");
 
-        _repository.Create(capitulo);
-        
-        return CreatedAtAction(nameof(BuscaCapituloPorId), new {Id = capitulo.Id}, capitulo.MapToReadCapitulo());
+        return CreatedAtAction(nameof(BuscaCapituloPorId), new {Id = capituloCriado.Id}, capituloCriado);
     }
 
     [HttpGet]

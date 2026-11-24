@@ -14,8 +14,15 @@ public class TecnicaRepository : IRepository<Tecnica, ReadTecnicaDto, UpdateTecn
         _context = context;
     }
 
-    public ReadTecnicaDto Create(Tecnica tecnica)
+    public ReadTecnicaDto? Create(Tecnica tecnica)
     {
+        var versao = _context.Versoes!
+            .Include(item => item.Personagem)
+            .FirstOrDefault(item => item.Id == tecnica.IdVersao);
+        if (versao is null)
+            return null;
+
+        tecnica.Versao = versao;
         _context.Tecnicas!.Add(tecnica);
         _context.SaveChanges();
         return tecnica.MapToReadTecnica();

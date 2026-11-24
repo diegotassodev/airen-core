@@ -14,8 +14,15 @@ public class HobbyRepository : IRepository<Hobby, ReadHobbyDto, UpdateHobbyDto>
         _context = context;
     }
 
-    public ReadHobbyDto Create(Hobby hobby)
+    public ReadHobbyDto? Create(Hobby hobby)
     {
+        var versao = _context.Versoes!
+            .Include(item => item.Personagem)
+            .FirstOrDefault(item => item.Id == hobby.IdVersao);
+        if (versao is null)
+            return null;
+
+        hobby.Versao = versao;
         _context.Hobbies!.Add(hobby);
         _context.SaveChanges();
         return hobby.MapToReadHobby();

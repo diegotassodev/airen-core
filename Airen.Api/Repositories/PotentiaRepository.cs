@@ -14,8 +14,13 @@ public class PotentiaRepository : IRepository<Potentia, ReadPotentiaDto, UpdateP
         _context = context;
     }
 
-    public ReadPotentiaDto Create(Potentia potentia)
+    public ReadPotentiaDto? Create(Potentia potentia)
     {
+        var personagem = _context.Personagens!.Find(potentia.PersonagemId);
+        if (personagem is null)
+            return null;
+
+        potentia.Personagem = personagem;
         _context.Potentias!.Add(potentia);
         _context.SaveChanges();
         return potentia.MapToReadPotentiaDto();

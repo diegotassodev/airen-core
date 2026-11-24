@@ -14,8 +14,13 @@ public class ParentescoRepository : IRepository<Parentesco, ReadParentescoDto, U
         _context = context;
     }
 
-    public ReadParentescoDto Create(Parentesco parentesco)
+    public ReadParentescoDto? Create(Parentesco parentesco)
     {
+        parentesco.Personagem = _context.Personagens!.Find(parentesco.IdPersonagem);
+        parentesco.Parente = _context.Personagens!.Find(parentesco.IdParente);
+        if (parentesco.Personagem is null || parentesco.Parente is null)
+            return null;
+
         _context.Parentescos!.Add(parentesco);
         _context.SaveChanges();
         return parentesco.MapToReadParentesco();

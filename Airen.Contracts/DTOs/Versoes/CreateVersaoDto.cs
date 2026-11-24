@@ -26,4 +26,6 @@ public record CreateVersaoDto {
     [Required (ErrorMessage = "O ID do personagem não foi definido")]
     public int IdPersonagem {get;set;}
 
+    public ICollection<int> IdVolumes {get;set;} = [];
+
 }

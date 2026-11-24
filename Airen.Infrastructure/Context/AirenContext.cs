@@ -28,6 +28,10 @@ public class AirenContext : DbContext {
     protected override void OnModelCreating(ModelBuilder builder) {
 
         builder.Entity<Parentesco>()
+            .HasIndex(p => new { p.IdPersonagem, p.IdParente })
+            .IsUnique();
+
+        builder.Entity<Parentesco>()
             .HasOne(p => p.Personagem)
             .WithMany(p => p.Parentes)
             .HasForeignKey(p => p.IdPersonagem)

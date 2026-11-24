@@ -15,8 +15,7 @@
 
             </header>
 
-            <EditForm Model="@volume"
-                      OnValidSubmit="Editar">
+            <EditForm Model="@volume" OnValidSubmit="Editar">
                 <DataAnnotationsValidator />
 
                 <section class="editor-section">
@@ -151,37 +150,26 @@
                         {
                             <span>Salvar alterações</span>
                         }
-
                     </MudButton>
-
                 </footer>
-
             </EditForm>
-
         </div>
-
     </DialogContent>
-
 </MudDialog>
 
 @code {
-
     private bool IsSaving;
-
 
     [CascadingParameter]
     public IMudDialogInstance? ModalDialog { get; set; }
 
-
     [Parameter]
     public ReadVolumeDto? volume { get; set; }
-
 
     private async Task Editar()
     {
         if (volume is null)
             return;
-
         IsSaving = true;
 
         try
@@ -208,11 +196,8 @@
             IsSaving = false;
         }
     }
-
-
     private void Cancelar()
     {
         ModalDialog?.Cancel();
     }
-
 }

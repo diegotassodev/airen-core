@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Sofia+Sans+Semi+Condensed:ital,wght@0,1..1000;1,1..1000&display=swap');
+
 .volume-dialog {
     border-radius: 4px;
     overflow: visible;
@@ -19,14 +21,12 @@
     display: block;
     margin-bottom: 10px;
     color: #a9a9a9;
-    font-family: Georgia, 'Times New Roman', Times, serif;
     font-size: 0.72rem;
     font-weight: 600;
     letter-spacing: 0.18em;
 }
 
 .volume-title {
-    font-family: Georgia, 'Times New Roman', Times, serif;    
     font-size: 2rem;
     font-weight: 500;
     line-height: 1.2;
@@ -42,7 +42,6 @@
 .volume-message {
     max-width: 700px;
     color: #bdbdbd;
-    font-family: Georgia, 'Times New Roman', Times, serif;
     font-size: 0.95rem;
     font-style: italic;
     line-height: 1.7;
@@ -91,7 +90,6 @@
 
 .metadata-label {
     color: #85827a;
-    font-family: Georgia, 'Times New Roman', Times, serif;
     font-size: 0.68rem;
     font-weight: 700;
     letter-spacing: 0.14em;
@@ -99,7 +97,6 @@
 
 .metadata-value {
     color: #252525;
-    font-family: Georgia, 'Times New Roman', Times, serif;
     font-size: 0.95rem;
 }
 
@@ -112,7 +109,6 @@
 
 .section-number {
     color: #171717;
-    font-family: Georgia, 'Times New Roman', Times, serif;
     font-size: 0.75rem;
     font-weight: 700;
     letter-spacing: 0.1em;
@@ -120,7 +116,6 @@
 
 .section-title {
     color: #202020;
-    font-family: Georgia, 'Times New Roman', Times, serif;
     font-size: 1.45rem;
     font-weight: 500;
 }
@@ -147,7 +142,6 @@
 
 .chapter-number {
     color: #171717;
-    font-family: Georgia, 'Times New Roman', Times, serif;
     font-size: 1.1rem;
     font-weight: 500;
     padding-top: 2px;
@@ -159,7 +153,6 @@
 
 .chapter-title {
     color: #242424;
-    font-family: Georgia, 'Times New Roman', Times, serif;
     font-size: 1.15rem;
     font-weight: 600;
     line-height: 1.4;
@@ -168,7 +161,6 @@
 .chapter-summary {
     margin-top: 9px;
     color: #68655f;
-    font-family: Georgia, 'Times New Roman', Times, serif;
     font-size: 0.91rem;
     line-height: 1.7;
 }
@@ -176,7 +168,6 @@
 .chapter-footer {
     margin-top: 13px;
     color: #96928a;
-    font-family: Georgia, 'Times New Roman', Times, serif;
     font-size: 0.68rem;
     letter-spacing: 0.08em;
     text-transform: uppercase;

@@ -1,5 +1,6 @@
 @using System.Globalization
 @inject IDialogService dialogService
+@inject VolumesAPI VolumesAPI
 
 <MudDialog Class="volume-dialog">
 
@@ -98,7 +99,7 @@
 
     <DialogActions>
         <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="(() => OpenModal(volume!))"> Editar </MudButton>
-        <MudButton Variant="Variant.Filled" Color="Color.Error"> Excluir </MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="(() => DeleteVolume(volume!))"> Excluir </MudButton>
     </DialogActions>
 
 </MudDialog>
@@ -122,9 +123,26 @@
 
         var parameters = new DialogParameters<ModalEditarVolume>
         {
-            {v => v.volume, volume}
+            {"volume", volumeDto}
         };
 
         await dialogService.ShowAsync<ModalEditarVolume>(parameters);
+    }
+
+    private async void DeleteVolume(ReadVolumeDto volumeDto)
+    {
+        bool? result = await dialogService.ShowMessageBoxAsync(
+            "Confirmar Exclusão",
+            "Tem certeza que deseja excluir este volume?",
+            "Sim",
+            "Não"
+        );
+
+        if (result == true)
+        {
+            await VolumesAPI.DeleteVolumesAsync(volumeDto);
+            ModalDialog?.Close();
+            StateHasChanged();
+        }
     }
 }

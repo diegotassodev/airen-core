@@ -27,4 +27,9 @@ public class VolumesAPI {
     {
         await _httpClient!.PutAsJsonAsync($"volume/{readDto.Id}", updateDto);
     }
+
+    public async Task DeleteVolumesAsync (ReadVolumeDto readDto)
+    {
+        await _httpClient!.DeleteAsync($"volume/{readDto.Id}");
+    }
 }

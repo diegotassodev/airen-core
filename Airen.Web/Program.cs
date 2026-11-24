@@ -10,7 +10,15 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 
 var apiServer = builder.Configuration["API-Server"];
 
+builder.Services.AddTransient<AfiliacoesAPI>();
+builder.Services.AddTransient<CapitulosAPI>();
+builder.Services.AddTransient<HabilidadesAPI>();
+builder.Services.AddTransient<HobbiesAPI>();
+builder.Services.AddTransient<ParentescoAPI>();
 builder.Services.AddTransient<PersonagensAPI>();
+builder.Services.AddTransient<PotentiasAPI>();
+builder.Services.AddTransient<TecnicasAPI>();
+builder.Services.AddTransient<VersoesAPI>();
 builder.Services.AddTransient<VolumesAPI>();
 
 builder.Services.AddHttpClient("API", client => {
@@ -20,6 +28,5 @@ builder.Services.AddHttpClient("API", client => {
 
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 builder.Services.AddMudServices();
-
 
 await builder.Build().RunAsync();

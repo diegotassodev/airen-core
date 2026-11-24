@@ -1,3 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Sofia+Sans+Semi+Condensed:ital,wght@0,1..1000;1,1..1000&display=swap');
+
+* {
+    font-family: "Sofia Sans Semi Condensed", sans-serif;
+}
+
 .editor-dialog {
     max-width: 60% !important;
     width: 100% !important;
@@ -9,7 +15,6 @@
     margin: 0 auto;
     padding: 12px 8px 0;
     color: #252525;
-    font-family: Georgia, 'Times New Roman', Times, serif;
 }
 
 .editor-header {
@@ -25,7 +30,6 @@
 .editor-title {
     margin-top: 4px;
     color: #202020;
-    font-family: Georgia, 'Times New Roman', Times, serif;
     font-size: 1.85rem;
     font-weight: 800;
     line-height: 1.25;
@@ -34,14 +38,9 @@
 
 .editor-description {
     max-width: 680px;
-
     margin-top: 7px;
-
     color: #68655f;
-
-    font-family: Georgia, 'Times New Roman', Times, serif;
     font-size: 0.88rem;
-
     line-height: 1.6;
 }
 
@@ -53,32 +52,24 @@
 .section-heading {
     display: flex;
     align-items: flex-start;
-
     gap: 14px;
-
     margin-bottom: 22px;
 }
 
 .section-heading .mud-icon-root {
     margin-top: 2px;
-
     color: #68655f;
 }
 
 .section-heading .mud-typography-subtitle1 {
     color: #242424;
-
-    font-family: Georgia, 'Times New Roman', Times, serif;
     font-size: 1.08rem;
     font-weight: 600;
 }
 
 .section-heading .mud-typography-caption {
     margin-top: 2px;
-
     color: #85827a;
-
-    font-family: Georgia, 'Times New Roman', Times, serif;
     font-size: 0.76rem;
 }
 
@@ -111,11 +102,6 @@
 
 .volume-editor .mud-input-label {
     color: #68655f;
-    font-family: Georgia, 'Times New Roman', Times, serif;
-}
-
-.volume-editor .mud-input {
-    font-family: Georgia, 'Times New Roman', Times, serif;
 }
 
 .volume-editor textarea {
@@ -179,15 +165,11 @@
 
 .cover-information .mud-typography-subtitle2 {
     color: #252525;
-
-    font-family: Georgia, 'Times New Roman', Times, serif;
     font-size: 0.95rem;
 }
 
 .cover-information .mud-typography-body2 {
     color: #68655f;
-
-    font-family: Georgia, 'Times New Roman', Times, serif;
     font-size: 0.82rem;
     line-height: 1.6;
 }
@@ -208,7 +190,6 @@
 
 .editor-footer .mud-button {
     border-radius: 10px;
-    font-family: Georgia, 'Times New Roman', Times, serif;
     font-size: 0.87rem;
     text-transform: none;
     letter-spacing: 0.02em;
@@ -229,16 +210,12 @@
 
 .volume-editor .validation-summary {
     margin-top: 20px;
-
     color: #8a3d32;
-
-    font-family: Georgia, 'Times New Roman', Times, serif;
     font-size: 0.82rem;
 }
 
 .volume-field .mud-input-label {
     color: #68655f;
-    font-family: Georgia, 'Times New Roman', Times, serif;
     font-size: 0.8rem;
     font-weight: 600;
 }

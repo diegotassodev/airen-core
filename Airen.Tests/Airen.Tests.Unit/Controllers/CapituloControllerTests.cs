@@ -120,7 +120,8 @@ public class CapituloControllerTests
             {
                 capitulo.Volume = volume;
                 volume.Capitulos.Add(capitulo);
-            });
+            })
+            .Returns(resultadoEsperado);
 
         // Act
         var resultado = controller!.AdicionaCapitulo(createDto);
@@ -134,6 +135,28 @@ public class CapituloControllerTests
 
         mock.Verify (repository => repository.Create(It.IsAny<Capitulo>()), Times.Once);
         
+    }
+
+    [Fact]
+    public void PostCapituloDeveRejeitarVolumeInexistente()
+    {
+        // Arrange
+        var dto = new CreateCapituloDto
+        {
+            Numero = 1,
+            Titulo = "Capítulo",
+            Resumo = "Resumo",
+            NumeroPaginas = 10,
+            IdVolume = 999
+        };
+        mock!.Setup(repository => repository.Create(It.IsAny<Capitulo>()))
+            .Returns((ReadCapituloDto?)null);
+
+        // Act
+        var resultado = controller!.AdicionaCapitulo(dto);
+
+        // Assert
+        Assert.IsType<BadRequestObjectResult>(resultado);
     }
 
     [Fact]

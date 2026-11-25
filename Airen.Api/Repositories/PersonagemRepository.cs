@@ -23,15 +23,19 @@ public class PersonagemRepository : IRepository<Personagem, ReadPersonagemDto, U
 
     public IEnumerable<ReadPersonagemDto> ReadAll() 
     {
-        return _context.Personagens!
+        var personagens = _context.Personagens!
+            .AsSplitQuery()
             .Include(p => p.Potentia)
             .Include(p => p.Potentia!).ThenInclude(p => p.Habilidades)
             .Include(p => p.Versoes!).ThenInclude(v => v.Hobbies)
             .Include(p => p.Versoes!).ThenInclude(v => v.Tecnicas)
             .Include(p => p.Versoes!).ThenInclude(v => v.Volumes)
+            .Include(p => p.Versoes!).ThenInclude(v => v.Volumes!).ThenInclude(v => v.Capitulos)
             .Include(p => p.Afiliacoes)
             .Include(p => p.Parentes!).ThenInclude(p => p.Parente)
-            .Select(p => p.MapToReadPersonagem()).ToList();
+            .ToList();
+
+        return personagens.Select(p => p.MapToReadPersonagem()).ToList();
     }
 
     public ReadPersonagemDto? ReadById(int id) 

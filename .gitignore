@@ -27,3 +27,6 @@ TestResults/
 
 # Migrations
 Migrations/
+
+# Features
+FEATURES.md

@@ -20,7 +20,7 @@ public record CreateCapituloDto {
     [Range(1, int.MaxValue, ErrorMessage = "O número de páginas deve ser maior que zero.")]
     public int NumeroPaginas {get;set;}
 
-    [Required(ErrorMessage = "O volume do capítulo não foi definido.")]
+    [Required(ErrorMessage = "O volume do capítulo não forti definido.")]
     [Range(1, int.MaxValue, ErrorMessage = "Selecione um volume válido.")]
     public int IdVolume {get;set;}
     public virtual Volume? Volume {get;set;}

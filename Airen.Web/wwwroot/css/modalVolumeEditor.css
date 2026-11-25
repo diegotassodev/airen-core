@@ -1,11 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Sofia+Sans+Semi+Condensed:ital,wght@0,1..1000;1,1..1000&display=swap');
-
-* {
-    font-family: "Sofia Sans Semi Condensed", sans-serif;
-}
-
 .editor-dialog {
-    max-width: 60% !important;
+    max-width: min(900px, calc(100vw - 32px)) !important;
     width: 100% !important;
 }
 
@@ -14,7 +8,7 @@
     max-width: 900px;
     margin: 0 auto;
     padding: 12px 8px 0;
-    color: #252525;
+    color: var(--mud-palette-text-primary);
 }
 
 .editor-header {
@@ -24,12 +18,12 @@
     gap: 24px;
     padding: 8px 4px 28px;
     margin-bottom: 8px;
-    border-bottom: 1px solid #d8d4ca;
+    border-bottom: 1px solid var(--mud-palette-divider);
 }
 
 .editor-title {
     margin-top: 4px;
-    color: #202020;
+    color: var(--mud-palette-text-primary);
     font-size: 1.85rem;
     font-weight: 800;
     line-height: 1.25;
@@ -39,14 +33,49 @@
 .editor-description {
     max-width: 680px;
     margin-top: 7px;
-    color: #68655f;
+    color: var(--mud-palette-text-secondary);
     font-size: 0.88rem;
     line-height: 1.6;
 }
 
 .editor-section {
     padding: 30px 4px;
-    border-bottom: 1px solid #d8d4ca;
+    border-bottom: 1px solid var(--mud-palette-divider);
+}
+
+.chapter-table {
+    border: 1px solid var(--mud-palette-divider);
+    border-radius: 8px;
+}
+
+.chapter-table .mud-table-cell {
+    padding: 14px 18px;
+}
+
+.chapter-table .mud-table-head {
+    background: var(--mud-palette-background);
+}
+
+.chapter-table .mud-table-head .mud-table-cell {
+    color: var(--mud-palette-text-secondary);
+    font-weight: 700;
+}
+
+.chapter-empty-state {
+    display: flex;
+    min-height: 100px;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 20px;
+    border: 1px dashed var(--mud-palette-divider);
+    border-radius: 8px;
+    color: var(--mud-palette-primary);
+    text-align: center;
+}
+
+.chapter-empty-state .mud-icon-root {
+    color: var(--mud-palette-primary);
 }
 
 .section-heading {
@@ -58,18 +87,18 @@
 
 .section-heading .mud-icon-root {
     margin-top: 2px;
-    color: #68655f;
+    color: var(--mud-palette-primary);
 }
 
 .section-heading .mud-typography-subtitle1 {
-    color: #242424;
+    color: var(--mud-palette-text-primary);
     font-size: 1.08rem;
     font-weight: 600;
 }
 
 .section-heading .mud-typography-caption {
     margin-top: 2px;
-    color: #85827a;
+    color: var(--mud-palette-text-secondary);
     font-size: 0.76rem;
 }
 
@@ -84,24 +113,39 @@
     gap: 16px;
 }
 
+.chapter-fields {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.chapter-section-heading {
+    align-items: center;
+    justify-content: space-between;
+}
+
+.chapter-section-heading .section-heading-icon {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+}
+
 .message-field {
     margin-top: 18px;
 }
 
 .volume-editor .mud-input-outlined {
-    border-radius: 2px;
+    border-radius: 8px;
 }
 
 .volume-editor .mud-input-outlined-border {
-    border-color: #c9c5bb;
+    border-color: var(--mud-palette-divider);
 }
 
 .volume-editor .mud-input-outlined:hover .mud-input-outlined-border {
-    border-color: #85827a;
+    border-color: var(--mud-palette-primary);
 }
 
 .volume-editor .mud-input-label {
-    color: #68655f;
+    color: var(--mud-palette-text-secondary);
 }
 
 .volume-editor textarea {
@@ -112,8 +156,9 @@
     display: flex;
     gap: 24px;
     padding: 18px;
-    border: 1px solid #d8d4ca;
-    border-radius: 2px;
+    border: 1px solid var(--mud-palette-divider);
+    border-radius: 10px;
+    background: var(--mud-palette-surface);
 }
 
 .cover-preview {
@@ -122,8 +167,8 @@
     min-width: 160px;
     overflow: visible;
 
-    border: 1px solid #d8d4ca;
-    border-radius: 2px;
+    border: 1px solid var(--mud-palette-divider);
+    border-radius: 10px;
 
 }
 
@@ -148,7 +193,7 @@
 
     gap: 8px;
 
-    color: #96928a;
+    color: var(--mud-palette-text-secondary);
 }
 
 .cover-information {
@@ -164,12 +209,12 @@
 }
 
 .cover-information .mud-typography-subtitle2 {
-    color: #252525;
+    color: var(--mud-palette-text-primary);
     font-size: 0.95rem;
 }
 
 .cover-information .mud-typography-body2 {
-    color: #68655f;
+    color: var(--mud-palette-text-secondary);
     font-size: 0.82rem;
     line-height: 1.6;
 }
@@ -195,27 +240,18 @@
     letter-spacing: 0.02em;
 }
 
-.editor-footer .mud-button-filled-success {
-    background: #252525;
-    color: #f5f1e8;
-}
-
-.editor-footer .mud-button-filled-success:hover {
-    background: #0e0d0d;
-}
-
 .editor-footer .mud-button-text {
-    color: #575450;
+    color: var(--mud-palette-text-secondary);
 }
 
 .volume-editor .validation-summary {
     margin-top: 20px;
-    color: #8a3d32;
+    color: var(--mud-palette-error);
     font-size: 0.82rem;
 }
 
 .volume-field .mud-input-label {
-    color: #68655f;
+    color: var(--mud-palette-text-secondary);
     font-size: 0.8rem;
     font-weight: 600;
 }
@@ -261,5 +297,14 @@
     .editor-footer {
         flex-direction: column-reverse;
         align-items: stretch;
+    }
+
+    .chapter-fields {
+        grid-template-columns: 1fr;
+    }
+
+    .chapter-section-heading {
+        align-items: stretch;
+        flex-direction: column;
     }
 }

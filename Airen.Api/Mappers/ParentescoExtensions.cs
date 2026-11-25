@@ -28,6 +28,8 @@ public static class ParentescoExtensions
         return new ReadParentescoDto 
         {
             Id = obj.Id,
+            IdPersonagem = obj.IdPersonagem,
+            IdParente = obj.IdParente,
             NomePersonagem = obj.Personagem!.Nome,
             NomeParente = obj.Parente!.Nome,
             TipoParentesco = obj.TipoParentesco

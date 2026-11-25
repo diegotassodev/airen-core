@@ -83,6 +83,8 @@ public class ParentescoControllerTests
         mock.Setup(repository => repository.Create(It.IsAny<Parentesco>()))
             .Callback<Parentesco>(parentesco =>
             {
+                parentesco.IdPersonagem = createDto.IdPersonagem;
+                parentesco.IdParente = createDto.IdParente;
                 parentesco.Personagem = personagem;
                 parentesco.Parente = parente;
                 personagem.Parentes = new List<Parentesco> { parentesco };
@@ -95,6 +97,8 @@ public class ParentescoControllerTests
         var resultadoCreated = Assert.IsType<CreatedAtActionResult>(resultado);
         var parentesco = Assert.IsType<ReadParentescoDto>(resultadoCreated.Value);
         Assert.Equal(0, parentesco.Id);
+        Assert.Equal(createDto.IdPersonagem, parentesco.IdPersonagem);
+        Assert.Equal(createDto.IdParente, parentesco.IdParente);
         Assert.Equal(personagem.Nome, parentesco.NomePersonagem);
         Assert.Equal(parente.Nome, parentesco.NomeParente);
         Assert.Equal(createDto.TipoParentesco, parentesco.TipoParentesco);

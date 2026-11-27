@@ -1,0 +1,104 @@
+@inject PotentiasAPI potentiasApi
+@inject ISnackbar snackbar
+
+<MudDialog Class="editor-dialog character-dialog">
+    <DialogContent>
+        <div class="volume-editor character-editor">
+            <header class="editor-header">
+                <div>
+                    <MudText Typo="Typo.h4" Class="editor-title">Editar potentia</MudText>
+                    <MudText Typo="Typo.body2" Class="editor-description">
+                        Atualize as informações da potentia.
+                    </MudText>
+                </div>
+            </header>
+
+            <EditForm Model="@formulario" OnValidSubmit="Salvar">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                <section class="editor-section related-fields">
+                    <MudTextField T="string"
+                                  @bind-Value="formulario.Nome"
+                                  Label="Nome"
+                                  Variant="Variant.Outlined"
+                                  Required="true"
+                                  For="@(() => formulario.Nome)" />
+                    <MudTextField T="string"
+                                  @bind-Value="formulario.LinkMusica"
+                                  Label="Link da música"
+                                  Variant="Variant.Outlined" />
+                    <MudTextField T="string"
+                                  @bind-Value="formulario.Descricao"
+                                  Label="Descrição"
+                                  Variant="Variant.Outlined"
+                                  Lines="4"
+                                  Required="true"
+                                  For="@(() => formulario.Descricao)" />
+                </section>
+
+                <footer class="editor-footer">
+                    <MudButton Variant="Variant.Text" OnClick="Cancelar">Cancelar</MudButton>
+                    <MudButton ButtonType="ButtonType.Submit"
+                               Variant="Variant.Filled"
+                               Color="Color.Primary"
+                               Disabled="@isSaving"
+                               StartIcon="@Icons.Material.Outlined.Save">
+                        @(isSaving ? "Salvando..." : "Salvar potentia")
+                    </MudButton>
+                </footer>
+            </EditForm>
+        </div>
+    </DialogContent>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    public IMudDialogInstance? ModalDialog { get; set; }
+
+    [Parameter]
+    public ReadPotentiaDto? potentia { get; set; }
+
+    [Parameter]
+    public int PersonagemId { get; set; }
+
+    private UpdatePotentiaDto formulario = new();
+    private bool isSaving;
+
+    protected override void OnParametersSet()
+    {
+        var potentiaAtual = potentia
+            ?? throw new InvalidOperationException("É necessário informar a potentia para edição.");
+
+        formulario = new UpdatePotentiaDto
+        {
+            Nome = potentiaAtual.Nome,
+            Descricao = potentiaAtual.Descricao,
+            LinkMusica = potentiaAtual.LinkMusica,
+            PersonagemId = PersonagemId
+        };
+    }
+
+    private async Task Salvar()
+    {
+        var potentiaAtual = potentia
+            ?? throw new InvalidOperationException("É necessário informar a potentia para edição.");
+
+        isSaving = true;
+        try
+        {
+            await potentiasApi.PutPotentiasAsync(potentiaAtual, formulario);
+            ModalDialog?.Close(DialogResult.Ok(true));
+        }
+        catch (HttpRequestException)
+        {
+            snackbar.Add("Não foi possível salvar a potentia. Verifique os dados e tente novamente.", Severity.Error);
+        }
+        finally
+        {
+            isSaving = false;
+        }
+    }
+
+    private void Cancelar() => ModalDialog?.Cancel();
+}

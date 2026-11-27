@@ -1,0 +1,83 @@
+@inject HabilidadesAPI habilidadesApi
+@inject ISnackbar snackbar
+
+<MudDialog Class="editor-dialog character-dialog">
+    <DialogContent>
+        <div class="volume-editor character-editor">
+            <header class="editor-header">
+                <div>
+                    <MudText Typo="Typo.h4" Class="editor-title">Adicionar habilidade</MudText>
+                    <MudText Typo="Typo.body2" Class="editor-description">
+                        Cadastre uma habilidade para esta potentia.
+                    </MudText>
+                </div>
+            </header>
+
+            <EditForm Model="@habilidade" OnValidSubmit="Salvar">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                <section class="editor-section related-fields">
+                    <MudTextField T="string"
+                                  @bind-Value="habilidade.Nome"
+                                  Label="Nome"
+                                  Variant="Variant.Outlined"
+                                  Required="true"
+                                  For="@(() => habilidade.Nome)" />
+                    <MudTextField T="string"
+                                  @bind-Value="habilidade.Descricao"
+                                  Label="Descrição"
+                                  Variant="Variant.Outlined"
+                                  Lines="4" />
+                </section>
+
+                <footer class="editor-footer">
+                    <MudButton Variant="Variant.Text" OnClick="Cancelar">Cancelar</MudButton>
+                    <MudButton ButtonType="ButtonType.Submit"
+                               Variant="Variant.Filled"
+                               Color="Color.Primary"
+                               Disabled="@isSaving"
+                               StartIcon="@Icons.Material.Outlined.Add">
+                        @(isSaving ? "Salvando..." : "Adicionar habilidade")
+                    </MudButton>
+                </footer>
+            </EditForm>
+        </div>
+    </DialogContent>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    public IMudDialogInstance? ModalDialog { get; set; }
+
+    [Parameter]
+    public int PotentiaId { get; set; }
+
+    private readonly CreateHabilidadeDto habilidade = new();
+    private bool isSaving;
+
+    protected override void OnParametersSet()
+    {
+        habilidade.IdPotentia = PotentiaId;
+    }
+
+    private async Task Salvar()
+    {
+        isSaving = true;
+        try
+        {
+            await habilidadesApi.PostHabilidadesAsync(habilidade);
+            ModalDialog?.Close(DialogResult.Ok(true));
+        }
+        catch (HttpRequestException)
+        {
+            snackbar.Add("Não foi possível salvar a habilidade. Verifique os dados e tente novamente.", Severity.Error);
+        }
+        finally
+        {
+            isSaving = false;
+        }
+    }
+
+    private void Cancelar() => ModalDialog?.Cancel();
+}

@@ -1,0 +1,124 @@
+@inject CapitulosAPI api
+@inject ISnackbar snackbar
+
+<MudDialog Class="editor-dialog">
+    <DialogContent>
+        <div class="volume-editor chapter-editor">
+            <header class="editor-header">
+                <div>
+                    <MudText Typo="Typo.h4" Class="editor-title">Editar capítulo</MudText>
+                    <MudText Typo="Typo.body2" Class="editor-description">
+                        Atualize as informações do capítulo @capitulo?.Numero.
+                    </MudText>
+                </div>
+            </header>
+
+            <EditForm Model="@formulario" OnValidSubmit="Salvar">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                <section class="editor-section">
+                    <div class="fields-grid chapter-fields">
+                        <MudNumericField T="int"
+                                         @bind-Value="formulario.Numero"
+                                         Label="Número"
+                                         Variant="Variant.Outlined"
+                                         Min="1"
+                                         Required="true" />
+                        <MudNumericField T="int"
+                                         @bind-Value="formulario.NumeroPaginas"
+                                         Label="Páginas"
+                                         Variant="Variant.Outlined"
+                                         Min="1"
+                                         Required="true" />
+                        <MudTextField T="string"
+                                      @bind-Value="formulario.Titulo"
+                                      Label="Título"
+                                      Variant="Variant.Outlined"
+                                      Required="true"
+                                      For="@(() => formulario.Titulo)"
+                                      FullWidth="true" />
+                        <MudTextField T="string"
+                                      @bind-Value="formulario.Resumo"
+                                      Label="Resumo"
+                                      Variant="Variant.Outlined"
+                                      Lines="5"
+                                      Required="true"
+                                      For="@(() => formulario.Resumo)"
+                                      FullWidth="true" />
+                    </div>
+                </section>
+
+                <footer class="editor-footer">
+                    <MudButton Variant="Variant.Text" OnClick="Cancelar">
+                        Cancelar
+                    </MudButton>
+                    <MudButton ButtonType="ButtonType.Submit"
+                               Variant="Variant.Filled"
+                               Color="Color.Primary"
+                               Disabled="@isSaving"
+                               StartIcon="@Icons.Material.Outlined.Save">
+                        @(isSaving ? "Salvando..." : "Salvar capítulo")
+                    </MudButton>
+                </footer>
+            </EditForm>
+        </div>
+    </DialogContent>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    public IMudDialogInstance? ModalDialog { get; set; }
+
+    [Parameter]
+    public ReadCapituloDto? capitulo { get; set; }
+
+    private UpdateCapituloDto formulario = new();
+    private bool isSaving;
+
+    protected override void OnParametersSet()
+    {
+        if (capitulo is null)
+            throw new InvalidOperationException("É necessário informar o capítulo para edição.");
+
+        formulario = new UpdateCapituloDto
+        {
+            Numero = capitulo.Numero,
+            Titulo = capitulo.Titulo,
+            Resumo = capitulo.Resumo,
+            NumeroPaginas = capitulo.NumeroPaginas
+        };
+    }
+
+    private async Task Salvar()
+    {
+        if (capitulo is null)
+            throw new InvalidOperationException("É necessário informar o capítulo para edição.");
+
+        isSaving = true;
+        try
+        {
+            await api.PutCapitulosAsync(capitulo, formulario);
+            var atualizado = new ReadCapituloDto
+            {
+                Id = capitulo.Id,
+                Numero = formulario.Numero,
+                Titulo = formulario.Titulo,
+                Resumo = formulario.Resumo,
+                NumeroPaginas = formulario.NumeroPaginas,
+                NumeroVolume = capitulo.NumeroVolume
+            };
+            ModalDialog?.Close(DialogResult.Ok(atualizado));
+        }
+        catch (HttpRequestException)
+        {
+            snackbar.Add("Não foi possível salvar o capítulo. Verifique os dados e tente novamente.", Severity.Error);
+        }
+        finally
+        {
+            isSaving = false;
+        }
+    }
+
+    private void Cancelar() => ModalDialog?.Cancel();
+}

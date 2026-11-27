@@ -1,0 +1,529 @@
+@using System.Globalization
+@using Airen.Web.Pages.Tables.Personagens.Modals
+@using Airen.Web.Pages.Tables.Personagens.Modals.Habilidade
+@using Airen.Web.Pages.Tables.Personagens.Modals.Parentesco
+@using Airen.Web.Pages.Tables.Personagens.Modals.Personagens
+@using Airen.Web.Pages.Tables.Personagens.Modals.Potentias
+
+@inject PersonagensAPI personagensApi
+@inject ParentescoAPI parentescoApi
+@inject PotentiasAPI potentiasApi
+@inject HabilidadesAPI habilidadesApi
+@inject IDialogService dialogService
+@inject ISnackbar snackbar
+
+<MudDialog Class="volume-dialog character-dialog character-detail-dialog">
+    <TitleContent>
+        <div class="volume-header character-header">
+            <div class="volume-header-content">
+                <span class="volume-label">PERSONAGEM #@personagem?.Id</span>
+                <MudText Class="volume-title">@personagem?.Nome</MudText>
+                @if (!string.IsNullOrWhiteSpace(personagem?.NomeOriginal))
+                {
+                    <MudText Class="character-original-name">@personagem.NomeOriginal</MudText>
+                }
+            </div>
+        </div>
+    </TitleContent>
+
+    <DialogContent>
+        @if (personagem is not null)
+        {
+            <div class="document character-document">
+                <div class="metadata character-metadata">
+                    <div class="metadata-item">
+                        <span class="metadata-label">NASCIMENTO</span>
+                        <span class="metadata-value">
+                            @(personagem.DataNascimento?.ToString("d 'de' MMMM 'de' yyyy", new CultureInfo("pt-BR")) ?? "Não informado")
+                        </span>
+                    </div>
+                    <div class="metadata-item">
+                        <span class="metadata-label">SITUAÇÃO</span>
+                        <span class="metadata-value">
+                            @(personagem.EstaVivo ? "Vivo" : "Falecido")
+                        </span>
+                    </div>
+                </div>
+
+                <section class="character-biography">
+                    <div class="character-section-heading">
+                        <MudIcon Icon="@Icons.Material.Outlined.Description" />
+                        <MudText Typo="Typo.h6">Biografia</MudText>
+                    </div>
+                    @if (string.IsNullOrWhiteSpace(personagem.Biografia))
+                    {
+                        <MudText Typo="Typo.body2" Class="character-empty">Nenhuma biografia cadastrada.</MudText>
+                    }
+                    else
+                    {
+                        <MudText Typo="Typo.body1" Class="character-biography-text">@personagem.Biografia</MudText>
+                    }
+                </section>
+
+                <section class="character-related-section">
+                    <div class="character-section-heading">
+                        <MudIcon Icon="@Icons.Material.Outlined.Groups" />
+                        <MudText Typo="Typo.h6">Afiliações</MudText>
+                    </div>
+                    @if (personagem.Afiliacoes?.Any() == true)
+                    {
+                        <div class="character-chip-list">
+                            @foreach (var afiliacao in personagem.Afiliacoes)
+                            {
+                                <MudTooltip Text="@afiliacao.Descricao">
+                                    <MudChip T="string" Color="Color.Primary" Variant="Variant.Outlined">
+                                        @afiliacao.Nome
+                                    </MudChip>
+                                </MudTooltip>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <MudText Typo="Typo.body2" Class="character-empty">Nenhuma afiliação cadastrada.</MudText>
+                    }
+                </section>
+
+                <section class="character-related-section">
+                    <div class="character-section-heading">
+                        <MudIcon Icon="@Icons.Material.Outlined.FamilyRestroom" />
+                        <MudText Typo="Typo.h6">Parentescos</MudText>
+                        <MudSpacer />
+                        <MudButton Variant="Variant.Outlined" Color="Color.Primary" StartIcon="@Icons.Material.Outlined.Add"
+                                   OnClick="AdicionarParentesco">
+                            Adicionar
+                        </MudButton>
+                    </div>
+                    @if (personagem.Parentes?.Any() == true)
+                    {
+                        <div class="character-related-list">
+                            @foreach (var parente in personagem.Parentes)
+                            {
+                                <div class="character-related-item">
+                                    <div class="character-related-item-header">
+                                        <MudText Typo="Typo.subtitle2">@parente.NomeParente - @parente.TipoParentesco</MudText>
+                                        <div class="character-related-item-actions">
+                                            <MudIconButton Icon="@Icons.Material.Outlined.Edit"
+                                                           Color="Color.Primary"
+                                                           Size="Size.Small"
+                                                           aria-label="Editar parentesco"
+                                                           OnClick="@(() => EditarParentesco(parente))" />
+                                            <MudIconButton Icon="@Icons.Material.Outlined.DeleteOutline"
+                                                           Color="Color.Error"
+                                                           Size="Size.Small"
+                                                           Disabled="@isDeletingParentesco"
+                                                           aria-label="Excluir parentesco"
+                                                           OnClick="@(() => ExcluirParentesco(parente))" />
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <MudText Typo="Typo.body2" Class="character-empty">Nenhum parentesco cadastrado.</MudText>
+                    }
+                </section>
+
+                <section class="character-related-section">
+                    <div class="character-section-heading">
+                        <MudIcon Icon="@Icons.Material.Outlined.AutoAwesome" />
+                        <MudText Typo="Typo.h6">Potentia</MudText>
+                        @if (personagem.Potentia is null)
+                        {
+                            <MudSpacer />
+                            <MudButton Variant="Variant.Outlined" Color="Color.Primary" StartIcon="@Icons.Material.Outlined.Add"
+                                       OnClick="AdicionarPotentia">
+                                Adicionar
+                            </MudButton>
+                        }
+                    </div>
+                    @if (personagem.Potentia is null)
+                    {
+                        <MudText Typo="Typo.body2" Class="character-empty">Nenhuma potentia cadastrada.</MudText>
+                    }
+                    else
+                    {
+                        <div class="character-related-item">
+                            <div class="character-related-item-header">
+                                <div>
+                                    <MudText Typo="Typo.subtitle1">
+                                        @personagem.Potentia.Nome
+                                        @if (!string.IsNullOrWhiteSpace(personagem.Potentia.LinkMusica))
+                                        {
+                                            <a class="mud-link"
+                                               href="@personagem.Potentia.LinkMusica"
+                                               target="_blank"
+                                               rel="noopener noreferrer">
+                                                <MudIcon Icon="@Icons.Material.Outlined.OpenInNew" Size="Size.Small" />
+                                            </a>
+                                        }
+                                    </MudText>
+                                    <MudText Typo="Typo.body2">@personagem.Potentia.Descricao</MudText>
+                                </div>
+                                <div class="character-related-item-actions">
+                                    <MudIconButton Icon="@Icons.Material.Outlined.Edit"
+                                                   Color="Color.Primary"
+                                                   Size="Size.Small"
+                                                   aria-label="Editar potentia"
+                                                   OnClick="@(() => EditarPotentia(personagem.Potentia))" />
+                                    <MudIconButton Icon="@Icons.Material.Outlined.DeleteOutline"
+                                                   Color="Color.Error"
+                                                   Size="Size.Small"
+                                                   Disabled="@isDeletingPotentia"
+                                                   aria-label="Excluir potentia"
+                                                   OnClick="@(() => ExcluirPotentia(personagem.Potentia))" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="character-section-subheading">
+                            <MudText Typo="Typo.subtitle2">Habilidades</MudText>
+                            <MudButton Variant="Variant.Text" Color="Color.Primary" StartIcon="@Icons.Material.Outlined.Add"
+                                       OnClick="AdicionarHabilidade">
+                                Adicionar
+                            </MudButton>
+                        </div>
+                        @if (personagem.Potentia.ListaHabilidades?.Any() == true)
+                        {
+                            <div class="character-related-list">
+                                @foreach (var habilidade in personagem.Potentia.ListaHabilidades)
+                                {
+                                    <div class="character-related-item">
+                                        <div class="character-related-item-header">
+                                            <MudText Typo="Typo.subtitle2">@habilidade.Nome</MudText>
+                                            <div class="character-related-item-actions">
+                                                <MudIconButton Icon="@Icons.Material.Outlined.Edit"
+                                                               Color="Color.Primary"
+                                                               Size="Size.Small"
+                                                               aria-label="Editar habilidade"
+                                                               OnClick="@(() => EditarHabilidade(habilidade))" />
+                                                <MudIconButton Icon="@Icons.Material.Outlined.DeleteOutline"
+                                                               Color="Color.Error"
+                                                               Size="Size.Small"
+                                                               Disabled="@isDeletingHabilidade"
+                                                               aria-label="Excluir habilidade"
+                                                               OnClick="@(() => ExcluirHabilidade(habilidade))" />
+                                            </div>
+                                        </div>
+                                        <MudText Typo="Typo.body2">@habilidade.Descricao</MudText>
+                                    </div>
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <MudText Typo="Typo.body2" Class="character-empty">Nenhuma habilidade cadastrada.</MudText>
+                        }
+                    }
+                </section>
+            </div>
+        }
+    </DialogContent>
+
+    <DialogActions>
+        <MudButton Color="Color.Error" Variant="Variant.Outlined" StartIcon="@Icons.Material.Outlined.Delete"
+                   Disabled="@isDeleting" OnClick="ExcluirPersonagem">
+            @(isDeleting ? "Excluindo..." : "Excluir")
+        </MudButton>
+        <MudSpacer />
+        <MudButton Variant="Variant.Outlined" Color="Color.Primary" StartIcon="@Icons.Material.Outlined.Edit"
+                   OnClick="EditarPersonagem">
+            Editar personagem
+        </MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    public IMudDialogInstance? ModalDialog { get; set; }
+
+    [Parameter]
+    public ReadPersonagemDto? personagem { get; set; }
+
+    [Parameter]
+    public EventCallback OnPersonagemAtualizado { get; set; }
+
+    private bool isDeleting;
+    private bool isDeletingParentesco;
+    private bool isDeletingHabilidade;
+    private bool isDeletingPotentia;
+
+    private async Task AdicionarParentesco()
+    {
+        if (personagem is null)
+            return;
+
+        var parameters = new DialogParameters<ModalAdicionarParentesco>
+        {
+            { dialog => dialog.PersonagemId, personagem.Id }
+        };
+        var dialog = await dialogService.ShowAsync<ModalAdicionarParentesco>(
+            null,
+            parameters,
+            OpcoesModalCadastro());
+        var result = await dialog.Result;
+        if (result is { Canceled: false })
+            await RecarregarPersonagem();
+    }
+
+    private async Task AdicionarPotentia()
+    {
+        if (personagem is null)
+            return;
+
+        var parameters = new DialogParameters<ModalAdicionarPotentia>
+        {
+            { dialog => dialog.PersonagemId, personagem.Id }
+        };
+        var dialog = await dialogService.ShowAsync<ModalAdicionarPotentia>(
+            null,
+            parameters,
+            OpcoesModalCadastro());
+        var result = await dialog.Result;
+        if (result is { Canceled: false })
+            await RecarregarPersonagem();
+    }
+
+    private async Task AdicionarHabilidade()
+    {
+        if (personagem?.Potentia is not { } potentia)
+            return;
+
+        var parameters = new DialogParameters<ModalAdicionarHabilidade>
+        {
+            { dialog => dialog.PotentiaId, potentia.Id }
+        };
+        var dialog = await dialogService.ShowAsync<ModalAdicionarHabilidade>(
+            null,
+            parameters,
+            OpcoesModalCadastro());
+        var result = await dialog.Result;
+        if (result is { Canceled: false })
+            await RecarregarPersonagem();
+    }
+
+    private static DialogOptions OpcoesModalCadastro() => new()
+    {
+        CloseButton = true,
+        CloseOnEscapeKey = true,
+        FullWidth = true,
+        MaxWidth = MaxWidth.Medium
+    };
+
+    private async Task EditarPersonagem()
+    {
+        if (personagem is null)
+            return;
+
+        var parameters = new DialogParameters<ModalEditarPersonagem>
+        {
+            { dialog => dialog.personagem, personagem }
+        };
+        var dialog = await dialogService.ShowAsync<ModalEditarPersonagem>(null, parameters);
+        var result = await dialog.Result;
+        if (result is { Canceled: false })
+        {
+            await RecarregarPersonagem();
+            await OnPersonagemAtualizado.InvokeAsync();
+        }
+    }
+
+    private async Task EditarParentesco(ReadParentescoDto parentesco)
+    {
+        if (personagem is null)
+            return;
+
+        var parameters = new DialogParameters<ModalEditarParentesco>
+        {
+            { dialog => dialog.parentesco, parentesco },
+            { dialog => dialog.PersonagemId, personagem.Id }
+        };
+        var options = new DialogOptions
+        {
+            CloseButton = true,
+            CloseOnEscapeKey = true,
+            FullWidth = true,
+            MaxWidth = MaxWidth.Medium
+        };
+        var dialog = await dialogService.ShowAsync<ModalEditarParentesco>(null, parameters, options);
+        var result = await dialog.Result;
+        if (result is { Canceled: false })
+            await RecarregarPersonagem();
+    }
+
+    private async Task EditarHabilidade(ReadHabilidadeDto habilidade)
+    {
+        if (personagem?.Potentia is null)
+            return;
+
+        var parameters = new DialogParameters<ModalEditarHabilidade>
+        {
+            { dialog => dialog.habilidade, habilidade },
+            { dialog => dialog.PotentiaId, personagem.Potentia.Id }
+        };
+        var options = new DialogOptions
+        {
+            CloseButton = true,
+            CloseOnEscapeKey = true,
+            FullWidth = true,
+            MaxWidth = MaxWidth.Medium
+        };
+        var dialog = await dialogService.ShowAsync<ModalEditarHabilidade>(null, parameters, options);
+        var result = await dialog.Result;
+        if (result is { Canceled: false })
+            await RecarregarPersonagem();
+    }
+
+    private async Task EditarPotentia(ReadPotentiaDto potentia)
+    {
+        if (personagem is null)
+            return;
+
+        var parameters = new DialogParameters<ModalEditarPotentia>
+        {
+            { dialog => dialog.potentia, potentia },
+            { dialog => dialog.PersonagemId, personagem.Id }
+        };
+        var options = new DialogOptions
+        {
+            CloseButton = true,
+            CloseOnEscapeKey = true,
+            FullWidth = true,
+            MaxWidth = MaxWidth.Medium
+        };
+        var dialog = await dialogService.ShowAsync<ModalEditarPotentia>(null, parameters, options);
+        var result = await dialog.Result;
+        if (result is { Canceled: false })
+            await RecarregarPersonagem();
+    }
+
+    private async Task ExcluirParentesco(ReadParentescoDto parentesco)
+    {
+        var confirmar = await dialogService.ShowMessageBoxAsync(
+            "Excluir parentesco",
+            $"Deseja excluir o parentesco com {parentesco.NomeParente}?",
+            yesText: "Excluir",
+            cancelText: "Cancelar");
+        if (confirmar != true)
+            return;
+
+        isDeletingParentesco = true;
+        try
+        {
+            await parentescoApi.DeleteParentescosAsync(parentesco);
+            snackbar.Add("Parentesco excluído.", Severity.Success);
+            await RecarregarPersonagem();
+        }
+        catch (HttpRequestException)
+        {
+            snackbar.Add("Não foi possível excluir o parentesco. Tente novamente.", Severity.Error);
+        }
+        finally
+        {
+            isDeletingParentesco = false;
+        }
+    }
+
+    private async Task ExcluirHabilidade(ReadHabilidadeDto habilidade)
+    {
+        var confirmar = await dialogService.ShowMessageBoxAsync(
+            "Excluir habilidade",
+            $"Deseja excluir a habilidade {habilidade.Nome}?",
+            yesText: "Excluir",
+            cancelText: "Cancelar");
+        if (confirmar != true)
+            return;
+
+        isDeletingHabilidade = true;
+        try
+        {
+            await habilidadesApi.DeleteHabilidadesAsync(habilidade);
+            snackbar.Add("Habilidade excluída.", Severity.Success);
+            await RecarregarPersonagem();
+        }
+        catch (HttpRequestException)
+        {
+            snackbar.Add("Não foi possível excluir a habilidade. Tente novamente.", Severity.Error);
+        }
+        finally
+        {
+            isDeletingHabilidade = false;
+        }
+    }
+
+    private async Task ExcluirPotentia(ReadPotentiaDto potentia)
+    {
+        var confirmar = await dialogService.ShowMessageBoxAsync(
+            "Excluir potentia",
+            $"Deseja excluir a potentia {potentia.Nome}?",
+            yesText: "Excluir",
+            cancelText: "Cancelar");
+        if (confirmar != true)
+            return;
+
+        isDeletingPotentia = true;
+        try
+        {
+            await potentiasApi.DeletePotentiasAsync(potentia);
+            snackbar.Add("Potentia excluída.", Severity.Success);
+            await RecarregarPersonagem();
+        }
+        catch (HttpRequestException)
+        {
+            snackbar.Add("Não foi possível excluir a potentia. Remova primeiro as habilidades relacionadas.", Severity.Error);
+        }
+        finally
+        {
+            isDeletingPotentia = false;
+        }
+    }
+
+    private async Task ExcluirPersonagem()
+    {
+        if (personagem is null)
+            return;
+
+        var confirmar = await dialogService.ShowMessageBoxAsync(
+            "Excluir personagem",
+            $"Deseja excluir {personagem.Nome}? Esta ação não pode ser desfeita.",
+            yesText: "Excluir",
+            cancelText: "Cancelar");
+        if (confirmar != true)
+            return;
+
+        isDeleting = true;
+        try
+        {
+            await personagensApi.DeletePersonagensAsync(personagem);
+            ModalDialog?.Close(DialogResult.Ok(true));
+        }
+        catch (HttpRequestException)
+        {
+            snackbar.Add("Não foi possível excluir o personagem. Remova primeiro os registros relacionados.", Severity.Error);
+        }
+        finally
+        {
+            isDeleting = false;
+        }
+    }
+
+    private async Task RecarregarPersonagem()
+    {
+        if (personagem is null)
+            return;
+
+        try
+        {
+            personagem = (await personagensApi.GetPersonagensAsync())
+                .FirstOrDefault(item => item.Id == personagem.Id);
+            if (personagem is null)
+                snackbar.Add("O personagem não foi encontrado após a atualização.", Severity.Warning);
+        }
+        catch (HttpRequestException)
+        {
+            snackbar.Add("Não foi possível atualizar os dados do personagem.", Severity.Error);
+        }
+    }
+}

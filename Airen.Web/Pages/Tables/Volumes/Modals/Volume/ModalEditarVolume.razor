@@ -1,0 +1,433 @@
+@using Airen.Web.Pages.Tables.Volumes.Modals.Capitulo
+
+@inject VolumesAPI api
+@inject CapitulosAPI capitulosApi
+@inject IDialogService dialogService
+@inject ISnackbar snackbar
+
+<MudDialog Class = "editor-dialog">
+    <DialogContent>
+        <div class="volume-editor">
+            <header class="editor-header">
+
+                <div>
+                    <MudText Typo="Typo.h4" Class="editor-title"> @formulario.Nome </MudText>
+                    <MudText Typo="Typo.body2" Class="editor-description">
+                        Atualize as informações e o conteúdo descritivo deste volume.
+                    </MudText>
+                </div>
+
+            </header>
+
+            <EditForm Model="@formulario" OnValidSubmit="Editar">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                <section class="editor-section">
+                    <div class="section-heading">
+                        <MudIcon Icon="@Icons.Material.Outlined.Info" Size="Size.Small" />
+                        <div>
+                            <MudText Typo="Typo.subtitle1"> Informações principais </MudText>
+                            <MudText Typo="Typo.caption"> Dados básicos utilizados na identificação do volume. </MudText>
+                        </div>
+                    </div>
+
+
+                    <div class="fields-grid">
+                        <MudNumericField T="int" @bind-Value="formulario.Numero"
+                                    Label="Número"
+                                    Variant="Variant.Outlined"
+                                    Class="volume-field"
+                                    Min="1"
+                                    Required="true"
+                                    FullWidth="true" />
+
+                        <MudTextField @bind-Value="formulario.Nome"
+                                    Label="Nome"
+                                    Class="volume-field"
+                                    Variant="Variant.Outlined"
+                                    Required="true"
+                                    For="@(() => formulario.Nome)"
+                                    FullWidth="true" />
+                    </div>
+
+                    <MudTextField @bind-Value="formulario.MensagemVolume"
+                            Label="Mensagem"
+                            Variant="Variant.Outlined"
+                            FullWidth="true"
+                            Lines="8"
+                            Class="message-field" />
+
+                    <MudDatePicker @bind-Date="formulario.DataLancamento"
+                                    Label="Data de Lançamento"
+                                    Variant="Variant.Outlined"
+                                    Color="Color.Primary"
+                                    DateFormat="dd/MM/yyyy" 
+                                    PickerVariant="PickerVariant.Dialog"
+                                    Required="true"/>
+
+                </section>
+
+<section class="editor-section">
+    <div class="section-heading">
+        <MudIcon Icon="@Icons.Material.Outlined.Image"
+                 Size="Size.Small" />
+        <div>
+            <MudText Typo="Typo.subtitle1">
+                Capa
+            </MudText>
+
+            <MudText Typo="Typo.caption">
+                Informe o endereço da imagem utilizada como capa do volume.
+            </MudText>
+        </div>
+    </div>
+
+
+    <div class="cover-card">
+        <div class="cover-preview">
+            @if (!string.IsNullOrWhiteSpace(formulario.UrlCapa))
+            {
+                <img src="@formulario.UrlCapa"
+                     alt="Capa do volume @formulario.Numero" />
+            }
+            else
+            {
+                <div class="cover-placeholder">
+                    <MudIcon Icon="@Icons.Material.Outlined.Image"
+                             Size="Size.Large" />
+                    <MudText Typo="Typo.body2">
+                        Sem capa
+                    </MudText>
+                </div>
+            }
+
+        </div>
+        <div class="cover-information">
+
+            <MudTextField @bind-Value="formulario.UrlCapa"
+                          Label="URL da capa"
+                          Placeholder="https://exemplo.com/capa.jpg"
+                          Variant="Variant.Outlined"
+                          FullWidth="true"
+                          Adornment="Adornment.Start"
+                          AdornmentIcon="@Icons.Material.Outlined.Link" />
+
+            <MudText Typo="Typo.caption" Align="Align.Center">
+                Escolha um arquivo ou informe o link direto para a capa.
+            </MudText>
+
+            <InputFile OnChange="SelecionarCapa"
+                       accept="image/png,image/jpeg,image/webp"
+                       class="cover-file-input" />
+            <MudText Typo="Typo.caption">PNG, JPG ou WEBP; até 2 MB.</MudText>
+            @if (!string.IsNullOrWhiteSpace(coverError))
+            {
+                <MudText Typo="Typo.caption" Color="Color.Error">@coverError</MudText>
+            }
+
+            @if (!string.IsNullOrWhiteSpace(formulario.UrlCapa))
+            {
+                <MudButton Href="@formulario.UrlCapa"
+                           Target="_blank"
+                           Variant="Variant.Text"
+                           Color="Color.Primary"
+                           StartIcon="@Icons.Material.Outlined.OpenInNew">
+                    Visualizar imagem
+                </MudButton>
+            }
+
+        </div>
+
+    </div>
+
+</section>
+
+            <section class="editor-section">
+                <div class="section-heading chapter-section-heading">
+                    <div class="section-heading-icon">
+                        <MudIcon Icon="@Icons.Material.Outlined.MenuBook" Size="Size.Small" />
+                        <div>
+                            <MudText Typo="Typo.subtitle1">Capítulos</MudText>
+                            <MudText Typo="Typo.caption">Busque por título, resumo ou número.</MudText>
+                        </div>
+                    </div>
+                    <MudButton Variant="Variant.Outlined"
+                               Color="Color.Primary"
+                               StartIcon="@Icons.Material.Outlined.Add"
+                               OnClick="AdicionarCapitulo">
+                        Adicionar capítulo
+                    </MudButton>
+                </div>
+
+                <div class="chapter-filters">
+                    <MudTextField T="string"
+                                  @bind-Value="buscaCapitulos"
+                                  Label="Buscar capítulo"
+                                  Placeholder="Título, resumo ou número"
+                                  Variant="Variant.Outlined"
+                                  Adornment="Adornment.Start"
+                                  AdornmentIcon="@Icons.Material.Outlined.Search"
+                                  Immediate="true"
+                                  Clearable="true" />
+                </div>
+
+                <MudTable T="ReadCapituloDto"
+                          Items="@CapitulosFiltrados"
+                          Hover="true"
+                          Striped="true"
+                          Dense="true"
+                          Breakpoint="Breakpoint.Sm"
+                          Class="chapter-table"
+                          RowsPerPage="10">
+                    <HeaderContent>
+                        <MudTh>Número</MudTh>
+                        <MudTh>Título</MudTh>
+                        <MudTh>Resumo</MudTh>
+                        <MudTh>Páginas</MudTh>
+                        <MudTh>Ações</MudTh>
+                    </HeaderContent>
+                    <RowTemplate Context="capitulo">
+                        <MudTd DataLabel="Número">@capitulo.Numero.ToString("00")</MudTd>
+                        <MudTd DataLabel="Título">@capitulo.Titulo</MudTd>
+                        <MudTd DataLabel="Resumo">@capitulo.Resumo</MudTd>
+                        <MudTd DataLabel="Páginas">@capitulo.NumeroPaginas</MudTd>
+                        <MudTd DataLabel="Ações">
+                            <MudIconButton Icon="@Icons.Material.Outlined.Edit"
+                                           Color="Color.Primary"
+                                           Size="Size.Small"
+                                           aria-label="Editar capítulo"
+                                           OnClick="@(() => EditarCapitulo(capitulo))" />
+                            <MudIconButton Icon="@Icons.Material.Outlined.DeleteOutline"
+                                           Color="Color.Error"
+                                           Size="Size.Small"
+                                           aria-label="Excluir capítulo"
+                                           OnClick="@(() => ExcluirCapitulo(capitulo))" />
+                        </MudTd>
+                    </RowTemplate>
+                    <NoRecordsContent>
+                        <div class="chapter-empty-state">
+                            <MudIcon Icon="@Icons.Material.Outlined.Article" />
+                            @if (capitulos.Count == 0)
+                            {
+                                <MudText Typo="Typo.body2">Nenhum capítulo vinculado a este volume.</MudText>
+                            }
+                            else
+                            {
+                                <MudText Typo="Typo.body2">Nenhum capítulo corresponde à busca.</MudText>
+                            }
+                        </div>
+                    </NoRecordsContent>
+                    <PagerContent>
+                        <MudTablePager HideRowsPerPage="true"
+                                       InfoFormat="{first_item}-{last_item} de {all_items}" />
+                    </PagerContent>
+                </MudTable>
+            </section>
+
+            <footer class="editor-footer">
+                <MudButton Variant="Variant.Text" OnClick="Cancelar">
+                    Cancelar
+                </MudButton>
+                <MudButton ButtonType="ButtonType.Submit"
+                           Variant="Variant.Filled"
+                           Color="Color.Primary"
+                           Disabled="@IsSaving"
+                           StartIcon="@Icons.Material.Outlined.Save">
+                    @(IsSaving ? "Salvando..." : "Salvar alterações")
+                </MudButton>
+            </footer>
+            </EditForm>
+        </div>
+    </DialogContent>
+</MudDialog>
+
+@code {
+    private bool IsSaving;
+    private const long MaxCoverSize = 2 * 1024 * 1024;
+    private string? coverError;
+
+    [CascadingParameter]
+    public IMudDialogInstance? ModalDialog { get; set; }
+
+    [Parameter]
+    public ReadVolumeDto? volume { get; set; }
+
+    private UpdateVolumeDto formulario = new();
+    private List<ReadCapituloDto> capitulos = [];
+    private string? buscaCapitulos = string.Empty;
+
+    private IEnumerable<ReadCapituloDto> CapitulosFiltrados
+    {
+        get
+        {
+            var busca = (buscaCapitulos ?? string.Empty).Trim();
+            return capitulos.Where(capitulo =>
+                (string.IsNullOrEmpty(busca)
+                    || capitulo.Numero.ToString().Contains(busca, StringComparison.OrdinalIgnoreCase)
+                    || (capitulo.Titulo?.Contains(busca, StringComparison.OrdinalIgnoreCase) ?? false)
+                    || (capitulo.Resumo?.Contains(busca, StringComparison.OrdinalIgnoreCase) ?? false)));
+        }
+    }
+
+    protected override void OnParametersSet()
+    {
+        var volumeAtual = volume
+            ?? throw new InvalidOperationException("É necessário informar o volume para edição.");
+
+        formulario = new UpdateVolumeDto
+        {
+            Numero = volumeAtual.Numero,
+            Nome = volumeAtual.Nome,
+            DataLancamento = volumeAtual.DataLancamento,
+            MensagemVolume = volumeAtual.MensagemVolume,
+            UrlCapa = volumeAtual.UrlCapa
+        };
+        capitulos = volumeAtual.Capitulos?
+            .OrderBy(capitulo => capitulo.Numero)
+            .ToList() ?? [];
+        volumeAtual.Capitulos = capitulos;
+    }
+
+    private async Task Editar()
+    {
+        if (volume is null)
+            throw new InvalidOperationException("É necessário informar o volume para edição.");
+
+        IsSaving = true;
+        try
+        {
+            await api.PutVolumesAsync(volume, formulario);
+            ModalDialog?.Close(DialogResult.Ok(true));
+        }
+        catch (HttpRequestException)
+        {
+            snackbar.Add("Não foi possível salvar o volume. Verifique os dados e tente novamente.", Severity.Error);
+        }
+        finally
+        {
+            IsSaving = false;
+        }
+    }
+
+    private async Task SelecionarCapa(InputFileChangeEventArgs args)
+    {
+        var arquivo = args.File;
+        if (arquivo.Size > MaxCoverSize)
+        {
+            coverError = "A imagem deve ter no máximo 2 MB.";
+            return;
+        }
+
+        if (arquivo.ContentType is not ("image/png" or "image/jpeg" or "image/webp"))
+        {
+            coverError = "Use uma imagem PNG, JPG ou WEBP.";
+            return;
+        }
+
+        try
+        {
+            await using var stream = arquivo.OpenReadStream(MaxCoverSize);
+            using var buffer = new MemoryStream();
+            await stream.CopyToAsync(buffer);
+            formulario.UrlCapa = $"data:{arquivo.ContentType};base64,{Convert.ToBase64String(buffer.ToArray())}";
+            coverError = null;
+        }
+        catch (IOException)
+        {
+            coverError = "Não foi possível ler a imagem selecionada.";
+        }
+    }
+
+    private async Task AdicionarCapitulo()
+    {
+        if (volume is null)
+            return;
+
+        var parameters = new DialogParameters<ModalAdicionarCapitulo>
+        {
+            { dialog => dialog.VolumeId, volume.Id },
+            { dialog => dialog.VolumeNumero, volume.Numero }
+        };
+        var options = new DialogOptions
+        {
+            CloseButton = true,
+            CloseOnEscapeKey = true,
+            FullWidth = true,
+            MaxWidth = MaxWidth.Medium
+        };
+        var dialog = await dialogService.ShowAsync<ModalAdicionarCapitulo>(
+            "Adicionar capítulo",
+            parameters,
+            options);
+        var result = await dialog.Result;
+        if (result is { Canceled: false, Data: ReadCapituloDto novoCapitulo })
+        {
+            capitulos.Add(novoCapitulo);
+            capitulos = capitulos.OrderBy(capitulo => capitulo.Numero).ToList();
+            volume.Capitulos = capitulos;
+        }
+
+    }
+
+    private async Task EditarCapitulo(ReadCapituloDto capitulo)
+    {
+        var parameters = new DialogParameters<ModalEditarCapitulo>
+        {
+            { dialog => dialog.capitulo, capitulo }
+        };
+        var options = new DialogOptions
+        {
+            CloseButton = true,
+            CloseOnEscapeKey = true,
+            FullWidth = true,
+            MaxWidth = MaxWidth.Medium
+        };
+        var dialog = await dialogService.ShowAsync<ModalEditarCapitulo>(
+            "Editar capítulo",
+            parameters,
+            options);
+        var result = await dialog.Result;
+        if (result is { Canceled: false, Data: ReadCapituloDto atualizado })
+        {
+            var index = capitulos.FindIndex(item => item.Id == atualizado.Id);
+            if (index >= 0)
+            {
+                capitulos[index] = atualizado;
+                capitulos = capitulos.OrderBy(item => item.Numero).ToList();
+                if (volume is not null)
+                    volume.Capitulos = capitulos;
+            }
+        }
+    }
+
+    private async Task ExcluirCapitulo(ReadCapituloDto capitulo)
+    {
+        var confirmacao = await dialogService.ShowMessageBoxAsync(
+            "Excluir capítulo",
+            $"Deseja excluir o capítulo \"{capitulo.Titulo}\"?",
+            "Excluir",
+            "Cancelar");
+
+        if (confirmacao != true)
+            return;
+
+        try
+        {
+            await capitulosApi.DeleteCapitulosAsync(capitulo);
+            capitulos.Remove(capitulo);
+            if (volume is not null)
+                volume.Capitulos = capitulos;
+            snackbar.Add("Capítulo excluído.", Severity.Success);
+        }
+        catch (HttpRequestException)
+        {
+            snackbar.Add("Não foi possível excluir o capítulo. Tente novamente.", Severity.Error);
+        }
+    }
+
+    private void Cancelar()
+    {
+        ModalDialog?.Cancel();
+    }
+}

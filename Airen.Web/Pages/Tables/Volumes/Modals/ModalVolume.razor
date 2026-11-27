@@ -1,8 +1,10 @@
 @using System.Globalization
+@using Airen.Web.Pages.Tables.Volumes.Modals.Volume
 @inject IDialogService dialogService
 @inject VolumesAPI VolumesAPI
+@inject ISnackbar snackbar
 
-<MudDialog Class="volume-dialog">
+<MudDialog Class="volume-dialog character-dialog character-detail-dialog">
 
     <TitleContent>
         <div class="volume-header">
@@ -55,51 +57,60 @@
                 </div>
             </div>
 
-            @if (volume?.Capitulos?.Count() > 0)
-            {
-                <section class="chapters">
-                    <div class="section-heading">
-                        <div>
-                            <MudText Class="section-title"> Capítulos </MudText>
-                        </div>
-                    </div>
+            <section class="chapters">
+                <div class="section-heading">
+                    <MudText Class="section-title">Capítulos</MudText>
+                </div>
 
+                @if (volume?.Capitulos?.Count > 0)
+                {
                     <div class="chapter-list">
-
                         @foreach (var capitulo in volume.Capitulos)
                         {
                             <article class="chapter">
-
                                 <div class="chapter-number">
                                     @capitulo.Numero.ToString("00")
                                 </div>
-
                                 <div class="chapter-content">
                                     <MudText Class="chapter-title">
                                         @capitulo.Titulo
                                     </MudText>
-
                                     <MudText Class="chapter-summary">
                                         @capitulo.Resumo
                                     </MudText>
-                                    
                                     <div class="chapter-footer">
-                                        <span>
-                                            @capitulo.NumeroPaginas páginas
-                                        </span>
+                                        @capitulo.NumeroPaginas páginas
                                     </div>
                                 </div>
                             </article>
                         }
                     </div>
-                </section>
-            }
+                }
+                else
+                {
+                    <div class="chapter-empty-state">
+                        <MudIcon Icon="@Icons.Material.Outlined.Article" />
+                        <MudText Typo="Typo.body2">Este volume ainda não possui capítulos.</MudText>
+                    </div>
+                }
+            </section>
         </div>
     </DialogContent>
 
     <DialogActions>
-        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="(() => OpenModal(volume!))"> Editar </MudButton>
-        <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="(() => DeleteVolume(volume!))"> Excluir </MudButton>
+        <MudButton Variant="Variant.Outlined"
+                   Color="Color.Error"
+                   StartIcon="@Icons.Material.Outlined.Delete"
+                   OnClick="(() => DeleteVolume(volume!))">
+            Excluir
+        </MudButton>
+        <MudSpacer />
+        <MudButton Variant="Variant.Outlined"
+                   Color="Color.Primary"
+                   StartIcon="@Icons.Material.Outlined.Edit"
+                   OnClick="(() => OpenModal(volume!))">
+            Editar volume
+        </MudButton>
     </DialogActions>
 
 </MudDialog>
@@ -112,7 +123,7 @@
     [Parameter]
     public ReadVolumeDto? volume { get; set; }
 
-    private async void OpenModal(ReadVolumeDto volumeDto)
+    private async Task OpenModal(ReadVolumeDto volumeDto)
     {
         var options = new DialogOptions {
             MaxWidth = MaxWidth.ExtraExtraLarge,
@@ -126,10 +137,13 @@
             {"volume", volumeDto}
         };
 
-        await dialogService.ShowAsync<ModalEditarVolume>(parameters);
+        var dialog = await dialogService.ShowAsync<ModalEditarVolume>(parameters, options);
+        var result = await dialog.Result;
+        if (result is { Canceled: false })
+            ModalDialog?.Close(DialogResult.Ok(true));
     }
 
-    private async void DeleteVolume(ReadVolumeDto volumeDto)
+    private async Task DeleteVolume(ReadVolumeDto volumeDto)
     {
         bool? result = await dialogService.ShowMessageBoxAsync(
             "Confirmar Exclusão",
@@ -140,9 +154,16 @@
 
         if (result == true)
         {
-            await VolumesAPI.DeleteVolumesAsync(volumeDto);
-            ModalDialog?.Close();
-            StateHasChanged();
+            try
+            {
+                await VolumesAPI.DeleteVolumesAsync(volumeDto);
+                ModalDialog?.Close(DialogResult.Ok(true));
+                snackbar.Add("Volume excluído com sucesso.", Severity.Success);
+            }
+            catch (HttpRequestException)
+            {
+                snackbar.Add("Não foi possível excluir o volume. Tente novamente.", Severity.Error);
+            }
         }
     }
 }

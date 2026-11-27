@@ -1,0 +1,235 @@
+@inject VolumesAPI api
+@inject ISnackbar snackbar
+
+<MudDialog Class="character-dialog volume-create-dialog">
+    <DialogContent>
+        <div class="character-form volume-create-form">
+            <header class="character-form-header">
+                <MudText Typo="Typo.h4" Class="collection-title">Criar volume</MudText>
+                <MudText Typo="Typo.body2" Class="collection-description">
+                    Registre as informações principais e a capa do volume.
+                </MudText>
+            </header>
+
+            <EditForm Model="@volume" OnValidSubmit="Criar">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+                <div class="character-fields volume-fields">
+                    <MudNumericField T="int"
+                                     @bind-Value="volume!.Numero"
+                                     Label="Número"
+                                     Variant="Variant.Outlined"
+                                     Min="1"
+                                     Required="true"
+                                     FullWidth="true" />
+                    <MudTextField T="string"
+                                  @bind-Value="volume!.Nome"
+                                  Label="Nome"
+                                  Variant="Variant.Outlined"
+                                  Required="true"
+                                  For="@(() => volume!.Nome)"
+                                  FullWidth="true" />
+                    <MudDatePicker @bind-Date="volume!.DataLancamento"
+                                   Label="Data de lançamento"
+                                   Variant="Variant.Outlined"
+                                   DateFormat="dd/MM/yyyy"
+                                   PickerVariant="PickerVariant.Dialog"
+                                   Required="true" />
+                    <MudTextField T="string"
+                                  @bind-Value="volume!.MensagemVolume"
+                                  Label="Mensagem"
+                                  Variant="Variant.Outlined"
+                                  Lines="5"
+                                  Class="volume-message-field"
+                                  FullWidth="true" />
+                </div>
+
+                <section class="volume-create-section">
+                    <header class="volume-create-section-header">
+                        <MudText Typo="Typo.subtitle1">Capa</MudText>
+                        <MudText Typo="Typo.body2" Class="collection-description">
+                            Escolha uma imagem do dispositivo ou informe um link.
+                        </MudText>
+                    </header>
+
+                    <div class="cover-card">
+                        <div class="cover-preview">
+                            @if (!string.IsNullOrWhiteSpace(volume?.UrlCapa))
+                            {
+                                <img src="@volume.UrlCapa" alt="Capa do volume @volume?.Numero" />
+                            }
+                            else
+                            {
+                                <div class="cover-placeholder">
+                                    <MudIcon Icon="@Icons.Material.Outlined.Image" Size="Size.Large" />
+                                    <MudText Typo="Typo.body2">Sem capa</MudText>
+                                </div>
+                            }
+                        </div>
+                        <div class="cover-information">
+                            <MudTextField T="string"
+                                          @bind-Value="volume!.UrlCapa"
+                                          Label="URL da capa"
+                                          Placeholder="https://exemplo.com/capa.jpg"
+                                          Variant="Variant.Outlined"
+                                          FullWidth="true"
+                                          Adornment="Adornment.Start"
+                                          AdornmentIcon="@Icons.Material.Outlined.Link" />
+                            <InputFile OnChange="SelecionarCapa"
+                                       accept="image/png,image/jpeg,image/webp"
+                                       class="cover-file-input" />
+                            <MudText Typo="Typo.caption">PNG, JPG ou WEBP; até 2 MB.</MudText>
+                            @if (!string.IsNullOrWhiteSpace(coverError))
+                            {
+                                <MudText Typo="Typo.caption" Color="Color.Error">@coverError</MudText>
+                            }
+                            @if (!string.IsNullOrWhiteSpace(volume?.UrlCapa))
+                            {
+                                <MudButton Href="@volume.UrlCapa"
+                                           Target="_blank"
+                                           Variant="Variant.Text"
+                                           Color="Color.Primary"
+                                           StartIcon="@Icons.Material.Outlined.OpenInNew">
+                                    Visualizar imagem
+                                </MudButton>
+                            }
+                        </div>
+                    </div>
+                </section>
+
+                <section class="volume-create-section">
+                    <header class="volume-create-section-header">
+                        <MudText Typo="Typo.subtitle1">Capítulos</MudText>
+                        <MudText Typo="Typo.body2" Class="collection-description">
+                            Os capítulos poderão ser adicionados depois que o volume for criado.
+                        </MudText>
+                    </header>
+                    <MudTable T="ReadCapituloDto"
+                              Items="@capitulos"
+                              Hover="true"
+                              Striped="true"
+                              Dense="true"
+                              Breakpoint="Breakpoint.Sm"
+                              Class="chapter-table">
+                        <HeaderContent>
+                            <MudTh>Número</MudTh>
+                            <MudTh>Título</MudTh>
+                            <MudTh>Resumo</MudTh>
+                            <MudTh>Páginas</MudTh>
+                        </HeaderContent>
+                        <RowTemplate Context="capitulo">
+                            <MudTd DataLabel="Número">@capitulo.Numero.ToString("00")</MudTd>
+                            <MudTd DataLabel="Título">@capitulo.Titulo</MudTd>
+                            <MudTd DataLabel="Resumo">@capitulo.Resumo</MudTd>
+                            <MudTd DataLabel="Páginas">@capitulo.NumeroPaginas</MudTd>
+                        </RowTemplate>
+                        <NoRecordsContent>
+                            <div class="chapter-empty-state">
+                                <MudIcon Icon="@Icons.Material.Outlined.Article" />
+                                <MudText Typo="Typo.body2">
+                                    Nenhum capítulo vinculado. Eles poderão ser adicionados após criar o volume.
+                                </MudText>
+                            </div>
+                        </NoRecordsContent>
+                    </MudTable>
+                </section>
+
+                <footer class="character-form-actions">
+                    <MudButton Variant="Variant.Text" OnClick="Cancelar">
+                        Cancelar
+                    </MudButton>
+                    <MudButton ButtonType="ButtonType.Submit"
+                               Variant="Variant.Filled"
+                               Color="Color.Primary"
+                               Disabled="@IsSaving"
+                               StartIcon="@Icons.Material.Outlined.Save">
+                        @(IsSaving ? "Salvando..." : "Criar volume")
+                    </MudButton>
+                </footer>
+            </EditForm>
+        </div>
+    </DialogContent>
+</MudDialog>
+
+@code {
+
+    private bool IsSaving;
+    private const long MaxCoverSize = 2 * 1024 * 1024;
+    private string? coverError;
+
+    [CascadingParameter]
+    public IMudDialogInstance? ModalDialog { get; set; }
+
+    public CreateVolumeDto? volume = new()
+    {
+        Numero = 0,
+        Nome = string.Empty,
+        DataLancamento = DateTime.Now,
+        MensagemVolume = string.Empty,
+        UrlCapa = string.Empty
+    };
+
+    private readonly List<ReadCapituloDto> capitulos = [];
+
+    private async Task Criar()
+    {
+        IsSaving = true;
+        try
+        {
+            var createVolume = new CreateVolumeDto
+            {
+                Numero = volume!.Numero,
+                Nome = volume.Nome,
+                DataLancamento = volume.DataLancamento,
+                MensagemVolume = volume.MensagemVolume,
+                UrlCapa = volume.UrlCapa
+            };
+
+            await api.PostVolumesAsync(createVolume);
+            ModalDialog?.Close(DialogResult.Ok(true));
+        }
+        catch (HttpRequestException)
+        {
+            snackbar.Add("Não foi possível criar o volume. Verifique os dados e tente novamente.", Severity.Error);
+        }
+        finally
+        {
+            IsSaving = false;
+        }
+    }
+
+    private async Task SelecionarCapa(InputFileChangeEventArgs args)
+    {
+        var arquivo = args.File;
+        if (arquivo.Size > MaxCoverSize)
+        {
+            coverError = "A imagem deve ter no máximo 2 MB.";
+            return;
+        }
+
+        if (arquivo.ContentType is not ("image/png" or "image/jpeg" or "image/webp"))
+        {
+            coverError = "Use uma imagem PNG, JPG ou WEBP.";
+            return;
+        }
+
+        try
+        {
+            await using var stream = arquivo.OpenReadStream(MaxCoverSize);
+            using var buffer = new MemoryStream();
+            await stream.CopyToAsync(buffer);
+            volume!.UrlCapa = $"data:{arquivo.ContentType};base64,{Convert.ToBase64String(buffer.ToArray())}";
+            coverError = null;
+        }
+        catch (IOException)
+        {
+            coverError = "Não foi possível ler a imagem selecionada.";
+        }
+    }
+
+    private void Cancelar()
+    {
+        ModalDialog?.Cancel();
+    }
+
+}

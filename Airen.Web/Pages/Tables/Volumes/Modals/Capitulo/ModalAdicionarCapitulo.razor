@@ -1,0 +1,113 @@
+@inject CapitulosAPI api
+@inject ISnackbar snackbar
+
+<MudDialog Class="editor-dialog">
+    <DialogContent>
+        <div class="volume-editor chapter-editor">
+            <header class="editor-header">
+                <div>
+                    <MudText Typo="Typo.h4" Class="editor-title">Adicionar capítulo</MudText>
+                    <MudText Typo="Typo.body2" Class="editor-description">
+                        Novo capítulo do volume @VolumeNumero.
+                    </MudText>
+                </div>
+            </header>
+
+            <EditForm Model="@capitulo" OnValidSubmit="Criar">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                <section class="editor-section">
+                    <div class="fields-grid chapter-fields">
+                        <MudNumericField T="int"
+                                         @bind-Value="capitulo.Numero"
+                                         Label="Número"
+                                         Variant="Variant.Outlined"
+                                         Min="1"
+                                         Required="true" />
+                        <MudNumericField T="int"
+                                         @bind-Value="capitulo.NumeroPaginas"
+                                         Label="Páginas"
+                                         Variant="Variant.Outlined"
+                                         Min="1"
+                                         Required="true" />
+                        <MudTextField T="string"
+                                      @bind-Value="capitulo.Titulo"
+                                      Label="Título"
+                                      Variant="Variant.Outlined"
+                                      Required="true"
+                                      For="@(() => capitulo.Titulo)"
+                                      FullWidth="true" />
+                        <MudTextField T="string"
+                                      @bind-Value="capitulo.Resumo"
+                                      Label="Resumo"
+                                      Variant="Variant.Outlined"
+                                      Lines="5"
+                                      Required="true"
+                                      For="@(() => capitulo.Resumo)"
+                                      FullWidth="true" />
+                    </div>
+                </section>
+
+                <footer class="editor-footer">
+                    <MudButton Variant="Variant.Text" OnClick="Cancelar">
+                        Cancelar
+                    </MudButton>
+                    <MudButton ButtonType="ButtonType.Submit"
+                               Variant="Variant.Filled"
+                               Color="Color.Primary"
+                               Disabled="@isSaving"
+                               StartIcon="@Icons.Material.Outlined.Add">
+                        @(isSaving ? "Criando..." : "Criar capítulo")
+                    </MudButton>
+                </footer>
+            </EditForm>
+        </div>
+    </DialogContent>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    public IMudDialogInstance? ModalDialog { get; set; }
+
+    [Parameter]
+    public int VolumeId { get; set; }
+
+    [Parameter]
+    public int VolumeNumero { get; set; }
+
+    private CreateCapituloDto capitulo = new()
+    {
+        Numero = 1,
+        Titulo = string.Empty,
+        Resumo = string.Empty,
+        NumeroPaginas = 1
+    };
+
+    private bool isSaving;
+
+    protected override void OnParametersSet()
+    {
+        capitulo.IdVolume = VolumeId;
+    }
+
+    private async Task Criar()
+    {
+        isSaving = true;
+        try
+        {
+            var criado = await api.PostCapitulosAsync(capitulo);
+            ModalDialog?.Close(DialogResult.Ok(criado));
+        }
+        catch (HttpRequestException)
+        {
+            snackbar.Add("Não foi possível criar o capítulo. Verifique os dados e tente novamente.", Severity.Error);
+        }
+        finally
+        {
+            isSaving = false;
+        }
+    }
+
+    private void Cancelar() => ModalDialog?.Cancel();
+}

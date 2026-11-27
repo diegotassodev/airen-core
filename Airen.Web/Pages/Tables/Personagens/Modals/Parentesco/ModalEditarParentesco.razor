@@ -1,0 +1,116 @@
+@inject ParentescoAPI parentescoApi
+@inject PersonagensAPI personagensApi
+@inject ISnackbar snackbar
+
+<MudDialog Class="editor-dialog character-dialog">
+    <DialogContent>
+        <div class="volume-editor character-editor">
+            <header class="editor-header">
+                <div>
+                    <MudText Typo="Typo.h4" Class="editor-title">Editar parentesco</MudText>
+                    <MudText Typo="Typo.body2" Class="editor-description">
+                        Atualize o parente ou o tipo de parentesco.
+                    </MudText>
+                </div>
+            </header>
+
+            <EditForm Model="@formulario" OnValidSubmit="Salvar">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                <section class="editor-section related-fields">
+                    <MudSelect T="int"
+                               @bind-Value="formulario.IdParente"
+                               Label="Parente"
+                               Variant="Variant.Outlined"
+                               Required="true">
+                        @foreach (var outroPersonagem in outrosPersonagens)
+                        {
+                            <MudSelectItem T="int" Value="@outroPersonagem.Id">@outroPersonagem.Nome</MudSelectItem>
+                        }
+                    </MudSelect>
+                    <MudTextField T="string"
+                                  @bind-Value="formulario.TipoParentesco"
+                                  Label="Tipo de parentesco"
+                                  Variant="Variant.Outlined" />
+                </section>
+
+                <footer class="editor-footer">
+                    <MudButton Variant="Variant.Text" OnClick="Cancelar">Cancelar</MudButton>
+                    <MudButton ButtonType="ButtonType.Submit"
+                               Variant="Variant.Filled"
+                               Color="Color.Primary"
+                               Disabled="@isSaving"
+                               StartIcon="@Icons.Material.Outlined.Save">
+                        @(isSaving ? "Salvando..." : "Salvar parentesco")
+                    </MudButton>
+                </footer>
+            </EditForm>
+        </div>
+    </DialogContent>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    public IMudDialogInstance? ModalDialog { get; set; }
+
+    [Parameter]
+    public ReadParentescoDto? parentesco { get; set; }
+
+    [Parameter]
+    public int PersonagemId { get; set; }
+
+    private UpdateParentescoDto formulario = new();
+    private IEnumerable<ReadPersonagemDto> outrosPersonagens = [];
+    private bool isSaving;
+
+    protected override void OnParametersSet()
+    {
+        var parentescoAtual = parentesco
+            ?? throw new InvalidOperationException("É necessário informar o parentesco para edição.");
+
+        formulario = new UpdateParentescoDto
+        {
+            IdPersonagem = PersonagemId,
+            IdParente = parentescoAtual.IdParente,
+            TipoParentesco = parentescoAtual.TipoParentesco
+        };
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            outrosPersonagens = (await personagensApi.GetPersonagensAsync())
+                .Where(outroPersonagem => outroPersonagem.Id != PersonagemId)
+                .OrderBy(outroPersonagem => outroPersonagem.Nome);
+        }
+        catch (HttpRequestException)
+        {
+            snackbar.Add("Não foi possível carregar a lista de personagens.", Severity.Error);
+        }
+    }
+
+    private async Task Salvar()
+    {
+        var parentescoAtual = parentesco
+            ?? throw new InvalidOperationException("É necessário informar o parentesco para edição.");
+
+        isSaving = true;
+        try
+        {
+            await parentescoApi.PutParentescosAsync(parentescoAtual, formulario);
+            ModalDialog?.Close(DialogResult.Ok(true));
+        }
+        catch (HttpRequestException)
+        {
+            snackbar.Add("Não foi possível salvar o parentesco. Verifique os dados e tente novamente.", Severity.Error);
+        }
+        finally
+        {
+            isSaving = false;
+        }
+    }
+
+    private void Cancelar() => ModalDialog?.Cancel();
+}

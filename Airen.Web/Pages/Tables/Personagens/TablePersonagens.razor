@@ -1,24 +1,242 @@
+@using Airen.Web.Pages.Tables.Personagens.Modals
+@using Airen.Web.Pages.Tables.Personagens.Modals.Personagens
+@using System.Globalization
+
 @inject PersonagensAPI api
+@inject IDialogService dialogService
 
-@if (personagens is not null) {
-    foreach (var personagem in personagens) {
+<section class="collection-page characters-page">
+    <header class="collection-header">
+        <div>
+            <MudText Typo="Typo.overline" Class="collection-eyebrow">Arquivos da Fundação</MudText>
+            <MudText Typo="Typo.h3" Class="collection-title">Personagens</MudText>
+            <MudText Typo="Typo.body1" Class="collection-description">
+                Consulte os registros e crie novos personagens.
+            </MudText>
+        </div>
+        <MudButton ButtonType="ButtonType.Button"
+                   OnClick="AdicionarPersonagem"
+                   Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   Size="Size.Large"
+                   StartIcon="@Icons.Material.Outlined.PersonAdd">
+            Criar personagem
+        </MudButton>
+    </header>
 
+    @if (isLoading)
+    {
+        <MudPaper Class="collection-state" Elevation="0">
+            <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
+            <MudText Typo="Typo.body1">Carregando personagens...</MudText>
+        </MudPaper>
     }
-}
-else {
-    <MudCard>
-        <MudCardContent>
-            <MudText> Erro </MudText>
-            <MudText Typo="Typo.body2"> Não conseguimos encontrar nenhum personagem. </MudText>
-        </MudCardContent>
-    </MudCard>
-}
+    else if (loadFailed || personagens is null)
+    {
+        <MudPaper Class="collection-state" Elevation="0">
+            <MudIcon Icon="@Icons.Material.Outlined.CloudOff" Size="Size.Large" />
+            <MudText Typo="Typo.h6">Não foi possível carregar os personagens</MudText>
+            <MudText Typo="Typo.body2">Verifique sua conexão e tente novamente.</MudText>
+            <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="CarregarPersonagens">
+                Tentar novamente
+            </MudButton>
+        </MudPaper>
+    }
+    else
+    {
+        <MudPaper Class="collection-panel" Elevation="0">
+            <div class="character-filters">
+                <MudTextField T="string"
+                              Value="@buscaPersonagem"
+                              ValueChanged="AtualizarBusca"
+                              Label="Buscar personagem"
+                              Placeholder="Nome ou nome original"
+                              Variant="Variant.Outlined"
+                              Adornment="Adornment.Start"
+                              AdornmentIcon="@Icons.Material.Outlined.Search"
+                              Immediate="true"
+                              Clearable="true" />
+
+                <MudSelect T="bool?"
+                           Value="@situacaoSelecionada"
+                           ValueChanged="AtualizarSituacao"
+                           Label="Situação"
+                           Variant="Variant.Outlined"
+                           Clearable="true">
+                    <MudSelectItem T="bool?" Value="@((bool?)true)">Vivos</MudSelectItem>
+                    <MudSelectItem T="bool?" Value="@((bool?)false)">Falecidos</MudSelectItem>
+
+                </MudSelect>
+            </div>
+
+            <MudTable T="ReadPersonagemDto"
+                      Items="@PersonagensFiltrados"
+                      Hover="true"
+                      Striped="true"
+                      Dense="true"
+                      Breakpoint="Breakpoint.Sm"
+                      RowsPerPage="10"
+                      @bind-CurrentPage="paginaAtual"
+                      OnRowClick="AbrirPersonagem">
+                <ToolBarContent>
+                    <div class="table-toolbar">
+                        <div>
+                            <MudText Typo="Typo.body2" Class="table-caption">
+                                Selecione um personagem para ver seus detalhes.
+                            </MudText>
+                        </div>
+                        <MudChip T="string" Color="Color.Primary" Variant="Variant.Outlined">
+                            @($"{QuantidadeFiltrada} de {personagens.Count()} personagens")
+                        </MudChip>
+                    </div>
+                </ToolBarContent>
+                <HeaderContent>
+                    <MudTh>ID</MudTh>
+                    <MudTh>Nome</MudTh>
+                    <MudTh>Nome original</MudTh>
+                    <MudTh>Nascimento</MudTh>
+                    <MudTh>Situação</MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd DataLabel="ID">#@context.Id</MudTd>
+                    <MudTd DataLabel="Nome">@context.Nome</MudTd>
+                    <MudTd DataLabel="Nome original">
+                        @(string.IsNullOrWhiteSpace(context.NomeOriginal) ? "—" : context.NomeOriginal)
+                    </MudTd>
+                    <MudTd DataLabel="Nascimento">
+                        @(context.DataNascimento?.ToString("dd/MM/yyyy") ?? "—")
+                    </MudTd>
+                    <MudTd DataLabel="Situação">
+                        <MudChip T="string"
+                                 Size="Size.Small"
+                                 Color="@(context.EstaVivo ? Color.Success : Color.Default)"
+                                 Variant="Variant.Outlined">
+                            @(context.EstaVivo ? "Vivo" : "Falecido")
+                        </MudChip>
+                    </MudTd>
+                </RowTemplate>
+                <NoRecordsContent>
+                    <div class="table-empty">
+                        <MudIcon Icon="@Icons.Material.Outlined.Group" Size="Size.Large" />
+                        @if (personagens.Any())
+                        {
+                            <MudText Typo="Typo.subtitle1">Nenhum personagem encontrado</MudText>
+                            <MudText Typo="Typo.body2">Ajuste ou limpe os filtros para ver mais resultados.</MudText>
+                        }
+                        else
+                        {
+                            <MudText Typo="Typo.subtitle1">Nenhum personagem cadastrado</MudText>
+                            <MudText Typo="Typo.body2">Use “Criar personagem” para adicionar o primeiro registro.</MudText>
+                        }
+                    </div>
+                </NoRecordsContent>
+                <PagerContent>
+                    <MudTablePager HideRowsPerPage="true" InfoFormat="" />
+                </PagerContent>
+            </MudTable>
+        </MudPaper>
+    }
+</section>
 
 @code {
-    public IEnumerable<ReadPersonagemDto>? personagens {get;set;}
+    public IEnumerable<ReadPersonagemDto>? personagens { get; set; }
+    private bool isLoading = true;
+    private bool loadFailed;
+    private string? buscaPersonagem = string.Empty;
+    private bool? situacaoSelecionada;
+    private int paginaAtual;
 
-    protected override async Task OnInitializedAsync() {
-        personagens = await api.GetPersonagensAsync();
+    private IEnumerable<ReadPersonagemDto> PersonagensFiltrados
+    {
+        get
+        {
+            var busca = (buscaPersonagem ?? string.Empty).Trim();
+            return (personagens ?? Enumerable.Empty<ReadPersonagemDto>())
+                .Where(personagem =>
+                    (string.IsNullOrEmpty(busca)
+                        || CorrespondeBusca(personagem.Nome, busca)
+                        || CorrespondeBusca(personagem.NomeOriginal, busca))
+                    && (situacaoSelecionada is null || personagem.EstaVivo == situacaoSelecionada.Value));
+        }
+    }
+
+    private static bool CorrespondeBusca(string? valor, string busca) =>
+        !string.IsNullOrWhiteSpace(valor)
+        && CultureInfo.CurrentCulture.CompareInfo.IndexOf(
+            valor,
+            busca,
+            CompareOptions.IgnoreCase | CompareOptions.IgnoreNonSpace) >= 0;
+
+    private int QuantidadeFiltrada => PersonagensFiltrados.Count();
+
+    private Task AtualizarBusca(string? busca)
+    {
+        buscaPersonagem = busca;
+        paginaAtual = 0;
+        return Task.CompletedTask;
+    }
+
+    private Task AtualizarSituacao(bool? situacao)
+    {
+        situacaoSelecionada = situacao;
+        paginaAtual = 0;
+        return Task.CompletedTask;
+    }
+
+    protected override Task OnInitializedAsync() => CarregarPersonagens();
+
+    private async Task CarregarPersonagens()
+    {
+        isLoading = true;
+        loadFailed = false;
+        try
+        {
+            personagens = await api.GetPersonagensAsync();
+        }
+        catch (HttpRequestException)
+        {
+            personagens = null;
+            loadFailed = true;
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task AdicionarPersonagem()
+    {
+        var dialog = await dialogService.ShowAsync<ModalAdicionarPersonagem>();
+        var result = await dialog.Result;
+        if (result is { Canceled: false })
+        {
+            buscaPersonagem = string.Empty;
+            situacaoSelecionada = null;
+            paginaAtual = 0;
+            await CarregarPersonagens();
+        }
+    }
+
+    private async Task AbrirPersonagem(TableRowClickEventArgs<ReadPersonagemDto> args)
+    {
+        var parameters = new DialogParameters<ModalPersonagem>
+        {
+            { dialog => dialog.personagem, args.Item },
+            { dialog => dialog.OnPersonagemAtualizado, EventCallback.Factory.Create(this, CarregarPersonagens) }
+        };
+        var options = new DialogOptions
+        {
+            CloseOnEscapeKey = true,
+            FullWidth = true,
+            MaxWidth = MaxWidth.Medium
+        };
+
+        var dialog = await dialogService.ShowAsync<ModalPersonagem>(parameters, options);
+        var result = await dialog.Result;
+        if (result is { Canceled: false })
+        {
+            await CarregarPersonagens();
+        }
     }
 
 }

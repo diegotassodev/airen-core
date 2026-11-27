@@ -1,0 +1,103 @@
+@inject PersonagensAPI api
+@inject ISnackbar snackbar
+
+<MudDialog Class="character-dialog">
+    <DialogContent>
+        <div class="character-form">
+            <header class="character-form-header">
+                <MudText Typo="Typo.h4" Class="collection-title">Criar personagem</MudText>
+                <MudText Typo="Typo.body2" Class="collection-description">
+                    Registre as informações principais do personagem.
+                </MudText>
+            </header>
+
+            <EditForm Model="@personagem" OnValidSubmit="Criar">
+                <DataAnnotationsValidator />
+
+                <div class="character-fields">
+                    <MudTextField T="string"
+                                  @bind-Value="personagem.Nome"
+                                  Label="Nome"
+                                  Variant="Variant.Outlined"
+                                  Required="true"
+                                  For="@(() => personagem.Nome)"
+                                  FullWidth="true" />
+                    <MudTextField T="string"
+                                  @bind-Value="personagem.NomeOriginal"
+                                  Label="Nome original"
+                                  Variant="Variant.Outlined"
+                                  HelperText="Opcional"
+                                  FullWidth="true" />
+                    <MudDatePicker @bind-Date="personagem.DataNascimento"
+                                   Label="Data de nascimento"
+                                   Variant="Variant.Outlined"
+                                   DateFormat="dd/MM/yyyy"
+                                   PickerVariant="PickerVariant.Dialog"
+                                   Required="true" />
+                    <MudCheckBox T="bool"
+                                 @bind-Value="personagem.EstaVivo"
+                                 Color="Color.Primary"
+                                 Label="Personagem vivo" />
+                    <MudTextField T="string"
+                                  @bind-Value="personagem.Biografia"
+                                  Label="Biografia"
+                                  Variant="Variant.Outlined"
+                                  Lines="5"
+                                  Required="true"
+                                  For="@(() => personagem.Biografia)"
+                                  FullWidth="true" />
+                </div>
+
+                <footer class="character-form-actions">
+                    <MudButton Variant="Variant.Text" OnClick="Cancelar"> Cancelar </MudButton>
+                    <MudButton ButtonType="ButtonType.Submit"
+                               Variant="Variant.Filled"
+                               Color="Color.Primary"
+                               Disabled="@isSaving"
+                               StartIcon="@Icons.Material.Outlined.PersonAdd">
+                        @(isSaving ? "Criando..." : "Criar personagem")
+                    </MudButton>
+                </footer>
+            </EditForm>
+        </div>
+    </DialogContent>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    public IMudDialogInstance? ModalDialog { get; set; }
+
+    private CreatePersonagemDto personagem = new()
+    {
+        Nome = string.Empty,
+        NomeOriginal = string.Empty,
+        Biografia = string.Empty,
+        DataNascimento = DateTime.Today,
+        EstaVivo = true
+    };
+
+    private bool isSaving;
+
+    private async Task Criar()
+    {
+        isSaving = true;
+        try
+        {
+            await api.PostPersonagensAsync(personagem);
+            ModalDialog?.Close(DialogResult.Ok(true));
+        }
+        catch (HttpRequestException)
+        {
+            snackbar.Add("Não foi possível criar o personagem. Verifique os dados e tente novamente.", Severity.Error);
+        }
+        finally
+        {
+            isSaving = false;
+        }
+    }
+
+    private void Cancelar()
+    {
+        ModalDialog?.Cancel();
+    }
+}

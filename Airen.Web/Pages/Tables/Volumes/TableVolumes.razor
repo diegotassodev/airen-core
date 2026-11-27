@@ -1,49 +1,183 @@
 @using Airen.Web.Pages.Tables.Volumes.Modals
+@using Airen.Web.Pages.Tables.Volumes.Modals.Volume
 
 @inject IDialogService dialogService
 @inject VolumesAPI api
 
-@if (volumes is not null) {
-    <MudTable T="ReadVolumeDto"
-        Items="@volumes" 
-        Hover="true" 
-        Breakpoint="Breakpoint.Sm"
-        style="padding: 15px;"
-        OnRowClick="OpenModal">
-        
-        <ToolBarContent>
-            <MudText Typo="Typo.h6">Volumes</MudText>
-        </ToolBarContent>
-        <HeaderContent>
-            <MudTh>ID</MudTh>
-            <MudTh>Nome</MudTh>
-            <MudTh>Número</MudTh>
-        </HeaderContent>
-        <RowTemplate>
-            <MudTd DataLabel="Id">@context.Id</MudTd>
-            <MudTd DataLabel="Nome">@context.Nome</MudTd>
-            <MudTd DataLabel="Numero">@context.Numero</MudTd>
-        </RowTemplate>
-    </MudTable>
-    <MudButton ButtonType="ButtonType.Button" OnClick="AdicionarVolume"> Adicionar Volume </MudButton>
-}
-else {
-    <MudCard>
-        <MudCardContent>
-            <MudText> Erro </MudText>
-            <MudText Typo="Typo.body2"> Não conseguimos encontrar nenhum volume. </MudText>
-        </MudCardContent>
-    </MudCard>
-}
+<section class="collection-page volumes-page">
+    <header class="collection-header">
+        <div>
+            <MudText Typo="Typo.overline" Class="collection-eyebrow">Arquivos da Fundação</MudText>
+            <MudText Typo="Typo.h3" Class="collection-title">Volumes</MudText>
+            <MudText Typo="Typo.body1" Class="collection-description">
+                Consulte registros e crie novos volumes para a fundação.
+            </MudText>
+        </div>
+        <MudButton ButtonType="ButtonType.Button"
+                   OnClick="AdicionarVolume"
+                   Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   Size="Size.Large"
+                   StartIcon="@Icons.Material.Outlined.Add">
+            Criar volume
+        </MudButton>
+    </header>
+
+    @if (isLoading)
+    {
+        <MudPaper Class="collection-state" Elevation="0">
+            <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
+            <MudText Typo="Typo.body1">Carregando volumes...</MudText>
+        </MudPaper>
+    }
+    else if (loadFailed || volumes is null)
+    {
+        <MudPaper Class="collection-state" Elevation="0">
+            <MudIcon Icon="@Icons.Material.Outlined.CloudOff" Size="Size.Large" />
+            <MudText Typo="Typo.h6">Não foi possível carregar os volumes</MudText>
+            <MudText Typo="Typo.body2">Verifique sua conexão e tente novamente.</MudText>
+            <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="CarregarVolumes">
+                Tentar novamente
+            </MudButton>
+        </MudPaper>
+    }
+    else
+    {
+        <MudPaper Class="collection-panel" Elevation="0">
+            <div class="collection-filters">
+
+                <MudTextField T="string"
+                              @bind-Value="buscaVolumes"
+                              Label="Buscar volume"
+                              Placeholder="Nome ou número"
+                              Variant="Variant.Outlined"
+                              Adornment="Adornment.Start"
+                              AdornmentIcon="@Icons.Material.Outlined.Search"
+                              Immediate="true"
+                              Clearable="true" />
+
+                <MudSelect T="int?"
+                           @bind-Value="anoSelecionado"
+                           Label="Ano de publicação"
+                           Variant="Variant.Outlined"
+                           Clearable="true">
+                    @foreach (var ano in AnosDePublicacao)
+                    {
+                        <MudSelectItem T="int?" Value="@((int?)ano)">@ano</MudSelectItem>
+                    }
+
+                </MudSelect>
+            </div>
+
+            <MudTable T="ReadVolumeDto"
+                      Items="@VolumesFiltrados"
+                      Hover="true"
+                      Striped="true"
+                      Dense="true"
+                      Breakpoint="Breakpoint.Sm"
+                      RowsPerPage="10"
+                      OnRowClick="OpenModal">
+                <ToolBarContent>
+                    <div class="table-toolbar">
+                        <div>
+                            <MudText Typo="Typo.body2" Class="table-caption">
+                                Selecione um volume para ver seus detalhes.
+                            </MudText>
+                        </div>
+                        <MudChip T="string" Color="Color.Primary" Variant="Variant.Outlined">
+                            @($"{QuantidadeVolumesFiltrados} de {volumes.Count()} volumes")
+                        </MudChip>
+                    </div>
+                </ToolBarContent>
+                <HeaderContent>
+                    <MudTh>ID</MudTh>
+                    <MudTh>Nome</MudTh>
+                    <MudTh>Número</MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd DataLabel="ID">
+                        <span class="volume-id">#@context.Id</span>
+                    </MudTd>
+                    <MudTd DataLabel="Nome">@context.Nome</MudTd>
+                    <MudTd DataLabel="Número">
+                        <span class="volume-number">@context.Numero.ToString("00")</span>
+                    </MudTd>
+                </RowTemplate>
+                <NoRecordsContent>
+                    <div class="table-empty">
+                        <MudIcon Icon="@Icons.Material.Outlined.MenuBook" Size="Size.Large" />
+                        @if (volumes.Any())
+                        {
+                            <MudText Typo="Typo.subtitle1">Nenhum volume encontrado</MudText>
+                            <MudText Typo="Typo.body2">Ajuste a busca ou remova o filtro de ano.</MudText>
+                        }
+                        else
+                        {
+                            <MudText Typo="Typo.subtitle1">Ainda não há volumes</MudText>
+                            <MudText Typo="Typo.body2">Adicione o primeiro volume para começar sua biblioteca.</MudText>
+                        }
+                    </div>
+                </NoRecordsContent>
+                <PagerContent>
+                    <MudTablePager HideRowsPerPage="true" InfoFormat="" />
+                </PagerContent>
+            </MudTable>
+        </MudPaper>
+    }
+</section>
 
 @code {
-    public IEnumerable<ReadVolumeDto>? volumes {get;set;}
+    public IEnumerable<ReadVolumeDto>? volumes { get; set; }
+    private bool isLoading = true;
+    private bool loadFailed;
+    private string? buscaVolumes = string.Empty;
+    private int? anoSelecionado;
 
-    protected override async Task OnInitializedAsync() {
-        volumes = await api.GetVolumeAsync();
+    private IEnumerable<int> AnosDePublicacao =>
+        (volumes ?? Enumerable.Empty<ReadVolumeDto>())
+        .Where(volume => volume.DataLancamento.HasValue)
+        .Select(volume => volume.DataLancamento!.Value.Year)
+        .Distinct()
+        .OrderByDescending(ano => ano);
+
+    private IEnumerable<ReadVolumeDto> VolumesFiltrados
+    {
+        get
+        {
+            var busca = (buscaVolumes ?? string.Empty).Trim();
+            return (volumes ?? Enumerable.Empty<ReadVolumeDto>())
+                .Where(volume =>
+                    (anoSelecionado is null || volume.DataLancamento?.Year == anoSelecionado)
+                    && (string.IsNullOrEmpty(busca)
+                        || (volume.Nome?.Contains(busca, StringComparison.OrdinalIgnoreCase) ?? false)
+                        || volume.Numero.ToString().Contains(busca, StringComparison.OrdinalIgnoreCase)));
+        }
     }
 
-    private async void OpenModal(TableRowClickEventArgs<ReadVolumeDto> args)
+    private int QuantidadeVolumesFiltrados => VolumesFiltrados.Count();
+
+    protected override Task OnInitializedAsync() => CarregarVolumes();
+
+    public async Task CarregarVolumes()
+    {
+        isLoading = true;
+        loadFailed = false;
+        try
+        {
+            volumes = await api.GetVolumeAsync();
+        }
+        catch (HttpRequestException)
+        {
+            volumes = null;
+            loadFailed = true;
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task OpenModal(TableRowClickEventArgs<ReadVolumeDto> args)
     {
         var volume = args.Item;
         var parameters = new DialogParameters<ModalVolume>
@@ -53,19 +187,31 @@ else {
         var options = new DialogOptions
         {
             CloseOnEscapeKey = true,
+            FullWidth = true,
+            MaxWidth = MaxWidth.Medium
         };
-        await dialogService.ShowAsync<ModalVolume>(parameters, options);
+        var dialog = await dialogService.ShowAsync<ModalVolume>(parameters, options);
+        var result = await dialog.Result;
+        if (result is { Canceled: false })
+            await CarregarVolumes();
     }
 
-    private async void AdicionarVolume()
+    private async Task AdicionarVolume()
     {
         var options = new DialogOptions
         {
             CloseOnEscapeKey = true,
-            MaxWidth = MaxWidth.ExtraExtraLarge,
-            CloseButton = true
+            MaxWidth = MaxWidth.Medium,
+            FullWidth = true
         };
-        await dialogService.ShowAsync<ModalAdicionarVolume>(options);
+        var dialog = await dialogService.ShowAsync<ModalAdicionarVolume>(options);
+        var result = await dialog.Result;
+        if (result is { Canceled: false })
+        {
+            buscaVolumes = string.Empty;
+            anoSelecionado = null;
+            await CarregarVolumes();
+        }
     }
 
 }

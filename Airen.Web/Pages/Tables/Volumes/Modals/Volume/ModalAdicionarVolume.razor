@@ -13,7 +13,6 @@
 
             <EditForm Model="@volume" OnValidSubmit="Criar">
                 <DataAnnotationsValidator />
-                <ValidationSummary />
                 <div class="character-fields volume-fields">
                     <MudNumericField T="int"
                                      @bind-Value="volume!.Numero"

@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="bunit" Version="2.15.2" />
     <PackageReference Include="coverlet.collector" Version="6.0.4" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
     <PackageReference Include="Moq" Version="4.21.0" />
@@ -22,6 +23,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Airen.Contracts\Airen.Contracts.csproj" />
     <ProjectReference Include="..\..\Airen.Api\Airen.Api.csproj" />
+    <ProjectReference Include="..\..\Airen.Web\Airen.Web.csproj" />
   </ItemGroup>
 
 </Project>

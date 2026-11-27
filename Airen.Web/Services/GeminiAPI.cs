@@ -2,7 +2,7 @@ using System.Net.Http.Json;
 
 namespace Airen.Web.Services;
 
-public class GeminiAPI
+public class GeminiAPI : IGeminiAPI
 {
     private readonly HttpClient _httpClient;
    

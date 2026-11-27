@@ -27,13 +27,16 @@
                                   @bind-Value="formulario.LinkMusica"
                                   Label="Link da música"
                                   Variant="Variant.Outlined" />
-                    <MudTextField T="string"
-                                  @bind-Value="formulario.Descricao"
-                                  Label="Descrição"
-                                  Variant="Variant.Outlined"
-                                  Lines="4"
-                                  Required="true"
-                                  For="@(() => formulario.Descricao)" />
+                    <div class="text-correction-field">
+                        <MudTextField T="string"
+                                      @bind-Value="formulario.Descricao"
+                                      Label="Descrição"
+                                      Variant="Variant.Outlined"
+                                      Lines="4"
+                                      Required="true"
+                                      For="@(() => formulario.Descricao)" />
+                        <TextCorrectionButton @bind-Text="formulario.Descricao" />
+                    </div>
                 </section>
 
                 <footer class="editor-footer">

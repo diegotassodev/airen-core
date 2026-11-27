@@ -38,14 +38,18 @@
                                  @bind-Value="personagem.EstaVivo"
                                  Color="Color.Primary"
                                  Label="Personagem vivo" />
-                    <MudTextField T="string"
-                                  @bind-Value="personagem.Biografia"
-                                  Label="Biografia"
-                                  Variant="Variant.Outlined"
-                                  Lines="5"
-                                  Required="true"
-                                  For="@(() => personagem.Biografia)"
-                                  FullWidth="true" />
+                    <div class="text-correction-field">
+                        <MudTextField T="string"
+                                      @bind-Value="personagem.Biografia"
+                                      Label="Biografia"
+                                      Variant="Variant.Outlined"
+                                      Lines="5"
+                                      Required="true"
+                                      For="@(() => personagem.Biografia)"
+                                      FullWidth="true" />
+                        <TextCorrectionButton @bind-Text="personagem.Biografia" />
+                    </div>
+
                 </div>
 
                 <footer class="character-form-actions">

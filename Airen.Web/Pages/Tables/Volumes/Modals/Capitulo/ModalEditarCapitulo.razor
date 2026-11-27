@@ -37,14 +37,17 @@
                                       Required="true"
                                       For="@(() => formulario.Titulo)"
                                       FullWidth="true" />
-                        <MudTextField T="string"
-                                      @bind-Value="formulario.Resumo"
-                                      Label="Resumo"
-                                      Variant="Variant.Outlined"
-                                      Lines="5"
-                                      Required="true"
-                                      For="@(() => formulario.Resumo)"
-                                      FullWidth="true" />
+                        <div class="text-correction-field">
+                            <MudTextField T="string"
+                                          @bind-Value="formulario.Resumo"
+                                          Label="Resumo"
+                                          Variant="Variant.Outlined"
+                                          Lines="5"
+                                          Required="true"
+                                          For="@(() => formulario.Resumo)"
+                                          FullWidth="true" />
+                            <TextCorrectionButton @bind-Text="formulario.Resumo" />
+                        </div>
                     </div>
                 </section>
 

@@ -12,6 +12,7 @@ var apiServer = builder.Configuration["API-Server"];
 
 builder.Services.AddTransient<AfiliacoesAPI>();
 builder.Services.AddTransient<CapitulosAPI>();
+builder.Services.AddTransient<GeminiAPI>();
 builder.Services.AddTransient<HabilidadesAPI>();
 builder.Services.AddTransient<HobbiesAPI>();
 builder.Services.AddTransient<ParentescoAPI>();

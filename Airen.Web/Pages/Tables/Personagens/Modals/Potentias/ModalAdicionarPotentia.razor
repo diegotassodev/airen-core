@@ -27,13 +27,16 @@
                                   @bind-Value="potentia.LinkMusica"
                                   Label="Link da música"
                                   Variant="Variant.Outlined" />
-                    <MudTextField T="string"
-                                  @bind-Value="potentia.Descricao"
-                                  Label="Descrição"
-                                  Variant="Variant.Outlined"
-                                  Lines="4"
-                                  Required="true"
-                                  For="@(() => potentia.Descricao)" />
+                    <div class="text-correction-field">
+                        <MudTextField T="string"
+                                      @bind-Value="potentia.Descricao"
+                                      Label="Descrição"
+                                      Variant="Variant.Outlined"
+                                      Lines="4"
+                                      Required="true"
+                                      For="@(() => potentia.Descricao)" />
+                        <TextCorrectionButton @bind-Text="potentia.Descricao" />
+                    </div>
                 </section>
 
                 <footer class="editor-footer">

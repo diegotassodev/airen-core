@@ -23,11 +23,14 @@
                                   Variant="Variant.Outlined"
                                   Required="true"
                                   For="@(() => formulario.Nome)" />
-                    <MudTextField T="string"
-                                  @bind-Value="formulario.Descricao"
-                                  Label="Descrição"
-                                  Variant="Variant.Outlined"
-                                  Lines="4" />
+                    <div class="text-correction-field">
+                        <MudTextField T="string"
+                                      @bind-Value="formulario.Descricao"
+                                      Label="Descrição"
+                                      Variant="Variant.Outlined"
+                                      Lines="4" />
+                        <TextCorrectionButton @bind-Text="formulario.Descricao" />
+                    </div>
                 </section>
 
                 <footer class="editor-footer">

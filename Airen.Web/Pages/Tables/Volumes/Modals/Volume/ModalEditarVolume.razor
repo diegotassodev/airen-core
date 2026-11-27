@@ -50,12 +50,15 @@
                                     FullWidth="true" />
                     </div>
 
-                    <MudTextField @bind-Value="formulario.MensagemVolume"
-                            Label="Mensagem"
-                            Variant="Variant.Outlined"
-                            FullWidth="true"
-                            Lines="8"
-                            Class="message-field" />
+                    <div class="text-correction-field">
+                        <MudTextField @bind-Value="formulario.MensagemVolume"
+                                      Label="Mensagem"
+                                      Variant="Variant.Outlined"
+                                      FullWidth="true"
+                                      Lines="8"
+                                      Class="message-field" />
+                        <TextCorrectionButton @bind-Text="formulario.MensagemVolume" />
+                    </div>
 
                     <MudDatePicker @bind-Date="formulario.DataLancamento"
                                     Label="Data de Lançamento"

@@ -37,14 +37,17 @@
                                       Required="true"
                                       For="@(() => capitulo.Titulo)"
                                       FullWidth="true" />
-                        <MudTextField T="string"
-                                      @bind-Value="capitulo.Resumo"
-                                      Label="Resumo"
-                                      Variant="Variant.Outlined"
-                                      Lines="5"
-                                      Required="true"
-                                      For="@(() => capitulo.Resumo)"
-                                      FullWidth="true" />
+                        <div class="text-correction-field">
+                            <MudTextField T="string"
+                                          @bind-Value="capitulo.Resumo"
+                                          Label="Resumo"
+                                          Variant="Variant.Outlined"
+                                          Lines="5"
+                                          Required="true"
+                                          For="@(() => capitulo.Resumo)"
+                                          FullWidth="true" />
+                            <TextCorrectionButton @bind-Text="capitulo.Resumo" />
+                        </div>
                     </div>
                 </section>
 

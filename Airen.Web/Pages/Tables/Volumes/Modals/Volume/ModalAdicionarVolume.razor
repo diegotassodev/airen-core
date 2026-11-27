@@ -34,13 +34,16 @@
                                    DateFormat="dd/MM/yyyy"
                                    PickerVariant="PickerVariant.Dialog"
                                    Required="true" />
-                    <MudTextField T="string"
-                                  @bind-Value="volume!.MensagemVolume"
-                                  Label="Mensagem"
-                                  Variant="Variant.Outlined"
-                                  Lines="5"
-                                  Class="volume-message-field"
-                                  FullWidth="true" />
+                    <div class="text-correction-field">
+                        <MudTextField T="string"
+                                      @bind-Value="volume!.MensagemVolume"
+                                      Label="Mensagem"
+                                      Variant="Variant.Outlined"
+                                      Lines="5"
+                                      Class="volume-message-field"
+                                      FullWidth="true" />
+                        <TextCorrectionButton @bind-Text="volume!.MensagemVolume" />
+                    </div>
                 </div>
 
                 <section class="volume-create-section">

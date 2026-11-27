@@ -300,6 +300,14 @@
     grid-column: 1 / -1;
 }
 
+.text-correction-field {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+}
+
 .character-form .validation-summary {
     margin-bottom: 16px;
     color: var(--mud-palette-error);

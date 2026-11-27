@@ -1,0 +1,55 @@
+@inject GeminiAPI GeminiApi
+@inject ISnackbar Snackbar
+
+@if (!string.IsNullOrWhiteSpace(Text))
+{
+    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+        <MudButton ButtonType="ButtonType.Button"
+                   Variant="Variant.Outlined"
+                   Color="Color.Primary"
+                   Disabled="@isCorrecting"
+                   OnClick="CorrectAsync"
+                   StartIcon="@Icons.Material.Outlined.Spellcheck">
+            @(isCorrecting ? "Pensando..." : "Corrigir ortografia")
+        </MudButton>
+        @if (isCorrecting)
+        {
+            <MudProgressCircular Indeterminate="true" Size="Size.Small" Color="Color.Primary" />
+        }
+    </MudStack>
+}
+
+@code {
+    [Parameter]
+    public string? Text { get; set; }
+
+    [Parameter]
+    public EventCallback<string?> TextChanged { get; set; }
+
+    private bool isCorrecting;
+
+    private async Task CorrectAsync()
+    {
+        if (isCorrecting || string.IsNullOrWhiteSpace(Text))
+            return;
+
+        isCorrecting = true;
+        try
+        {
+            var correctedText = await GeminiApi.CorrigirOrtografiaAsync(Text);
+            await TextChanged.InvokeAsync(correctedText);
+        }
+        catch (HttpRequestException)
+        {
+            Snackbar.Add("Não foi possível corrigir o texto. Tente novamente.", Severity.Error);
+        }
+        catch (TaskCanceledException)
+        {
+            Snackbar.Add("A correção demorou demais. Tente novamente.", Severity.Error);
+        }
+        finally
+        {
+            isCorrecting = false;
+        }
+    }
+}

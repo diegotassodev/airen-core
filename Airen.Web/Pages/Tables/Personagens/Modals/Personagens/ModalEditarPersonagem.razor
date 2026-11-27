@@ -41,14 +41,18 @@
                                      @bind-Value="formulario.EstaVivo"
                                      Color="Color.Primary"
                                      Label="Personagem vivo" />
-                        <MudTextField T="string"
-                                      @bind-Value="formulario.Biografia"
-                                      Label="Biografia"
-                                      Variant="Variant.Outlined"
-                                      Lines="6"
-                                      Required="true"
-                                      For="@(() => formulario.Biografia)"
-                                      FullWidth="true" />
+                                     
+                        <div class="text-correction-field">
+                            <MudTextField T="string"
+                                          @bind-Value="formulario.Biografia"
+                                          Label="Biografia"
+                                          Variant="Variant.Outlined"
+                                          Lines="6"
+                                          Required="true"
+                                          For="@(() => formulario.Biografia)"
+                                          FullWidth="true" />
+                            <TextCorrectionButton @bind-Text="formulario.Biografia" />
+                        </div>
                     </div>
                 </section>
 

@@ -7,17 +7,17 @@ namespace Airen.Api.Controllers.External;
 [Route("[controller]")]
 public class GeminiController : ControllerBase 
 {
-    private readonly GeminiService _geminiService;
+    private readonly IGeminiService _geminiService;
 
-    public GeminiController(GeminiService geminiService) 
+    public GeminiController(IGeminiService geminiService)
     {
         _geminiService = geminiService;
     }
 
     [HttpPost]
-    public async Task<IActionResult> RetornarResposta([FromBody] string pergunta) 
+    public async Task<IActionResult> CorrigirOrtografia([FromBody] string texto, CancellationToken cancellationToken)
     {
-        var response = await _geminiService.RetornarResposta(pergunta);
+        var response = await _geminiService.CorrigirOrtografiaAsync(texto, cancellationToken);
         return Ok(response);
     }
 }

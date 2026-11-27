@@ -24,7 +24,7 @@ builder.Services.AddCors
 );
 
 builder.Services.AddApplicationRepositories();
-builder.Services.AddHttpClient<GeminiService>();
+builder.Services.AddScoped<IGeminiService, GeminiService>();
 
 var app = builder.Build();
 

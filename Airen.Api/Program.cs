@@ -1,4 +1,5 @@
 using Airen.Api.Repositories;
+using Airen.Api.Services;
 using Airen.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 
@@ -23,6 +24,7 @@ builder.Services.AddCors
 );
 
 builder.Services.AddApplicationRepositories();
+builder.Services.AddHttpClient<GeminiService>();
 
 var app = builder.Build();
 

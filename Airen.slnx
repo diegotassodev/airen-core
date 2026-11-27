@@ -1,2 +1,9 @@
 <Solution>
+  <Project Path="Airen.Contracts/Airen.Contracts.csproj" />
+  <Project Path="Airen.Infrastructure/Airen.Infrastructure.csproj" />
+  <Project Path="Airen.Web/Airen.Web.csproj" />
+  <Folder Name="/Airen.Tests/">
+    <Project Path="Airen.Tests/Airen.Tests.Unit/Airen.Tests.Unit.csproj" />
+  </Folder>
+  <Project Path="Airen.Api/Airen.Api.csproj" />
 </Solution>
